@@ -75,6 +75,17 @@ function PlayPage() {
 
   const current = items[idx];
 
+  // Reset progress whenever the level (or its content) changes
+  useEffect(() => {
+    setIdx(0);
+    setScore(0);
+    setSkipped(new Set());
+    setDefeated(false);
+    setTranscript("");
+    setTick(0);
+    itemKeyRef.current++;
+  }, [level, subject, world, grade]);
+
   const handleResult = useCallback((t: string) => {
     setTranscript(t);
     if (!current) return;
