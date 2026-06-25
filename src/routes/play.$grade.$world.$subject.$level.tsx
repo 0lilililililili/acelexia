@@ -136,6 +136,12 @@ function PlayPage() {
 
   const canSkip = current ? !skipped.has(current.prompt) : false;
   const finished = !isLoading && items.length > 0 && idx >= items.length;
+
+  useEffect(() => {
+    if (finished) {
+      markCleared(grade, world, subject, parseInt(level, 10) || 1);
+    }
+  }, [finished, grade, world, subject, level]);
   const remaining = Math.max(0, FALL_SECONDS - tick);
   const fallPct = Math.min(100, (tick / FALL_SECONDS) * 100);
 
