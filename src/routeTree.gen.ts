@@ -9,38 +9,242 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UploadReportRouteImport } from './routes/upload-report'
+import { Route as TakeTestRouteImport } from './routes/take-test'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ResultRouteImport } from './routes/result'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as Home2RouteImport } from './routes/home2'
+import { Route as GameRouteImport } from './routes/game'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as WorldWorldRouteImport } from './routes/world.$world'
+import { Route as TowerGradeWorldSubjectRouteImport } from './routes/tower.$grade.$world.$subject'
+import { Route as PlayGradeWorldSubjectLevelRouteImport } from './routes/play.$grade.$world.$subject.$level'
 
+const UploadReportRoute = UploadReportRouteImport.update({
+  id: '/upload-report',
+  path: '/upload-report',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TakeTestRoute = TakeTestRouteImport.update({
+  id: '/take-test',
+  path: '/take-test',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResultRoute = ResultRouteImport.update({
+  id: '/result',
+  path: '/result',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Home2Route = Home2RouteImport.update({
+  id: '/home2',
+  path: '/home2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GameRoute = GameRouteImport.update({
+  id: '/game',
+  path: '/game',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WorldWorldRoute = WorldWorldRouteImport.update({
+  id: '/world/$world',
+  path: '/world/$world',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TowerGradeWorldSubjectRoute = TowerGradeWorldSubjectRouteImport.update({
+  id: '/tower/$grade/$world/$subject',
+  path: '/tower/$grade/$world/$subject',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlayGradeWorldSubjectLevelRoute =
+  PlayGradeWorldSubjectLevelRouteImport.update({
+    id: '/play/$grade/$world/$subject/$level',
+    path: '/play/$grade/$world/$subject/$level',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/game': typeof GameRoute
+  '/home2': typeof Home2Route
+  '/login': typeof LoginRoute
+  '/result': typeof ResultRoute
+  '/settings': typeof SettingsRoute
+  '/signup': typeof SignupRoute
+  '/take-test': typeof TakeTestRoute
+  '/upload-report': typeof UploadReportRoute
+  '/world/$world': typeof WorldWorldRoute
+  '/tower/$grade/$world/$subject': typeof TowerGradeWorldSubjectRoute
+  '/play/$grade/$world/$subject/$level': typeof PlayGradeWorldSubjectLevelRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/game': typeof GameRoute
+  '/home2': typeof Home2Route
+  '/login': typeof LoginRoute
+  '/result': typeof ResultRoute
+  '/settings': typeof SettingsRoute
+  '/signup': typeof SignupRoute
+  '/take-test': typeof TakeTestRoute
+  '/upload-report': typeof UploadReportRoute
+  '/world/$world': typeof WorldWorldRoute
+  '/tower/$grade/$world/$subject': typeof TowerGradeWorldSubjectRoute
+  '/play/$grade/$world/$subject/$level': typeof PlayGradeWorldSubjectLevelRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/game': typeof GameRoute
+  '/home2': typeof Home2Route
+  '/login': typeof LoginRoute
+  '/result': typeof ResultRoute
+  '/settings': typeof SettingsRoute
+  '/signup': typeof SignupRoute
+  '/take-test': typeof TakeTestRoute
+  '/upload-report': typeof UploadReportRoute
+  '/world/$world': typeof WorldWorldRoute
+  '/tower/$grade/$world/$subject': typeof TowerGradeWorldSubjectRoute
+  '/play/$grade/$world/$subject/$level': typeof PlayGradeWorldSubjectLevelRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/game'
+    | '/home2'
+    | '/login'
+    | '/result'
+    | '/settings'
+    | '/signup'
+    | '/take-test'
+    | '/upload-report'
+    | '/world/$world'
+    | '/tower/$grade/$world/$subject'
+    | '/play/$grade/$world/$subject/$level'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/game'
+    | '/home2'
+    | '/login'
+    | '/result'
+    | '/settings'
+    | '/signup'
+    | '/take-test'
+    | '/upload-report'
+    | '/world/$world'
+    | '/tower/$grade/$world/$subject'
+    | '/play/$grade/$world/$subject/$level'
+  id:
+    | '__root__'
+    | '/'
+    | '/game'
+    | '/home2'
+    | '/login'
+    | '/result'
+    | '/settings'
+    | '/signup'
+    | '/take-test'
+    | '/upload-report'
+    | '/world/$world'
+    | '/tower/$grade/$world/$subject'
+    | '/play/$grade/$world/$subject/$level'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  GameRoute: typeof GameRoute
+  Home2Route: typeof Home2Route
+  LoginRoute: typeof LoginRoute
+  ResultRoute: typeof ResultRoute
+  SettingsRoute: typeof SettingsRoute
+  SignupRoute: typeof SignupRoute
+  TakeTestRoute: typeof TakeTestRoute
+  UploadReportRoute: typeof UploadReportRoute
+  WorldWorldRoute: typeof WorldWorldRoute
+  TowerGradeWorldSubjectRoute: typeof TowerGradeWorldSubjectRoute
+  PlayGradeWorldSubjectLevelRoute: typeof PlayGradeWorldSubjectLevelRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/upload-report': {
+      id: '/upload-report'
+      path: '/upload-report'
+      fullPath: '/upload-report'
+      preLoaderRoute: typeof UploadReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/take-test': {
+      id: '/take-test'
+      path: '/take-test'
+      fullPath: '/take-test'
+      preLoaderRoute: typeof TakeTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/result': {
+      id: '/result'
+      path: '/result'
+      fullPath: '/result'
+      preLoaderRoute: typeof ResultRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/home2': {
+      id: '/home2'
+      path: '/home2'
+      fullPath: '/home2'
+      preLoaderRoute: typeof Home2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/game': {
+      id: '/game'
+      path: '/game'
+      fullPath: '/game'
+      preLoaderRoute: typeof GameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +252,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/world/$world': {
+      id: '/world/$world'
+      path: '/world/$world'
+      fullPath: '/world/$world'
+      preLoaderRoute: typeof WorldWorldRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tower/$grade/$world/$subject': {
+      id: '/tower/$grade/$world/$subject'
+      path: '/tower/$grade/$world/$subject'
+      fullPath: '/tower/$grade/$world/$subject'
+      preLoaderRoute: typeof TowerGradeWorldSubjectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/play/$grade/$world/$subject/$level': {
+      id: '/play/$grade/$world/$subject/$level'
+      path: '/play/$grade/$world/$subject/$level'
+      fullPath: '/play/$grade/$world/$subject/$level'
+      preLoaderRoute: typeof PlayGradeWorldSubjectLevelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  GameRoute: GameRoute,
+  Home2Route: Home2Route,
+  LoginRoute: LoginRoute,
+  ResultRoute: ResultRoute,
+  SettingsRoute: SettingsRoute,
+  SignupRoute: SignupRoute,
+  TakeTestRoute: TakeTestRoute,
+  UploadReportRoute: UploadReportRoute,
+  WorldWorldRoute: WorldWorldRoute,
+  TowerGradeWorldSubjectRoute: TowerGradeWorldSubjectRoute,
+  PlayGradeWorldSubjectLevelRoute: PlayGradeWorldSubjectLevelRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
