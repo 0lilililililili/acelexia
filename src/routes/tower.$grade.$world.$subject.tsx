@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getCleared } from "@/lib/progress";
 
 export const Route = createFileRoute("/tower/$grade/$world/$subject")({
   component: TowerPage,
@@ -16,7 +17,17 @@ function TowerPage() {
   const start = page * perPage + 1;
   const end = Math.min(start + perPage - 1, totalLevels);
 
-  const unlockedThrough = 25; // demo: pretend 25 levels cleared
+  const [unlockedThrough, setUnlockedThrough] = useState(0);
+  useEffect(() => {
+    const sync = () => setUnlockedThrough(getCleared(grade, world, subject));
+    sync();
+    window.addEventListener("progress-updated", sync);
+    window.addEventListener("focus", sync);
+    return () => {
+      window.removeEventListener("progress-updated", sync);
+      window.removeEventListener("focus", sync);
+    };
+  }, [grade, world, subject]);
 
   return (
     <main className="min-h-screen px-6 py-8 max-w-5xl mx-auto">
