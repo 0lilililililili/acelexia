@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/game")({ component: GameMap });
 
@@ -12,13 +13,23 @@ const WORLDS = [
 ];
 
 function GameMap() {
+  const [player, setPlayer] = useState<{ name: string; grade: string } | null>(null);
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem("player");
+      if (raw) setPlayer(JSON.parse(raw));
+    } catch {}
+  }, []);
   return (
     <main className="min-h-screen px-6 py-8">
       <header className="flex items-center justify-between max-w-6xl mx-auto mb-8">
         <div>
-          <div className="text-sm text-muted-foreground">Player • Grade P3 • Level 1</div>
+          <div className="text-sm text-muted-foreground">
+            {player?.name ? `${player.name} • ` : "Player • "}Grade {player?.grade ?? "—"} • Level 1
+          </div>
           <h1 className="text-3xl font-extrabold">World Map 🗺️</h1>
         </div>
+
         <Link to="/settings" className="rounded-full bg-card border-2 border-border px-4 py-2 font-semibold hover:border-primary">
           ⚙️ Settings
         </Link>
