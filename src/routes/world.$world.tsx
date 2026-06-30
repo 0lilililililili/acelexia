@@ -38,8 +38,23 @@ function WorldPage() {
     { subject: "MATH", label: "Math Tower",     emoji: "🔢", key: "math" },
   ];
 
+  if (!isFestivalOpen(world)) {
+    const next = nextOpening(world);
+    return (
+      <main className="min-h-screen px-6 py-8 max-w-3xl mx-auto text-center">
+        <Link to="/game" className="text-primary font-semibold">← World map</Link>
+        <div className="mt-16 text-7xl opacity-60">{meta.emoji}</div>
+        <h1 className="text-3xl font-extrabold mt-4">{meta.name} is closed</h1>
+        <p className="text-muted-foreground mt-2">
+          This is a limited festival map. {next ? `Come back on ${next.toLocaleDateString("en-HK", { month: "long", day: "numeric", year: "numeric" })}.` : "Check back during the next festival."}
+        </p>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen px-6 py-8" style={{ background: `linear-gradient(180deg, ${meta.color}, var(--color-background) 60%)` }}>
+
       <Link to="/game" className="text-white/90 font-semibold">← World map</Link>
 
       <header className="text-center mt-4 mb-10 text-white drop-shadow">
