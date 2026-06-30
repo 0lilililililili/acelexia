@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 
 const WORLD_META: Record<string, { name: string; emoji: string; color: string }> = {
   aquatic:  { name: "Aquatic World",    emoji: "🌊", color: "var(--color-aqua)" },
@@ -9,7 +10,7 @@ const WORLD_META: Record<string, { name: string; emoji: string; color: string }>
   festival: { name: "Lunar Festival",   emoji: "🏮", color: "var(--color-sun)" },
 };
 
-const GRADE = "G3"; // demo default
+
 
 export const Route = createFileRoute("/world/$world")({
   component: WorldPage,
@@ -18,6 +19,17 @@ export const Route = createFileRoute("/world/$world")({
 function WorldPage() {
   const { world } = Route.useParams();
   const meta = WORLD_META[world] ?? { name: world, emoji: "🏰", color: "var(--color-primary)" };
+
+  const [grade, setGrade] = useState("P3");
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem("player");
+      if (raw) {
+        const p = JSON.parse(raw);
+        if (p?.grade) setGrade(p.grade);
+      }
+    } catch {}
+  }, []);
 
   const towers = [
     { subject: "CHI",  label: "Chinese Tower",  emoji: "🀄", key: "chi" },
@@ -40,12 +52,12 @@ function WorldPage() {
           <Link
             key={t.key}
             to="/tower/$grade/$world/$subject"
-            params={{ grade: GRADE, world, subject: t.key }}
+            params={{ grade, world, subject: t.key }}
             className="bg-card border-2 border-border rounded-3xl p-6 text-center shadow-lg hover:scale-[1.03] transition"
           >
             <div className="text-6xl">{t.emoji}</div>
             <h2 className="text-xl font-extrabold mt-2">{t.label}</h2>
-            <p className="text-sm text-muted-foreground mt-1">{GRADE} {meta.name} {t.subject}</p>
+            <p className="text-sm text-muted-foreground mt-1">{grade} {meta.name} {t.subject}</p>
             <div className="mt-4 inline-block bg-primary text-primary-foreground rounded-full px-4 py-2 font-bold">Enter tower</div>
           </Link>
         ))}
