@@ -52,12 +52,12 @@ function WorldPage() {
           <Link
             key={t.key}
             to="/tower/$grade/$world/$subject"
-            params={{ grade: GRADE, world, subject: t.key }}
+            params={{ grade, world, subject: t.key }}
             className="bg-card border-2 border-border rounded-3xl p-6 text-center shadow-lg hover:scale-[1.03] transition"
           >
             <div className="text-6xl">{t.emoji}</div>
             <h2 className="text-xl font-extrabold mt-2">{t.label}</h2>
-            <p className="text-sm text-muted-foreground mt-1">{GRADE} {meta.name} {t.subject}</p>
+            <p className="text-sm text-muted-foreground mt-1">{grade} {meta.name} {t.subject}</p>
             <div className="mt-4 inline-block bg-primary text-primary-foreground rounded-full px-4 py-2 font-bold">Enter tower</div>
           </Link>
         ))}
