@@ -70,11 +70,17 @@ function TestPage() {
 
           <button
             disabled={!name.trim()}
-            onClick={() => setStarted(true)}
+            onClick={() => {
+              try {
+                window.localStorage.setItem("player", JSON.stringify({ name, grade: age }));
+              } catch {}
+              setStarted(true);
+            }}
             className="mt-8 w-full rounded-2xl bg-primary text-primary-foreground py-4 text-lg font-bold disabled:opacity-50"
           >
             Start test →
           </button>
+
           <Link to="/home2" className="block mt-4 text-center text-sm text-muted-foreground">← Back</Link>
         </div>
       </main>
