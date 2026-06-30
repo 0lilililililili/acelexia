@@ -20,6 +20,17 @@ function WorldPage() {
   const { world } = Route.useParams();
   const meta = WORLD_META[world] ?? { name: world, emoji: "🏰", color: "var(--color-primary)" };
 
+  const [grade, setGrade] = useState("P3");
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem("player");
+      if (raw) {
+        const p = JSON.parse(raw);
+        if (p?.grade) setGrade(p.grade);
+      }
+    } catch {}
+  }, []);
+
   const towers = [
     { subject: "CHI",  label: "Chinese Tower",  emoji: "🀄", key: "chi" },
     { subject: "ENG",  label: "English Tower",  emoji: "🔤", key: "eng" },
