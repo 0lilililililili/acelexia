@@ -10,7 +10,7 @@ const WORLD_META: Record<string, { name: string; emoji: string; color: string }>
   festival: { name: "Lunar Festival",   emoji: "🏮", color: "var(--color-sun)" },
 };
 
-const GRADE = "G3"; // demo default
+
 
 export const Route = createFileRoute("/world/$world")({
   component: WorldPage,
