@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 
 const WORLD_META: Record<string, { name: string; emoji: string; color: string }> = {
   aquatic:  { name: "Aquatic World",    emoji: "🌊", color: "var(--color-aqua)" },
