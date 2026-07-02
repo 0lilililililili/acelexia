@@ -25,9 +25,45 @@ const SUBJECT_LANG: Record<string, "en-US" | "zh-HK"> = {
   math: "en-US",
 };
 
-const FALL_SECONDS = 18; // time before the enemy falls off-screen / question expires
+const FALL_SECONDS = 35; // time before the enemy falls off-screen / question expires
 
 type Item = { prompt: string; answer: string; hint?: string };
+
+const NUM_WORDS: Record<string, string> = {
+  zero: "0", oh: "0",
+  one: "1", two: "2", three: "3", four: "4", five: "5",
+  six: "6", seven: "7", eight: "8", nine: "9", ten: "10",
+  eleven: "11", twelve: "12", thirteen: "13", fourteen: "14", fifteen: "15",
+  sixteen: "16", seventeen: "17", eighteen: "18", nineteen: "19", twenty: "20",
+  thirty: "30", forty: "40", fifty: "50", sixty: "60", seventy: "70", eighty: "80", ninety: "90",
+  hundred: "100", thousand: "1000",
+  half: "1/2", halves: "1/2",
+  third: "1/3", thirds: "1/3",
+  quarter: "1/4", quarters: "1/4", fourth: "1/4", fourths: "1/4",
+  fifth: "1/5", fifths: "1/5", sixth: "1/6", sixths: "1/6",
+  seventh: "1/7", sevenths: "1/7", eighth: "1/8", eighths: "1/8",
+  ninth: "1/9", ninths: "1/9", tenth: "1/10", tenths: "1/10",
+};
+
+function wordsToFraction(s: string): string | null {
+  // "two over three", "two thirds", "two out of three", "two divided by three"
+  const t = s.toLowerCase().trim();
+  const overMatch = t.match(/^([a-z]+)\s+(?:over|out of|divided by|on)\s+([a-z0-9]+)$/);
+  if (overMatch) {
+    const n = NUM_WORDS[overMatch[1]] ?? overMatch[1];
+    const d = NUM_WORDS[overMatch[2]] ?? overMatch[2];
+    if (/^\d+$/.test(n) && /^\d+$/.test(d)) return `${n}/${d}`;
+  }
+  const thirdsMatch = t.match(/^([a-z]+)\s+([a-z]+)$/);
+  if (thirdsMatch) {
+    const n = NUM_WORDS[thirdsMatch[1]];
+    const dWord = NUM_WORDS[thirdsMatch[2]];
+    if (n && dWord && dWord.startsWith("1/")) {
+      return `${n}${dWord.slice(1)}`; // "two" + "/3" → "2/3"
+    }
+  }
+  return null;
+}
 
 function normalize(s: string) {
   return s.toLowerCase().replace(/[^\p{Letter}\p{Number}]/gu, "");
@@ -36,9 +72,23 @@ function normalize(s: string) {
 function matches(transcript: string, answer: string) {
   const a = normalize(answer);
   if (!a) return false;
+  const answerIsFraction = /^\d+\/\d+$/.test(answer.trim());
   return transcript.split("|").some((alt) => {
-    const n = normalize(alt);
-    return n === a || n.includes(a) || a.includes(n);
+    const raw = alt.toLowerCase().trim();
+    const n = normalize(raw);
+    if (!n) return false;
+    if (n === a) return true;
+    // exact word match against any token in transcript (avoids "bee" ⊂ "beach")
+    const tokens = raw.split(/[^\p{Letter}\p{Number}]+/u).filter(Boolean);
+    if (tokens.some((tok) => normalize(tok) === a)) return true;
+    // fraction: "two over three" / "two thirds" → "2/3"
+    if (answerIsFraction) {
+      const frac = wordsToFraction(raw);
+      if (frac && frac === answer.trim()) return true;
+    }
+    // long answers: allow containment either direction (min length 4)
+    if (a.length >= 4 && (n.includes(a) || a.includes(n))) return true;
+    return false;
   });
 }
 
