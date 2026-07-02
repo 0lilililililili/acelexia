@@ -21,7 +21,7 @@ const QUESTIONS = [
 function TestPage() {
   const nav = useNavigate();
   const [name, setName] = useState("");
-  const [age, setAge] = useState("P3");
+  const [age, setAge] = useState<string>("");
   const [started, setStarted] = useState(false);
   const [idx, setIdx] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
@@ -69,7 +69,7 @@ function TestPage() {
           </div>
 
           <button
-            disabled={!name.trim()}
+            disabled={!name.trim() || !age}
             onClick={() => {
               try {
                 window.localStorage.setItem("player", JSON.stringify({ name, grade: age }));
