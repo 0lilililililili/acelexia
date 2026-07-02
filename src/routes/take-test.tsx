@@ -1,43 +1,50 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import {
+  GRADES, QUESTIONS_BY_GRADE, saveSubmission, type Grade, type QResult,
+} from "@/lib/input-questions";
 
 export const Route = createFileRoute("/take-test")({ component: TestPage });
-
-const AGES = ["K3", "P1", "P2", "P3", "P4", "P5", "P6"];
-
-// 9 sample qs — 3 per subject, mapped to radar attributes
-const QUESTIONS = [
-  { subject: "chi", attr: "Character recognition", q: "識別這個字：「貓」", choices: ["dog", "cat", "fish", "bird"], answer: 1 },
-  { subject: "chi", attr: "Word reading",          q: "「蘋果」是甚麼？", choices: ["fruit", "vehicle", "animal", "color"], answer: 0 },
-  { subject: "chi", attr: "Comprehension",         q: "「太陽從哪裡升起？」", choices: ["West", "North", "East", "South"], answer: 2 },
-  { subject: "eng", attr: "Word recognition",      q: "Which word is spelled correctly?", choices: ["recieve", "receive", "receeve", "receve"], answer: 1 },
-  { subject: "eng", attr: "Reading",               q: "What is the opposite of 'hot'?", choices: ["warm", "spicy", "cold", "fast"], answer: 2 },
-  { subject: "eng", attr: "Comprehension",         q: "Pick the picture word: 'The cat is sleeping under the tree.'", choices: ["🐱💤🌳", "🐶🍖", "🐟🌊", "🦁👑"], answer: 0 },
-  { subject: "math", attr: "Arithmetic",           q: "7 + 5 = ?", choices: ["10", "11", "12", "13"], answer: 2 },
-  { subject: "math", attr: "Word problems",        q: "Anna has 8 apples and eats 3. How many left?", choices: ["3", "5", "8", "11"], answer: 1 },
-  { subject: "math", attr: "Number sense",         q: "Which is largest?", choices: ["1/2", "1/3", "1/4", "1/5"], answer: 0 },
-];
 
 function TestPage() {
   const nav = useNavigate();
   const [name, setName] = useState("");
-  const [age, setAge] = useState<string>("");
+  const [grade, setGrade] = useState<Grade | "">("");
   const [started, setStarted] = useState(false);
   const [idx, setIdx] = useState(0);
-  const [answers, setAnswers] = useState<number[]>([]);
+  const [results, setResults] = useState<QResult[]>([]);
+  const startedAt = useRef<number>(Date.now());
+
+  const questions = useMemo(() => (grade ? QUESTIONS_BY_GRADE[grade] : []), [grade]);
+  const q = questions[idx];
 
   const pick = (i: number) => {
-    const next = [...answers, i];
-    setAnswers(next);
-    if (idx + 1 < QUESTIONS.length) setIdx(idx + 1);
-    else {
-      // Build per-attribute score
-      const results = QUESTIONS.map((q, k) => ({
-        subject: q.subject,
-        attr: q.attr,
-        correct: next[k] === q.answer ? 1 : 0,
+    if (!q) return;
+    const timeMs = Date.now() - startedAt.current;
+    const correct = i === q.answer;
+    const next = [...results, { qid: q.id, correct, timeMs }];
+    setResults(next);
+    if (idx + 1 < questions.length) {
+      setIdx(idx + 1);
+      startedAt.current = Date.now();
+    } else {
+      // Save trial submission for cross-comparison with input-data dataset
+      saveSubmission({
+        userId: `trial_${Date.now()}`,
+        source: "trial",
+        dyslexia: null,
+        grade: grade as Grade,
+        timestamp: Date.now(),
+        results: next,
+      });
+
+      // Radar-chart payload (per-subject attributes)
+      const radar = questions.map((qq, k) => ({
+        subject: qq.subject,
+        attr: qq.attr,
+        correct: next[k].correct ? 1 : 0,
       }));
-      const payload = encodeURIComponent(JSON.stringify({ name, age, results }));
+      const payload = encodeURIComponent(JSON.stringify({ name, age: grade, results: radar }));
       nav({ to: "/result", search: { d: payload } });
     }
   };
@@ -47,7 +54,7 @@ function TestPage() {
       <main className="min-h-screen flex items-center justify-center p-6">
         <div className="bg-card border-2 border-border rounded-3xl p-8 w-full max-w-md shadow-lg">
           <h1 className="text-3xl font-extrabold">Quick test ✏️</h1>
-          <p className="text-muted-foreground mt-2">9 short questions. Takes about 3 minutes.</p>
+          <p className="text-muted-foreground mt-2">24 short questions (8 per subject) matching your grade's HKEAA syllabus.</p>
 
           <label className="block mt-6 font-semibold">Your name</label>
           <input
@@ -59,21 +66,22 @@ function TestPage() {
 
           <label className="block mt-4 font-semibold">Grade</label>
           <div className="mt-2 grid grid-cols-4 gap-2">
-            {AGES.map((a) => (
+            {GRADES.map((g) => (
               <button
-                key={a}
-                onClick={() => setAge(a)}
-                className={`rounded-xl py-2 font-bold border-2 ${age === a ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border"}`}
-              >{a}</button>
+                key={g}
+                onClick={() => setGrade(g)}
+                className={`rounded-xl py-2 font-bold border-2 ${grade === g ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border"}`}
+              >{g}</button>
             ))}
           </div>
 
           <button
-            disabled={!name.trim() || !age}
+            disabled={!name.trim() || !grade}
             onClick={() => {
               try {
-                window.localStorage.setItem("player", JSON.stringify({ name, grade: age }));
+                window.localStorage.setItem("player", JSON.stringify({ name, grade }));
               } catch {}
+              startedAt.current = Date.now();
               setStarted(true);
             }}
             className="mt-8 w-full rounded-2xl bg-primary text-primary-foreground py-4 text-lg font-bold disabled:opacity-50"
@@ -87,19 +95,22 @@ function TestPage() {
     );
   }
 
-  const q = QUESTIONS[idx];
+  if (!q) return null;
   return (
     <main className="min-h-screen flex items-center justify-center p-6">
       <div className="w-full max-w-2xl">
         <div className="flex items-center justify-between mb-4">
-          <div className="text-sm text-muted-foreground">Question {idx + 1} / {QUESTIONS.length}</div>
+          <div className="text-sm text-muted-foreground">
+            Question {idx + 1} / {questions.length} • <span className="font-mono">{q.id}</span>
+          </div>
           <div className="text-sm font-semibold uppercase tracking-wider text-primary">{q.subject}</div>
         </div>
         <div className="h-2 rounded-full bg-muted mb-8 overflow-hidden">
-          <div className="h-full bg-primary transition-all" style={{ width: `${((idx) / QUESTIONS.length) * 100}%` }} />
+          <div className="h-full bg-primary transition-all" style={{ width: `${(idx / questions.length) * 100}%` }} />
         </div>
 
-        <div className="bg-card rounded-3xl border-2 border-border p-8 shadow animate-pop" key={idx}>
+        <div className="bg-card rounded-3xl border-2 border-border p-8 shadow animate-pop" key={q.id}>
+          <div className="text-xs text-muted-foreground mb-2">{q.attr}</div>
           <h2 className="text-2xl font-bold leading-snug">{q.q}</h2>
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             {q.choices.map((c, i) => (
