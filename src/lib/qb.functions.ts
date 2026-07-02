@@ -31,22 +31,32 @@ export const generateLevelItems = createServerFn({ method: "POST" })
       P5: "decimals (multiply/divide), percentages basics, averages, area of triangles/parallelograms, volume of cuboid, simple algebra with symbols",
       P6: "percentages (discount, profit/loss), fractions (all operations, mixed numbers), ratio, speed, circles (circumference/area), 3D volume, simple equations, geometry angles",
     };
-    const langSyllabus: Record<string, string> = {
-      K3: "high-frequency single characters/words, 2-3 letter sight words",
-      P1: "basic everyday vocabulary: family, school, common objects",
-      P2: "short 2-character Chinese words / 3-5 letter English words, common verbs and adjectives",
-      P3: "2-character compound words and simple idioms; English CVCe and common blends",
-      P4: "basic 4-character idioms, descriptive vocabulary; English multi-syllable words",
-      P5: "richer idioms and light classical phrases (淺白文言); English academic vocab, prefixes/suffixes",
-      P6: "advanced 成語 and literary expressions; upper-primary English vocabulary, synonyms/antonyms",
+    const chiSyllabus: Record<string, string> = {
+      K3: "high-frequency single traditional Chinese characters (人、口、手、日、月、山、水…); recognition of familiar objects",
+      P1: "single characters and 2-character everyday words (家人、學校、食物); basic radicals",
+      P2: "2-character compound words, common measure words (量詞) e.g. 一隻貓、一本書; simple sentence patterns",
+      P3: "introductory 4-character 成語 (idioms) e.g. 一心一意、七上八落; near-synonyms/antonyms; punctuation",
+      P4: "wider range of 成語 and descriptive vocabulary (擬聲、擬人); simple 修辭 (比喻、擬人)",
+      P5: "richer 成語, common 諺語/歇後語, light 淺白文言 phrases (例如：亡羊補牢); 關聯詞",
+      P6: "advanced 成語 and literary expressions, classical Chinese short excerpts, 修辭手法 (排比、對偶、誇張)",
+    };
+    const engSyllabus: Record<string, string> = {
+      K3: "letter sounds A-Z, CVC sight words (cat, sun, dog); simple naming",
+      P1: "present simple tense (I am / he is / she runs), plurals -s, personal pronouns, basic 3-5 letter words",
+      P2: "present continuous (is/are + -ing), past simple regular verbs (-ed), articles a/an/the, common adjectives",
+      P3: "past simple irregular verbs (went, ate, saw), simple future (will / going to), prepositions of place/time, adverbs of frequency",
+      P4: "past continuous, comparatives/superlatives, countable vs uncountable (some/any/much/many), connectives (and, but, because)",
+      P5: "present perfect (have/has + pp), modal verbs (can, must, should, might), relative clauses (who/which/that), phrasal verbs",
+      P6: "past perfect (had + pp), first & second conditional (if...will / if...would), to-infinitive vs gerund, passive voice, reported speech",
     };
     const msyl = mathSyllabus[data.grade] ?? mathSyllabus.P3;
-    const lsyl = langSyllabus[data.grade] ?? langSyllabus.P3;
+    const csyl = chiSyllabus[data.grade] ?? chiSyllabus.P3;
+    const esyl = engSyllabus[data.grade] ?? engSyllabus.P3;
 
     const subjectDesc = {
-      chi: `Traditional Chinese character/word recognition for HK students following the HKEAA primary syllabus for ${data.grade} (${lsyl}). 'prompt' is a single Chinese character or 2-character word at that level. 'answer' is the Cantonese jyutping OR the character itself.`,
-      eng: `English word recognition aligned to the HKEAA primary English syllabus for ${data.grade} (${lsyl}). 'prompt' is one age-appropriate English word. 'answer' is the same word in lowercase.`,
-      math: `Mathematics aligned to the HKEAA primary mathematics syllabus for ${data.grade}. Focus strictly on: ${msyl}. 'prompt' is a short expression or question (e.g. '3456 + 1289', '25% of 80', '3/4 + 1/8'). 'answer' is the numeric result as digits (e.g. '4745', '20', '7/8').`,
+      chi: `Traditional Chinese for HK students strictly at HKEAA ${data.grade} level: ${csyl}. 'prompt' is a single Chinese character, 2-character word, or (from P3+) a 4-character 成語. 'answer' is the Cantonese jyutping OR the characters themselves.`,
+      eng: `English aligned to HKEAA primary syllabus ${data.grade}: ${esyl}. 'prompt' is EITHER a single age-appropriate word to read aloud, OR a short fill-in sentence targeting the grade's grammar (e.g. P3: "Yesterday I ___ (go) to school." → answer "went"; P6: "If I ___ (be) you, I would study harder." → answer "were"). Mix vocabulary and grammar items. 'answer' is the target word in lowercase.`,
+      math: `Mathematics aligned to HKEAA ${data.grade} strictly on: ${msyl}. 'prompt' is a short expression or question (e.g. '3456 + 1289', '25% of 80', '3/4 + 1/8'). 'answer' is the numeric result (e.g. '4745', '20', '7/8').`,
     }[data.subject];
 
     const sys = `You generate dyslexia-friendly practice items for Hong Kong primary students strictly within the HKEAA syllabus for ${data.grade}. Difficulty scales gently with level ${data.level}/500 but must NOT exceed ${data.grade} scope. Theme items around "${data.theme}" when natural. ${subjectDesc} Return ONLY JSON matching: {"items":[{"prompt":"","answer":"","hint":""}]}`;
