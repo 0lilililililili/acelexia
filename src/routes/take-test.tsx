@@ -69,7 +69,7 @@ function TestPage() {
           </div>
 
           <button
-            disabled={!name.trim()}
+            disabled={!name.trim() || !age}
             onClick={() => {
               try {
                 window.localStorage.setItem("player", JSON.stringify({ name, grade: age }));
