@@ -27,7 +27,7 @@ function Home1() {
           Defeat bosses with your voice. Learn Chinese, English & Math.
         </p>
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-3">
+        <div className="mt-10 grid gap-4 sm:grid-cols-2">
           <Link
             to="/signup"
             className="rounded-2xl bg-primary text-primary-foreground px-6 py-5 text-lg font-bold shadow-lg hover:scale-[1.03] transition"
@@ -46,11 +46,18 @@ function Home1() {
           >
             🎮 Trial
           </Link>
+          <Link
+            to="/input-data"
+            className="rounded-2xl bg-card border-2 border-border px-6 py-5 text-lg font-bold hover:scale-[1.03] transition"
+          >
+            📊 Input data
+          </Link>
         </div>
 
         <p className="mt-8 text-sm text-muted-foreground">
           Designed for dyslexic kids • K3 to P6 • Hong Kong
         </p>
+
       </div>
     </main>
   );
