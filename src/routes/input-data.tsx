@@ -21,6 +21,7 @@ function InputDataPage() {
   const [idx, setIdx] = useState(0);
   const [results, setResults] = useState<QResult[]>([]);
   const startedAt = useRef<number>(Date.now());
+  const dataIdRef = useRef<string>(genDataId());
 
   const questions = useMemo(() => (grade ? QUESTIONS_BY_GRADE[grade] : []), [grade]);
   const q = questions[idx];
