@@ -18,6 +18,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as InputDataRouteImport } from './routes/input-data'
 import { Route as Home2RouteImport } from './routes/home2'
 import { Route as GameRouteImport } from './routes/game'
+import { Route as CodeRouteImport } from './routes/code'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WorldWorldRouteImport } from './routes/world.$world'
@@ -69,6 +70,11 @@ const GameRoute = GameRouteImport.update({
   path: '/game',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CodeRoute = CodeRouteImport.update({
+  id: '/code',
+  path: '/code',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -99,6 +105,7 @@ const PlayGradeWorldSubjectLevelRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/code': typeof CodeRoute
   '/game': typeof GameRoute
   '/home2': typeof Home2Route
   '/input-data': typeof InputDataRoute
@@ -115,6 +122,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/code': typeof CodeRoute
   '/game': typeof GameRoute
   '/home2': typeof Home2Route
   '/input-data': typeof InputDataRoute
@@ -132,6 +140,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/code': typeof CodeRoute
   '/game': typeof GameRoute
   '/home2': typeof Home2Route
   '/input-data': typeof InputDataRoute
@@ -150,6 +159,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/code'
     | '/game'
     | '/home2'
     | '/input-data'
@@ -166,6 +176,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/admin'
+    | '/code'
     | '/game'
     | '/home2'
     | '/input-data'
@@ -182,6 +193,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/code'
     | '/game'
     | '/home2'
     | '/input-data'
@@ -199,6 +211,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
+  CodeRoute: typeof CodeRoute
   GameRoute: typeof GameRoute
   Home2Route: typeof Home2Route
   InputDataRoute: typeof InputDataRoute
@@ -278,6 +291,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GameRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/code': {
+      id: '/code'
+      path: '/code'
+      fullPath: '/code'
+      preLoaderRoute: typeof CodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -319,6 +339,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
+  CodeRoute: CodeRoute,
   GameRoute: GameRoute,
   Home2Route: Home2Route,
   InputDataRoute: InputDataRoute,
