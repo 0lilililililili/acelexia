@@ -152,6 +152,9 @@ function InputDataPage() {
       <p className="text-center text-muted-foreground mt-2">
         You answered {correct} / {results.length} correctly. Your responses have been saved.
       </p>
+      <p className="text-center mt-3 text-sm">
+        Your Data ID: <span className="font-mono font-bold text-primary">{dataIdRef.current}</span>
+      </p>
       <div className="mt-8 flex gap-3">
         <Link to="/" className="flex-1 rounded-2xl bg-card border-2 border-border py-4 text-center font-bold">Home</Link>
         <button
