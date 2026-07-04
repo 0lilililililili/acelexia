@@ -168,3 +168,32 @@ function bucketize(qid: string, subs: Submission[]) {
   }
   return { dysCorrect, dysWrong, nonCorrect, nonWrong };
 }
+
+function exportJson(subs: Submission[]) {
+  const blob = new Blob([JSON.stringify(subs, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `wq_submissions_${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importJson(e: React.ChangeEvent<HTMLInputElement>, setSubs: (s: Submission[]) => void) {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const imported = JSON.parse(String(reader.result)) as Submission[];
+      const existing = JSON.parse(window.localStorage.getItem("wq_submissions_v1") || "[]") as Submission[];
+      const seen = new Set(existing.map((s) => `${s.userId}|${s.timestamp}`));
+      const merged = [...existing, ...imported.filter((s) => !seen.has(`${s.userId}|${s.timestamp}`))];
+      window.localStorage.setItem("wq_submissions_v1", JSON.stringify(merged));
+      setSubs(merged);
+      alert(`Imported ${imported.length} submissions (${merged.length} total).`);
+    } catch { alert("Invalid JSON file."); }
+  };
+  reader.readAsText(file);
+  e.target.value = "";
+}
