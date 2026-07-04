@@ -38,6 +38,7 @@ function InputDataPage() {
     } else {
       saveSubmission({
         userId: `u_${Date.now()}`,
+        dataId: dataIdRef.current,
         source: "input-data",
         dyslexia,
         grade: grade as Grade,
