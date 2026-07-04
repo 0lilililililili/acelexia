@@ -1,14 +1,16 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
-  Bar, BarChart, CartesianGrid, ComposedChart, Legend, Line, ResponsiveContainer,
-  Tooltip, XAxis, YAxis,
+  CartesianGrid, ResponsiveContainer, Scatter, ScatterChart,
+  Tooltip, XAxis, YAxis, ZAxis,
 } from "recharts";
 import {
-  GRADES, QUESTIONS_BY_GRADE, loadSubmissions, type Grade, type Submission,
+  GRADES, QUESTIONS_BY_GRADE, loadSubmissions, type Grade, type MCQ, type Submission,
 } from "@/lib/input-questions";
 
 export const Route = createFileRoute("/admin")({ component: AdminPage });
+
+type Point = { t: number; sec: number; date: string };
 
 function AdminPage() {
   const nav = useNavigate();
@@ -24,7 +26,10 @@ function AdminPage() {
     setSubs(loadSubmissions());
   }, [nav]);
 
-  const stats = useMemo(() => buildStats(subs, grade), [subs, grade]);
+  const filtered = useMemo(() => subs.filter((s) => s.grade === grade), [subs, grade]);
+  const dysCount = filtered.filter((s) => s.dyslexia === true).length;
+  const nonCount = filtered.filter((s) => s.dyslexia === false).length;
+  const questions = QUESTIONS_BY_GRADE[grade];
 
   if (!ok) return null;
 
@@ -32,9 +37,10 @@ function AdminPage() {
     <main className="min-h-screen p-6 bg-background">
       <header className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-extrabold">Admin • Question Stats</h1>
+          <h1 className="text-3xl font-extrabold">Admin • Per-question Stats</h1>
           <p className="text-sm text-muted-foreground">
-            Accuracy % and avg time (seconds) per question, split by dyslexia group.
+            For each question: 4 scatter charts (dyslexia correct/incorrect, normal correct/incorrect).
+            Each point = one attempt. X = submission time, Y = seconds taken.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -56,11 +62,11 @@ function AdminPage() {
           >{g}</button>
         ))}
         <div className="ml-auto text-sm text-muted-foreground">
-          Submissions: {stats.totalSubs} (dyslexic {stats.dysCount} • non-dyslexic {stats.nonCount})
+          Submissions: {filtered.length} (dyslexic {dysCount} • non-dyslexic {nonCount})
         </div>
       </div>
 
-      {stats.totalSubs === 0 ? (
+      {filtered.length === 0 ? (
         <div className="bg-card border-2 border-border rounded-3xl p-10 text-center">
           <p className="text-lg">No submissions yet for {grade}.</p>
           <Link to="/input-data" className="inline-block mt-4 rounded-2xl bg-primary text-primary-foreground px-5 py-3 font-bold">
@@ -68,62 +74,86 @@ function AdminPage() {
           </Link>
         </div>
       ) : (
-        <div className="grid gap-6 lg:grid-cols-2">
-          <Chart title="Dyslexic group" empty={stats.dysCount === 0} rows={stats.rows.map((r) => ({ id: r.id, accuracy: r.dysAcc, time: r.dysTime }))} />
-          <Chart title="Non-dyslexic group" empty={stats.nonCount === 0} rows={stats.rows.map((r) => ({ id: r.id, accuracy: r.nonAcc, time: r.nonTime }))} />
+        <div className="space-y-6">
+          {questions.map((q) => (
+            <QuestionBlock key={q.id} q={q} subs={filtered} />
+          ))}
         </div>
       )}
     </main>
   );
 }
 
-function Chart({ title, rows, empty }: { title: string; empty: boolean; rows: { id: string; accuracy: number | null; time: number | null }[] }) {
+function QuestionBlock({ q, subs }: { q: MCQ; subs: Submission[] }) {
+  const buckets = useMemo(() => bucketize(q.id, subs), [q.id, subs]);
   return (
-    <div className="bg-card border-2 border-border rounded-3xl p-4 shadow">
-      <h2 className="font-extrabold text-lg mb-2">{title}</h2>
-      {empty ? (
-        <div className="h-72 flex items-center justify-center text-muted-foreground text-sm">No data in this group yet.</div>
-      ) : (
-        <div className="h-96">
+    <section className="bg-card border-2 border-border rounded-3xl p-4 shadow">
+      <div className="flex flex-wrap items-baseline justify-between gap-2 mb-3">
+        <h2 className="font-extrabold text-lg">
+          <span className="text-primary">{q.id}</span> • {q.subject.toUpperCase()} • {q.attr}
+        </h2>
+        <p className="text-sm text-muted-foreground truncate max-w-xl">{q.q}</p>
+      </div>
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <MiniScatter title="Dyslexia • Correct" color="hsl(142 71% 45%)" points={buckets.dysCorrect} />
+        <MiniScatter title="Dyslexia • Incorrect" color="hsl(0 84% 60%)" points={buckets.dysWrong} />
+        <MiniScatter title="Normal • Correct" color="hsl(199 89% 48%)" points={buckets.nonCorrect} />
+        <MiniScatter title="Normal • Incorrect" color="hsl(38 92% 50%)" points={buckets.nonWrong} />
+      </div>
+    </section>
+  );
+}
+
+function MiniScatter({ title, points, color }: { title: string; points: Point[]; color: string }) {
+  return (
+    <div className="border border-border rounded-2xl p-2">
+      <div className="text-xs font-bold mb-1 flex justify-between">
+        <span>{title}</span>
+        <span className="text-muted-foreground">n={points.length}</span>
+      </div>
+      <div className="h-40">
+        {points.length === 0 ? (
+          <div className="h-full flex items-center justify-center text-xs text-muted-foreground">No data</div>
+        ) : (
           <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={rows} margin={{ top: 10, right: 10, left: 0, bottom: 40 }}>
+            <ScatterChart margin={{ top: 8, right: 8, left: 0, bottom: 8 }}>
               <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-              <XAxis dataKey="id" angle={-60} textAnchor="end" interval={0} tick={{ fontSize: 10 }} height={70} />
-              <YAxis yAxisId="left" domain={[0, 100]} tickFormatter={(v) => `${v}%`} tick={{ fontSize: 11 }} />
-              <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 11 }} unit="s" />
-              <Tooltip
-                formatter={(v: any, name) => name === "accuracy" ? [`${v?.toFixed?.(0) ?? v}%`, "Accuracy"] : [`${v?.toFixed?.(1) ?? v}s`, "Avg time"]}
+              <XAxis
+                dataKey="t" type="number" domain={["dataMin", "dataMax"]}
+                tickFormatter={(v) => new Date(v).toLocaleDateString(undefined, { month: "numeric", day: "numeric" })}
+                tick={{ fontSize: 10 }}
+                name="Submission time"
               />
-              <Legend />
-              <Bar yAxisId="left" dataKey="accuracy" name="Accuracy %" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
-              <Line yAxisId="right" type="monotone" dataKey="time" name="Avg time (s)" stroke="hsl(var(--destructive))" strokeWidth={2} dot />
-            </ComposedChart>
+              <YAxis dataKey="sec" type="number" tick={{ fontSize: 10 }} unit="s" name="Time taken" />
+              <ZAxis range={[60, 60]} />
+              <Tooltip
+                cursor={{ strokeDasharray: "3 3" }}
+                formatter={(v: any, name: string) => name === "sec" ? [`${(v as number).toFixed(2)}s`, "Time"] : v}
+                labelFormatter={(_, payload) => {
+                  const p = payload?.[0]?.payload as Point | undefined;
+                  return p ? p.date : "";
+                }}
+              />
+              <Scatter data={points} fill={color} />
+            </ScatterChart>
           </ResponsiveContainer>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
 
-function buildStats(subs: Submission[], grade: Grade) {
-  const qs = QUESTIONS_BY_GRADE[grade];
-  const filtered = subs.filter((s) => s.grade === grade);
-  const dys = filtered.filter((s) => s.dyslexia === true);
-  const non = filtered.filter((s) => s.dyslexia === false);
-
-  const agg = (group: Submission[], qid: string) => {
-    const rs = group.flatMap((s) => s.results).filter((r) => r.qid === qid);
-    if (rs.length === 0) return { acc: null as number | null, time: null as number | null };
-    const acc = (rs.filter((r) => r.correct).length / rs.length) * 100;
-    const time = rs.reduce((a, r) => a + r.timeMs, 0) / rs.length / 1000;
-    return { acc, time };
-  };
-
-  const rows = qs.map((q) => {
-    const d = agg(dys, q.id);
-    const n = agg(non, q.id);
-    return { id: q.id, dysAcc: d.acc, dysTime: d.time, nonAcc: n.acc, nonTime: n.time };
-  });
-
-  return { rows, totalSubs: filtered.length, dysCount: dys.length, nonCount: non.length };
+function bucketize(qid: string, subs: Submission[]) {
+  const dysCorrect: Point[] = [];
+  const dysWrong: Point[] = [];
+  const nonCorrect: Point[] = [];
+  const nonWrong: Point[] = [];
+  for (const s of subs) {
+    const r = s.results.find((x) => x.qid === qid);
+    if (!r) continue;
+    const pt: Point = { t: s.timestamp, sec: r.timeMs / 1000, date: new Date(s.timestamp).toLocaleString() };
+    if (s.dyslexia === true) (r.correct ? dysCorrect : dysWrong).push(pt);
+    else if (s.dyslexia === false) (r.correct ? nonCorrect : nonWrong).push(pt);
+  }
+  return { dysCorrect, dysWrong, nonCorrect, nonWrong };
 }
