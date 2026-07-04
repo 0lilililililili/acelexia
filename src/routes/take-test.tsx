@@ -31,6 +31,7 @@ function TestPage() {
       // Save trial submission for cross-comparison with input-data dataset
       saveSubmission({
         userId: `trial_${Date.now()}`,
+        dataId: genDataId(),
         source: "trial",
         dyslexia: null,
         grade: grade as Grade,
