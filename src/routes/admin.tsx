@@ -43,8 +43,19 @@ function AdminPage() {
             Each point = one attempt. X = submission time, Y = seconds taken.
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Link to="/" className="text-sm text-primary font-semibold">← Home</Link>
+        <div className="flex items-center gap-2 flex-wrap">
+          <Link to="/" className="text-sm text-primary font-semibold mr-2">← Home</Link>
+          <button
+            onClick={() => exportJson(subs)}
+            className="rounded-xl bg-card border-2 border-border px-3 py-2 text-sm font-bold"
+          >Export data</button>
+          <label className="rounded-xl bg-card border-2 border-border px-3 py-2 text-sm font-bold cursor-pointer">
+            Import data
+            <input
+              type="file" accept="application/json" className="hidden"
+              onChange={(e) => importJson(e, setSubs)}
+            />
+          </label>
           <button
             onClick={() => { window.sessionStorage.removeItem("wq_admin"); nav({ to: "/login" }); }}
             className="rounded-xl bg-card border-2 border-border px-3 py-2 text-sm font-bold"
