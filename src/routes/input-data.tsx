@@ -111,11 +111,14 @@ function InputDataPage() {
     return (
       <main className="min-h-screen flex items-center justify-center p-6">
         <div className="w-full max-w-2xl">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
             <div className="text-sm text-muted-foreground">
               Question {idx + 1} / {questions.length} • <span className="font-mono">{q.id}</span>
             </div>
             <div className="text-sm font-semibold uppercase tracking-wider text-primary">{q.subject}</div>
+            <div className="text-xs font-mono px-2 py-1 rounded-md bg-muted text-muted-foreground">
+              Data ID: <span className="font-bold text-foreground">{dataIdRef.current}</span>
+            </div>
           </div>
           <div className="h-2 rounded-full bg-muted mb-8 overflow-hidden">
             <div className="h-full bg-primary transition-all" style={{ width: `${(idx / questions.length) * 100}%` }} />
