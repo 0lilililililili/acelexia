@@ -3,6 +3,7 @@ import { useMemo, useRef, useState } from "react";
 import {
   QUESTIONS_BY_GRADE,
   saveSubmission,
+  genDataId,
   GRADES,
   type Grade,
   type QResult,
@@ -20,6 +21,7 @@ function InputDataPage() {
   const [idx, setIdx] = useState(0);
   const [results, setResults] = useState<QResult[]>([]);
   const startedAt = useRef<number>(Date.now());
+  const dataIdRef = useRef<string>(genDataId());
 
   const questions = useMemo(() => (grade ? QUESTIONS_BY_GRADE[grade] : []), [grade]);
   const q = questions[idx];
@@ -36,6 +38,7 @@ function InputDataPage() {
     } else {
       saveSubmission({
         userId: `u_${Date.now()}`,
+        dataId: dataIdRef.current,
         source: "input-data",
         dyslexia,
         grade: grade as Grade,
@@ -108,11 +111,14 @@ function InputDataPage() {
     return (
       <main className="min-h-screen flex items-center justify-center p-6">
         <div className="w-full max-w-2xl">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
             <div className="text-sm text-muted-foreground">
               Question {idx + 1} / {questions.length} • <span className="font-mono">{q.id}</span>
             </div>
             <div className="text-sm font-semibold uppercase tracking-wider text-primary">{q.subject}</div>
+            <div className="text-xs font-mono px-2 py-1 rounded-md bg-muted text-muted-foreground">
+              Data ID: <span className="font-bold text-foreground">{dataIdRef.current}</span>
+            </div>
           </div>
           <div className="h-2 rounded-full bg-muted mb-8 overflow-hidden">
             <div className="h-full bg-primary transition-all" style={{ width: `${(idx / questions.length) * 100}%` }} />
@@ -145,6 +151,9 @@ function InputDataPage() {
       <h1 className="mt-3 text-3xl font-extrabold text-center">Thanks!</h1>
       <p className="text-center text-muted-foreground mt-2">
         You answered {correct} / {results.length} correctly. Your responses have been saved.
+      </p>
+      <p className="text-center mt-3 text-sm">
+        Your Data ID: <span className="font-mono font-bold text-primary">{dataIdRef.current}</span>
       </p>
       <div className="mt-8 flex gap-3">
         <Link to="/" className="flex-1 rounded-2xl bg-card border-2 border-border py-4 text-center font-bold">Home</Link>

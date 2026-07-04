@@ -45,6 +45,9 @@ function AdminPage() {
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <Link to="/" className="text-sm text-primary font-semibold mr-2">← Home</Link>
+          <Link to="/admin/view" className="rounded-xl bg-primary text-primary-foreground px-3 py-2 text-sm font-bold">
+            View submissions →
+          </Link>
           <button
             onClick={() => exportJson(subs)}
             className="rounded-xl bg-card border-2 border-border px-3 py-2 text-sm font-bold"

@@ -257,6 +257,7 @@ export const QUESTIONS_BY_GRADE: Record<Grade, MCQ[]> = GRADES.reduce((acc, g) =
 export type QResult = { qid: string; correct: boolean; timeMs: number };
 export type Submission = {
   userId: string;
+  dataId: string;              // short human-friendly id shown to the user
   source: "input-data" | "trial";
   dyslexia: boolean | null;    // null = unknown (trial mode without answer)
   grade: Grade;
@@ -266,11 +267,28 @@ export type Submission = {
 
 const STORAGE_KEY = "wq_submissions_v1";
 
+// Short id like "D-8F3K2" — easy to read out loud / write down.
+export function genDataId(): string {
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let s = "";
+  for (let i = 0; i < 5; i++) s += alphabet[Math.floor(Math.random() * alphabet.length)];
+  return `D-${s}`;
+}
+
 export function loadSubmissions(): Submission[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as Submission[]) : [];
+    const arr = raw ? (JSON.parse(raw) as Submission[]) : [];
+    // Backfill dataId for older records so the admin table always has a value.
+    let mutated = false;
+    for (const s of arr) {
+      if (!s.dataId) { s.dataId = genDataId(); mutated = true; }
+    }
+    if (mutated) {
+      try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); } catch {}
+    }
+    return arr;
   } catch { return []; }
 }
 
