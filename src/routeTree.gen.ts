@@ -19,6 +19,7 @@ import { Route as InputDataRouteImport } from './routes/input-data'
 import { Route as Home2RouteImport } from './routes/home2'
 import { Route as GameRouteImport } from './routes/game'
 import { Route as CodeRouteImport } from './routes/code'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as WorldWorldRouteImport } from './routes/world.$world'
@@ -76,15 +77,20 @@ const CodeRoute = CodeRouteImport.update({
   path: '/code',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
-  id: '/admin/',
-  path: '/admin/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const WorldWorldRoute = WorldWorldRouteImport.update({
   id: '/world/$world',
@@ -92,9 +98,9 @@ const WorldWorldRoute = WorldWorldRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminViewRoute = AdminViewRouteImport.update({
-  id: '/admin/view',
-  path: '/admin/view',
-  getParentRoute: () => rootRouteImport,
+  id: '/view',
+  path: '/view',
+  getParentRoute: () => AdminRoute,
 } as any)
 const TowerGradeWorldSubjectRoute = TowerGradeWorldSubjectRouteImport.update({
   id: '/tower/$grade/$world/$subject',
@@ -110,6 +116,7 @@ const PlayGradeWorldSubjectLevelRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/code': typeof CodeRoute
   '/game': typeof GameRoute
   '/home2': typeof Home2Route
@@ -147,6 +154,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/code': typeof CodeRoute
   '/game': typeof GameRoute
   '/home2': typeof Home2Route
@@ -167,6 +175,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/code'
     | '/game'
     | '/home2'
@@ -203,6 +212,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/code'
     | '/game'
     | '/home2'
@@ -222,6 +232,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
   CodeRoute: typeof CodeRoute
   GameRoute: typeof GameRoute
   Home2Route: typeof Home2Route
@@ -232,9 +243,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   TakeTestRoute: typeof TakeTestRoute
   UploadReportRoute: typeof UploadReportRoute
-  AdminViewRoute: typeof AdminViewRoute
   WorldWorldRoute: typeof WorldWorldRoute
-  AdminIndexRoute: typeof AdminIndexRoute
   TowerGradeWorldSubjectRoute: typeof TowerGradeWorldSubjectRoute
   PlayGradeWorldSubjectLevelRoute: typeof PlayGradeWorldSubjectLevelRoute
 }
@@ -311,6 +320,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -320,10 +336,10 @@ declare module '@tanstack/react-router' {
     }
     '/admin/': {
       id: '/admin/'
-      path: '/admin'
+      path: '/'
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/world/$world': {
       id: '/world/$world'
@@ -334,10 +350,10 @@ declare module '@tanstack/react-router' {
     }
     '/admin/view': {
       id: '/admin/view'
-      path: '/admin/view'
+      path: '/view'
       fullPath: '/admin/view'
       preLoaderRoute: typeof AdminViewRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/tower/$grade/$world/$subject': {
       id: '/tower/$grade/$world/$subject'
@@ -356,8 +372,21 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdminRouteChildren {
+  AdminViewRoute: typeof AdminViewRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminViewRoute: AdminViewRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
   CodeRoute: CodeRoute,
   GameRoute: GameRoute,
   Home2Route: Home2Route,
@@ -368,9 +397,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   TakeTestRoute: TakeTestRoute,
   UploadReportRoute: UploadReportRoute,
-  AdminViewRoute: AdminViewRoute,
   WorldWorldRoute: WorldWorldRoute,
-  AdminIndexRoute: AdminIndexRoute,
   TowerGradeWorldSubjectRoute: TowerGradeWorldSubjectRoute,
   PlayGradeWorldSubjectLevelRoute: PlayGradeWorldSubjectLevelRoute,
 }
