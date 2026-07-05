@@ -107,11 +107,11 @@ function AdminViewPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <SortHead label="Time" active={sortKey === "time"} dir={sortDir} onClick={() => toggleSort("time")} />
-              <SortHead label="Dyslexia" active={sortKey === "dyslexia"} dir={sortDir} onClick={() => toggleSort("dyslexia")} />
-              <SortHead label="Grade" active={sortKey === "grade"} dir={sortDir} onClick={() => toggleSort("grade")} />
-              <SortHead label="Correct rate" active={sortKey === "acc"} dir={sortDir} onClick={() => toggleSort("acc")} />
               <SortHead label="Data ID" active={sortKey === "dataId"} dir={sortDir} onClick={() => toggleSort("dataId")} />
+              <SortHead label="Datetime" active={sortKey === "time"} dir={sortDir} onClick={() => toggleSort("time")} />
+              <SortHead label="Grade" active={sortKey === "grade"} dir={sortDir} onClick={() => toggleSort("grade")} />
+              <SortHead label="Dyslexia" active={sortKey === "dyslexia"} dir={sortDir} onClick={() => toggleSort("dyslexia")} />
+              <SortHead label="Correct ans rate" active={sortKey === "acc"} dir={sortDir} onClick={() => toggleSort("acc")} />
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -123,18 +123,18 @@ function AdminViewPage() {
               </TableRow>
             ) : rows.map(({ s, acc, correct, total }) => (
               <TableRow key={`${s.userId}-${s.timestamp}`}>
+                <TableCell className="font-mono">{s.dataId}</TableCell>
                 <TableCell className="whitespace-nowrap">
                   {new Date(s.timestamp).toLocaleString()}
                 </TableCell>
+                <TableCell className="font-semibold">{s.grade}</TableCell>
                 <TableCell>
                   {s.dyslexia === true ? "With" : s.dyslexia === false ? "Without" : "Unknown"}
                 </TableCell>
-                <TableCell className="font-semibold">{s.grade}</TableCell>
                 <TableCell>
                   <span className="font-semibold">{(acc * 100).toFixed(0)}%</span>
                   <span className="text-xs text-muted-foreground ml-2">({correct}/{total})</span>
                 </TableCell>
-                <TableCell className="font-mono">{s.dataId}</TableCell>
               </TableRow>
             ))}
           </TableBody>
