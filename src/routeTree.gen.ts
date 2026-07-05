@@ -21,6 +21,7 @@ import { Route as GameRouteImport } from './routes/game'
 import { Route as CodeRouteImport } from './routes/code'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as WorldWorldRouteImport } from './routes/world.$world'
 import { Route as AdminViewRouteImport } from './routes/admin.view'
 import { Route as TowerGradeWorldSubjectRouteImport } from './routes/tower.$grade.$world.$subject'
@@ -86,6 +87,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const WorldWorldRoute = WorldWorldRouteImport.update({
   id: '/world/$world',
   path: '/world/$world',
@@ -123,12 +129,12 @@ export interface FileRoutesByFullPath {
   '/upload-report': typeof UploadReportRoute
   '/admin/view': typeof AdminViewRoute
   '/world/$world': typeof WorldWorldRoute
+  '/admin/': typeof AdminIndexRoute
   '/tower/$grade/$world/$subject': typeof TowerGradeWorldSubjectRoute
   '/play/$grade/$world/$subject/$level': typeof PlayGradeWorldSubjectLevelRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRouteWithChildren
   '/code': typeof CodeRoute
   '/game': typeof GameRoute
   '/home2': typeof Home2Route
@@ -141,6 +147,7 @@ export interface FileRoutesByTo {
   '/upload-report': typeof UploadReportRoute
   '/admin/view': typeof AdminViewRoute
   '/world/$world': typeof WorldWorldRoute
+  '/admin': typeof AdminIndexRoute
   '/tower/$grade/$world/$subject': typeof TowerGradeWorldSubjectRoute
   '/play/$grade/$world/$subject/$level': typeof PlayGradeWorldSubjectLevelRoute
 }
@@ -160,6 +167,7 @@ export interface FileRoutesById {
   '/upload-report': typeof UploadReportRoute
   '/admin/view': typeof AdminViewRoute
   '/world/$world': typeof WorldWorldRoute
+  '/admin/': typeof AdminIndexRoute
   '/tower/$grade/$world/$subject': typeof TowerGradeWorldSubjectRoute
   '/play/$grade/$world/$subject/$level': typeof PlayGradeWorldSubjectLevelRoute
 }
@@ -180,12 +188,12 @@ export interface FileRouteTypes {
     | '/upload-report'
     | '/admin/view'
     | '/world/$world'
+    | '/admin/'
     | '/tower/$grade/$world/$subject'
     | '/play/$grade/$world/$subject/$level'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin'
     | '/code'
     | '/game'
     | '/home2'
@@ -198,6 +206,7 @@ export interface FileRouteTypes {
     | '/upload-report'
     | '/admin/view'
     | '/world/$world'
+    | '/admin'
     | '/tower/$grade/$world/$subject'
     | '/play/$grade/$world/$subject/$level'
   id:
@@ -216,6 +225,7 @@ export interface FileRouteTypes {
     | '/upload-report'
     | '/admin/view'
     | '/world/$world'
+    | '/admin/'
     | '/tower/$grade/$world/$subject'
     | '/play/$grade/$world/$subject/$level'
   fileRoutesById: FileRoutesById
@@ -324,6 +334,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/world/$world': {
       id: '/world/$world'
       path: '/world/$world'
@@ -357,10 +374,12 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminViewRoute: typeof AdminViewRoute
+  AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminViewRoute: AdminViewRoute,
+  AdminIndexRoute: AdminIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
