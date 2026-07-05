@@ -7,11 +7,10 @@ export const Route = createFileRoute("/code")({
 });
 
 // Bundle every source file at build time as raw text.
-const RAW_FILES = import.meta.glob("/src/**/*.{ts,tsx,css}", {
-  query: "?raw",
-  import: "default",
-  eager: true,
-}) as Record<string, string>;
+const RAW_FILES = import.meta.glob(
+  ["/src/**/*.{ts,tsx,css}", "!/src/**/*.gen.ts"],
+  { query: "?raw", import: "default", eager: true },
+) as Record<string, string>;
 
 const EXCLUDE = /routeTree\.gen\.ts$|\/components\/ui\//;
 
