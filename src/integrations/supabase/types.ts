@@ -14,7 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      submissions: {
+        Row: {
+          client_timestamp: number
+          created_at: string
+          data_id: string
+          dyslexia: boolean | null
+          grade: string
+          id: string
+          results: Json
+          user_id: string
+        }
+        Insert: {
+          client_timestamp: number
+          created_at?: string
+          data_id: string
+          dyslexia?: boolean | null
+          grade: string
+          id?: string
+          results: Json
+          user_id: string
+        }
+        Update: {
+          client_timestamp?: number
+          created_at?: string
+          data_id?: string
+          dyslexia?: boolean | null
+          grade?: string
+          id?: string
+          results?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
