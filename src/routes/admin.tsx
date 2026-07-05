@@ -21,9 +21,9 @@ function AdminPage() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const flag = window.sessionStorage.getItem("wq_admin") === "1";
-    if (!flag) nav({ to: "/login" });
-    else setOk(true);
-    setSubs(loadSubmissions());
+    if (!flag) { nav({ to: "/login" }); return; }
+    setOk(true);
+    loadSubmissions().then(setSubs).catch((e) => console.error(e));
   }, [nav]);
 
   const filtered = useMemo(() => subs.filter((s) => s.grade === grade), [subs, grade]);
