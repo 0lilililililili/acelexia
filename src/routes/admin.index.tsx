@@ -8,7 +8,7 @@ import {
   GRADES, QUESTIONS_BY_GRADE, loadSubmissions, type Grade, type MCQ, type Submission,
 } from "@/lib/input-questions";
 
-export const Route = createFileRoute("/admin")({ component: AdminPage });
+export const Route = createFileRoute("/admin/")({ component: AdminPage });
 
 type Point = { t: number; sec: number; date: string };
 
