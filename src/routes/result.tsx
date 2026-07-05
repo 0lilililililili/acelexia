@@ -42,9 +42,19 @@ function ResultPage() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         {subjects.map((s) => {
-          const data = payload!.results
+          const agg = new Map<string, { sum: number; n: number }>();
+          payload!.results
             .filter((r) => r.subject === s.key)
-            .map((r) => ({ attr: r.attr, score: r.correct }));
+            .forEach((r) => {
+              const cur = agg.get(r.attr) ?? { sum: 0, n: 0 };
+              cur.sum += r.correct;
+              cur.n += 1;
+              agg.set(r.attr, cur);
+            });
+          const data = Array.from(agg.entries()).map(([attr, v]) => ({
+            attr,
+            score: v.n ? v.sum / v.n : 0,
+          }));
           return (
             <div key={s.key} className="bg-card border-2 border-border rounded-3xl p-5 shadow">
               <h2 className="text-xl font-bold">{s.emoji} {s.label}</h2>
