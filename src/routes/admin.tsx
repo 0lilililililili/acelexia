@@ -21,9 +21,9 @@ function AdminPage() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const flag = window.sessionStorage.getItem("wq_admin") === "1";
-    if (!flag) nav({ to: "/login" });
-    else setOk(true);
-    setSubs(loadSubmissions());
+    if (!flag) { nav({ to: "/login" }); return; }
+    setOk(true);
+    loadSubmissions().then(setSubs).catch((e) => console.error(e));
   }, [nav]);
 
   const filtered = useMemo(() => subs.filter((s) => s.grade === grade), [subs, grade]);
@@ -186,15 +186,14 @@ function importJson(e: React.ChangeEvent<HTMLInputElement>, setSubs: (s: Submiss
   const file = e.target.files?.[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = () => {
+  reader.onload = async () => {
     try {
       const imported = JSON.parse(String(reader.result)) as Submission[];
-      const existing = JSON.parse(window.localStorage.getItem("wq_submissions_v1") || "[]") as Submission[];
-      const seen = new Set(existing.map((s) => `${s.userId}|${s.timestamp}`));
-      const merged = [...existing, ...imported.filter((s) => !seen.has(`${s.userId}|${s.timestamp}`))];
-      window.localStorage.setItem("wq_submissions_v1", JSON.stringify(merged));
-      setSubs(merged);
-      alert(`Imported ${imported.length} submissions (${merged.length} total).`);
+      const { importSubmissions, loadSubmissions } = await import("@/lib/input-questions");
+      const n = await importSubmissions(imported);
+      const fresh = await loadSubmissions();
+      setSubs(fresh);
+      alert(`Imported ${n} submissions to the cloud (${fresh.length} total).`);
     } catch { alert("Invalid JSON file."); }
   };
   reader.readAsText(file);
