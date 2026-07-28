@@ -1,17 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { isFestivalOpen, nextOpening } from "@/lib/festivals";
-
-const WORLD_META: Record<string, { name: string; emoji: string; color: string }> = {
-  aquatic:  { name: "Aquatic World",    emoji: "🌊", color: "var(--color-aqua)" },
-  forest:   { name: "Forest Hunt",      emoji: "🌲", color: "var(--color-forest)" },
-  fire:     { name: "Fire World",       emoji: "🔥", color: "var(--color-fire)" },
-  olympus:  { name: "Mount Olympus",    emoji: "⚡", color: "var(--color-grape)" },
-  winter:   { name: "Santa's Workshop", emoji: "🎄", color: "var(--color-fire)" },
-  festival: { name: "Lunar Festival",   emoji: "🏮", color: "var(--color-sun)" },
-};
-
-
+import { WORLD_ART } from "@/lib/world-art";
 
 export const Route = createFileRoute("/world/$world")({
   component: WorldPage,
@@ -19,7 +9,7 @@ export const Route = createFileRoute("/world/$world")({
 
 function WorldPage() {
   const { world } = Route.useParams();
-  const meta = WORLD_META[world] ?? { name: world, emoji: "🏰", color: "var(--color-primary)" };
+  const art = WORLD_ART[world] ?? WORLD_ART.forest;
 
   const [grade, setGrade] = useState("P3");
   useEffect(() => {
@@ -33,9 +23,9 @@ function WorldPage() {
   }, []);
 
   const towers = [
-    { subject: "CHI",  label: "Chinese Tower",  emoji: "🀄", key: "chi" },
-    { subject: "ENG",  label: "English Tower",  emoji: "🔤", key: "eng" },
-    { subject: "MATH", label: "Math Tower",     emoji: "🔢", key: "math" },
+    { subject: "CHI",  label: "Chinese Tower",  key: "chi" },
+    { subject: "ENG",  label: "English Tower",  key: "eng" },
+    { subject: "MATH", label: "Math Tower",     key: "math" },
   ];
 
   if (!isFestivalOpen(world)) {
@@ -43,8 +33,8 @@ function WorldPage() {
     return (
       <main className="min-h-screen px-6 py-8 max-w-3xl mx-auto text-center">
         <Link to="/game" className="text-primary font-semibold">← World map</Link>
-        <div className="mt-16 text-7xl opacity-60">{meta.emoji}</div>
-        <h1 className="text-3xl font-extrabold mt-4">{meta.name} is closed</h1>
+        <img src={art.boss} alt="" className="mx-auto mt-16 w-40 h-40 object-contain opacity-60" />
+        <h1 className="text-3xl font-extrabold mt-4">{art.label} is closed</h1>
         <p className="text-muted-foreground mt-2">
           This is a limited festival map. {next ? `Come back on ${next.toLocaleDateString("en-HK", { month: "long", day: "numeric", year: "numeric" })}.` : "Check back during the next festival."}
         </p>
@@ -53,27 +43,34 @@ function WorldPage() {
   }
 
   return (
-    <main className="min-h-screen px-6 py-8" style={{ background: `linear-gradient(180deg, ${meta.color}, var(--color-background) 60%)` }}>
+    <main
+      className="min-h-screen px-6 py-8 relative"
+      style={{
+        backgroundImage: `linear-gradient(180deg, oklch(0 0 0 / 0.15), oklch(0 0 0 / 0.3)), url(${art.bg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      }}
+    >
+      <Link to="/game" className="text-white font-semibold drop-shadow relative z-10">← World map</Link>
 
-      <Link to="/game" className="text-white/90 font-semibold">← World map</Link>
-
-      <header className="text-center mt-4 mb-10 text-white drop-shadow">
-        <div className="text-7xl">{meta.emoji}</div>
-        <h1 className="text-4xl font-extrabold mt-2">{meta.name}</h1>
-        <p className="opacity-90">Choose a boss tower to challenge.</p>
+      <header className="text-center mt-4 mb-10 text-white drop-shadow relative z-10">
+        <img src={art.boss} alt="" className="mx-auto w-36 h-36 object-contain drop-shadow-2xl" />
+        <h1 className="text-4xl font-extrabold mt-2">{art.label} World</h1>
+        <p className="opacity-95">Choose a boss tower to challenge.</p>
       </header>
 
-      <div className="grid gap-5 sm:grid-cols-3 max-w-5xl mx-auto">
+      <div className="grid gap-5 sm:grid-cols-3 max-w-5xl mx-auto relative z-10">
         {towers.map((t) => (
           <Link
             key={t.key}
             to="/tower/$grade/$world/$subject"
             params={{ grade, world, subject: t.key }}
-            className="bg-card border-2 border-border rounded-3xl p-6 text-center shadow-lg hover:scale-[1.03] transition"
+            className="bg-card border-4 border-white/70 rounded-3xl p-6 text-center shadow-2xl hover:scale-[1.03] transition"
           >
-            <div className="text-6xl">{t.emoji}</div>
+            <img src={art.boss} alt="" className="mx-auto w-24 h-24 object-contain" />
             <h2 className="text-xl font-extrabold mt-2">{t.label}</h2>
-            <p className="text-sm text-muted-foreground mt-1">{grade} {meta.name} {t.subject}</p>
+            <p className="text-sm text-muted-foreground mt-1">{grade} {art.label} {t.subject}</p>
             <div className="mt-4 inline-block bg-primary text-primary-foreground rounded-full px-4 py-2 font-bold">Enter tower</div>
           </Link>
         ))}
