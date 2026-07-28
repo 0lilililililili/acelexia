@@ -17,11 +17,6 @@ const SUBJECT_LANG: Record<string, "en-US" | "zh-HK"> = {
   math: "en-US",
 };
 
-const SUBJECT_LANG: Record<string, "en-US" | "zh-HK"> = {
-  eng: "en-US",
-  chi: "zh-HK",
-  math: "en-US",
-};
 
 const FALL_SECONDS = 35; // time before the enemy falls off-screen / question expires
 
