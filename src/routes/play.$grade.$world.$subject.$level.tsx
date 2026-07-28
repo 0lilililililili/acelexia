@@ -88,7 +88,7 @@ function matches(transcript: string, answer: string) {
 function PlayPage() {
   const { grade, world, subject, level } = Route.useParams();
   const nav = useNavigate();
-  const theme = WORLD_THEME[world] ?? WORLD_THEME.forest;
+  const art = WORLD_ART[world] ?? WORLD_ART.forest;
   const lang = SUBJECT_LANG[subject] ?? "en-US";
 
   const generate = useServerFn(generateLevelItems);
