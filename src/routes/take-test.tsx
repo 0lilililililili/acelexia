@@ -1,8 +1,9 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
 import {
-  GRADES, QUESTIONS_BY_GRADE, saveSubmission, genDataId, type Grade, type QResult,
+  GRADES, QUESTIONS_BY_GRADE, type Grade, type QResult,
 } from "@/lib/input-questions";
+
 
 export const Route = createFileRoute("/take-test")({ component: TestPage });
 
