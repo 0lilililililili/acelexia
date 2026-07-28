@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { getCleared } from "@/lib/progress";
+import { WORLD_ART, mutedBgStyle } from "@/lib/world-art";
 
 export const Route = createFileRoute("/tower/$grade/$world/$subject")({
   component: TowerPage,
@@ -29,8 +30,11 @@ function TowerPage() {
     };
   }, [grade, world, subject]);
 
+  const art = WORLD_ART[world] ?? WORLD_ART.forest;
   return (
-    <main className="min-h-screen px-6 py-8 max-w-5xl mx-auto">
+    <main className="min-h-screen relative" style={{ ...mutedBgStyle(art.bg), backgroundAttachment: "fixed" }}>
+      <div className="absolute inset-0 bg-background/70 pointer-events-none" />
+      <div className="relative px-6 py-8 max-w-5xl mx-auto">
       <Link to="/world/$world" params={{ world }} className="text-primary font-semibold">← Back to {world}</Link>
 
       <header className="mt-4 mb-6 text-center">
@@ -75,6 +79,7 @@ function TowerPage() {
             </Link>
           );
         })}
+      </div>
       </div>
     </main>
   );
