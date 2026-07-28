@@ -9,72 +9,27 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as UploadReportRouteImport } from './routes/upload-report'
-import { Route as TakeTestRouteImport } from './routes/take-test'
-import { Route as SignupRouteImport } from './routes/signup'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as ResultRouteImport } from './routes/result'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as InputDataRouteImport } from './routes/input-data'
-import { Route as Home2RouteImport } from './routes/home2'
-import { Route as GameRouteImport } from './routes/game'
-import { Route as CodeRouteImport } from './routes/code'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as CodeRouteImport } from './routes/code'
+import { Route as GameRouteImport } from './routes/game'
+import { Route as Home2RouteImport } from './routes/home2'
+import { Route as InputDataRouteImport } from './routes/input-data'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as ResultRouteImport } from './routes/result'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as TakeTestRouteImport } from './routes/take-test'
+import { Route as UploadReportRouteImport } from './routes/upload-report'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as WorldWorldRouteImport } from './routes/world.$world'
 import { Route as AdminViewRouteImport } from './routes/admin.view'
+import { Route as WorldWorldRouteImport } from './routes/world.$world'
 import { Route as TowerGradeWorldSubjectRouteImport } from './routes/tower.$grade.$world.$subject'
 import { Route as PlayGradeWorldSubjectLevelRouteImport } from './routes/play.$grade.$world.$subject.$level'
 
-const UploadReportRoute = UploadReportRouteImport.update({
-  id: '/upload-report',
-  path: '/upload-report',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TakeTestRoute = TakeTestRouteImport.update({
-  id: '/take-test',
-  path: '/take-test',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SignupRoute = SignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResultRoute = ResultRouteImport.update({
-  id: '/result',
-  path: '/result',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const InputDataRoute = InputDataRouteImport.update({
-  id: '/input-data',
-  path: '/input-data',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const Home2Route = Home2RouteImport.update({
-  id: '/home2',
-  path: '/home2',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GameRoute = GameRouteImport.update({
-  id: '/game',
-  path: '/game',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CodeRoute = CodeRouteImport.update({
-  id: '/code',
-  path: '/code',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -82,9 +37,54 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const CodeRoute = CodeRouteImport.update({
+  id: '/code',
+  path: '/code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GameRoute = GameRouteImport.update({
+  id: '/game',
+  path: '/game',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Home2Route = Home2RouteImport.update({
+  id: '/home2',
+  path: '/home2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InputDataRoute = InputDataRouteImport.update({
+  id: '/input-data',
+  path: '/input-data',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResultRoute = ResultRouteImport.update({
+  id: '/result',
+  path: '/result',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TakeTestRoute = TakeTestRouteImport.update({
+  id: '/take-test',
+  path: '/take-test',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UploadReportRoute = UploadReportRouteImport.update({
+  id: '/upload-report',
+  path: '/upload-report',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -92,15 +92,15 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
-const WorldWorldRoute = WorldWorldRouteImport.update({
-  id: '/world/$world',
-  path: '/world/$world',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AdminViewRoute = AdminViewRouteImport.update({
   id: '/view',
   path: '/view',
   getParentRoute: () => AdminRoute,
+} as any)
+const WorldWorldRoute = WorldWorldRouteImport.update({
+  id: '/world/$world',
+  path: '/world/$world',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const TowerGradeWorldSubjectRoute = TowerGradeWorldSubjectRouteImport.update({
   id: '/tower/$grade/$world/$subject',
@@ -250,74 +250,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/upload-report': {
-      id: '/upload-report'
-      path: '/upload-report'
-      fullPath: '/upload-report'
-      preLoaderRoute: typeof UploadReportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/take-test': {
-      id: '/take-test'
-      path: '/take-test'
-      fullPath: '/take-test'
-      preLoaderRoute: typeof TakeTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/result': {
-      id: '/result'
-      path: '/result'
-      fullPath: '/result'
-      preLoaderRoute: typeof ResultRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/input-data': {
-      id: '/input-data'
-      path: '/input-data'
-      fullPath: '/input-data'
-      preLoaderRoute: typeof InputDataRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/home2': {
-      id: '/home2'
-      path: '/home2'
-      fullPath: '/home2'
-      preLoaderRoute: typeof Home2RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/game': {
-      id: '/game'
-      path: '/game'
-      fullPath: '/game'
-      preLoaderRoute: typeof GameRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/code': {
-      id: '/code'
-      path: '/code'
-      fullPath: '/code'
-      preLoaderRoute: typeof CodeRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -327,11 +264,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/code': {
+      id: '/code'
+      path: '/code'
+      fullPath: '/code'
+      preLoaderRoute: typeof CodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/game': {
+      id: '/game'
+      path: '/game'
+      fullPath: '/game'
+      preLoaderRoute: typeof GameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/home2': {
+      id: '/home2'
+      path: '/home2'
+      fullPath: '/home2'
+      preLoaderRoute: typeof Home2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/input-data': {
+      id: '/input-data'
+      path: '/input-data'
+      fullPath: '/input-data'
+      preLoaderRoute: typeof InputDataRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/result': {
+      id: '/result'
+      path: '/result'
+      fullPath: '/result'
+      preLoaderRoute: typeof ResultRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/take-test': {
+      id: '/take-test'
+      path: '/take-test'
+      fullPath: '/take-test'
+      preLoaderRoute: typeof TakeTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/upload-report': {
+      id: '/upload-report'
+      path: '/upload-report'
+      fullPath: '/upload-report'
+      preLoaderRoute: typeof UploadReportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -341,19 +341,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/world/$world': {
-      id: '/world/$world'
-      path: '/world/$world'
-      fullPath: '/world/$world'
-      preLoaderRoute: typeof WorldWorldRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin/view': {
       id: '/admin/view'
       path: '/view'
       fullPath: '/admin/view'
       preLoaderRoute: typeof AdminViewRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/world/$world': {
+      id: '/world/$world'
+      path: '/world/$world'
+      fullPath: '/world/$world'
+      preLoaderRoute: typeof WorldWorldRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/tower/$grade/$world/$subject': {
       id: '/tower/$grade/$world/$subject'
