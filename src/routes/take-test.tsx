@@ -1,8 +1,9 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
 import {
-  GRADES, QUESTIONS_BY_GRADE, saveSubmission, genDataId, type Grade, type QResult,
+  GRADES, QUESTIONS_BY_GRADE, type Grade, type QResult,
 } from "@/lib/input-questions";
+
 
 export const Route = createFileRoute("/take-test")({ component: TestPage });
 
@@ -28,16 +29,10 @@ function TestPage() {
       setIdx(idx + 1);
       startedAt.current = Date.now();
     } else {
-      // Save trial submission for cross-comparison with input-data dataset
-      saveSubmission({
-        userId: `trial_${Date.now()}`,
-        dataId: genDataId(),
-        source: "trial",
-        dyslexia: null,
-        grade: grade as Grade,
-        timestamp: Date.now(),
-        results: next,
-      });
+      // Trial results are kept local-only — not saved to the shared dataset,
+      // so trial performance is independent from the input-data research pool.
+
+
 
       // Radar-chart payload (per-subject attributes)
       const radar = questions.map((qq, k) => ({
