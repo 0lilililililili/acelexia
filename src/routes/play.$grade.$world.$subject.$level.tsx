@@ -99,7 +99,7 @@ function PlayPage() {
         data: {
           subject: subject as "chi" | "eng" | "math",
           grade,
-          theme: theme.label,
+          theme: art.label,
           level: Math.min(500, Math.max(1, parseInt(level, 10) || 1)),
           count: 8,
         },
