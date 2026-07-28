@@ -5,18 +5,16 @@ import { useServerFn } from "@tanstack/react-start";
 import { generateLevelItems } from "@/lib/qb.functions";
 import { useSpeech } from "@/hooks/use-speech";
 import { markCleared } from "@/lib/progress";
+import { WORLD_ART, mutedBgStyle } from "@/lib/world-art";
 
 export const Route = createFileRoute("/play/$grade/$world/$subject/$level")({
   component: PlayPage,
 });
 
-const WORLD_THEME: Record<string, { color: string; emoji: string; defeatedEmoji: string; label: string }> = {
-  aquatic:  { color: "var(--color-aqua)",   emoji: "🐟", defeatedEmoji: "🐡", label: "Aquatic" },
-  forest:   { color: "var(--color-forest)", emoji: "👹", defeatedEmoji: "😵", label: "Forest" },
-  fire:     { color: "var(--color-fire)",   emoji: "👺", defeatedEmoji: "💀", label: "Fire" },
-  olympus:  { color: "var(--color-grape)",  emoji: "⚡", defeatedEmoji: "💨", label: "Olympus" },
-  winter:   { color: "var(--color-fire)",   emoji: "🎁", defeatedEmoji: "✨", label: "Workshop" },
-  festival: { color: "var(--color-sun)",    emoji: "🏮", defeatedEmoji: "💥", label: "Festival" },
+const SUBJECT_LANG: Record<string, "en-US" | "zh-HK"> = {
+  eng: "en-US",
+  chi: "zh-HK",
+  math: "en-US",
 };
 
 const SUBJECT_LANG: Record<string, "en-US" | "zh-HK"> = {
