@@ -80,6 +80,7 @@ function TowerPage() {
           );
         })}
       </div>
+      </div>
     </main>
   );
 }
