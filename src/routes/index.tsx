@@ -1,4 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import pirateMap from "@/assets/pirate-map.jpg";
+import mascot from "@/assets/mascot-dragon.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -14,16 +16,29 @@ export const Route = createFileRoute("/")({
 
 function Home1() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-6 py-12 bg-background relative overflow-hidden">
-      <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-accent/30 blur-3xl" />
-      <div className="absolute -bottom-32 -right-24 w-[28rem] h-[28rem] rounded-full bg-primary/20 blur-3xl" />
+    <main
+      className="min-h-screen flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden"
+      style={{
+        backgroundImage: `url(${pirateMap})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      {/* Warm parchment veil for readability */}
+      <div className="absolute inset-0 bg-[oklch(0.97_0.05_80)]/55" />
 
       <div className="relative z-10 text-center max-w-2xl">
-        <div className="text-7xl mb-4">🐉✨</div>
+        <img
+          src={mascot}
+          alt="WordQuest dragon mascot"
+          width={220}
+          height={220}
+          className="mx-auto drop-shadow-xl"
+        />
         <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-foreground">
           Word<span className="text-primary">Quest</span>
         </h1>
-        <p className="mt-4 text-lg text-muted-foreground">
+        <p className="mt-4 text-lg font-semibold text-foreground/80">
           Defeat bosses with your voice. Learn Chinese, English & Math.
         </p>
 
@@ -42,15 +57,9 @@ function Home1() {
           </Link>
           <Link
             to="/home2"
-            className="rounded-2xl bg-accent text-accent-foreground px-6 py-5 text-lg font-bold shadow-lg hover:scale-[1.03] transition"
+            className="rounded-2xl bg-accent text-accent-foreground px-6 py-5 text-lg font-bold shadow-lg hover:scale-[1.03] transition sm:col-span-2"
           >
-            🎮 Trial
-          </Link>
-          <Link
-            to="/input-data"
-            className="rounded-2xl bg-card border-2 border-border px-6 py-5 text-lg font-bold hover:scale-[1.03] transition"
-          >
-            📊 Input data
+            Start Trial
           </Link>
           <Link
             to="/code"
@@ -60,10 +69,9 @@ function Home1() {
           </Link>
         </div>
 
-        <p className="mt-8 text-sm text-muted-foreground">
+        <p className="mt-8 text-sm text-foreground/70">
           Designed for dyslexic kids • K3 to P6 • Hong Kong
         </p>
-
       </div>
     </main>
   );
