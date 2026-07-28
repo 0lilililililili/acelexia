@@ -192,7 +192,7 @@ function PlayPage() {
     return (
       <main className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="text-5xl animate-bounce">{theme.emoji}</div>
+          <img src={art.boss} alt="" className="w-24 h-24 mx-auto animate-bounce object-contain" />
           <p className="mt-3 text-muted-foreground">Summoning bosses…</p>
         </div>
       </main>
@@ -242,16 +242,17 @@ function PlayPage() {
   return (
     <main
       className="min-h-screen relative overflow-hidden flex flex-col"
-      style={{ background: `linear-gradient(180deg, ${theme.color} 0%, var(--color-background) 100%)` }}
+      style={{ ...mutedBgStyle(art.bg), backgroundAttachment: "fixed" }}
     >
+      <div className="absolute inset-0 bg-background/40 pointer-events-none" />
       {/* HUD */}
-      <header className="flex items-center justify-between px-5 py-3 bg-black/20 backdrop-blur text-white">
+      <header className="relative flex items-center justify-between px-5 py-3 bg-black/40 backdrop-blur text-white">
         <Link to="/tower/$grade/$world/$subject" params={{ grade, world, subject }} className="font-bold">← Exit</Link>
         <div className="text-center">
-          <div className="text-xs opacity-90 uppercase tracking-wider">{theme.label} • {subject.toUpperCase()} • {grade}</div>
+          <div className="text-xs opacity-90 uppercase tracking-wider">{art.label} • {subject.toUpperCase()} • {grade}</div>
           <div className="font-extrabold">Level {level} • Score {score}</div>
         </div>
-        <Link to="/settings" className="font-bold">⚙️</Link>
+        <Link to="/settings" className="font-bold">Settings</Link>
       </header>
 
       {/* Falling enemy */}
@@ -265,7 +266,7 @@ function PlayPage() {
               transition: "top 0.1s linear",
             }}
           >
-            <div className="text-[7rem] leading-none drop-shadow-lg">{theme.emoji}</div>
+            <img src={art.boss} alt="boss" className="w-40 h-40 sm:w-48 sm:h-48 object-contain drop-shadow-2xl" />
             <div className="mt-2 bg-card border-4 border-foreground/80 rounded-2xl px-6 py-3 shadow-2xl">
               <div className="text-4xl sm:text-5xl font-extrabold tracking-wide text-center">
                 {current.prompt}
@@ -274,8 +275,8 @@ function PlayPage() {
           </div>
         )}
         {defeated && (
-          <div className="absolute left-1/2 -translate-x-1/2 top-1/3 animate-defeated text-[7rem]">
-            {theme.defeatedEmoji}
+          <div className="absolute left-1/2 -translate-x-1/2 top-1/3 animate-defeated">
+            <img src={art.boss} alt="" className="w-40 h-40 object-contain grayscale opacity-70" />
           </div>
         )}
 
