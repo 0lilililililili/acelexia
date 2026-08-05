@@ -11,6 +11,8 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { registerOfflineApp } from "../lib/register-sw";
+import { getState } from "../lib/store";
 
 function NotFoundComponent() {
   return (
@@ -121,6 +123,18 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  // Offline app support + user font-size preference
+  useEffect(() => {
+    registerOfflineApp();
+    const applyFont = () => {
+      const scale = getState().settings.fontScale || 1;
+      document.documentElement.style.fontSize = `${scale * 100}%`;
+    };
+    applyFont();
+    window.addEventListener("settings-updated", applyFont);
+    return () => window.removeEventListener("settings-updated", applyFont);
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
