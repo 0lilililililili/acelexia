@@ -14,6 +14,83 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_users: {
+        Row: {
+          created_at: string
+          id: string
+          password_hash: string
+          password_salt: string
+          updated_at: string
+          username: string
+          username_lower: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          password_hash: string
+          password_salt: string
+          updated_at?: string
+          username: string
+          username_lower?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          password_hash?: string
+          password_salt?: string
+          updated_at?: string
+          username?: string
+          username_lower?: string | null
+        }
+        Relationships: []
+      }
+      progress: {
+        Row: {
+          created_at: string
+          grade: string | null
+          id: string
+          onboarded: boolean
+          revision_bank: Json
+          settings: Json
+          towers: Json
+          updated_at: string
+          user_id: string
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          grade?: string | null
+          id?: string
+          onboarded?: boolean
+          revision_bank?: Json
+          settings?: Json
+          towers?: Json
+          updated_at?: string
+          user_id: string
+          username: string
+        }
+        Update: {
+          created_at?: string
+          grade?: string | null
+          id?: string
+          onboarded?: boolean
+          revision_bank?: Json
+          settings?: Json
+          towers?: Json
+          updated_at?: string
+          user_id?: string
+          username?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "progress_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "app_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       submissions: {
         Row: {
           client_timestamp: number
