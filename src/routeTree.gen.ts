@@ -23,6 +23,7 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as TakeTestRouteImport } from './routes/take-test'
 import { Route as UploadReportRouteImport } from './routes/upload-report'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminProgressRouteImport } from './routes/admin.progress'
 import { Route as AdminViewRouteImport } from './routes/admin.view'
 import { Route as WorldWorldRouteImport } from './routes/world.$world'
 import { Route as TowerGradeWorldSubjectRouteImport } from './routes/tower.$grade.$world.$subject'
@@ -98,6 +99,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminProgressRoute = AdminProgressRouteImport.update({
+  id: '/progress',
+  path: '/progress',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminViewRoute = AdminViewRouteImport.update({
   id: '/view',
   path: '/view',
@@ -134,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/take-test': typeof TakeTestRoute
   '/upload-report': typeof UploadReportRoute
+  '/admin/progress': typeof AdminProgressRoute
   '/admin/view': typeof AdminViewRoute
   '/world/$world': typeof WorldWorldRoute
   '/admin/': typeof AdminIndexRoute
@@ -153,6 +160,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/take-test': typeof TakeTestRoute
   '/upload-report': typeof UploadReportRoute
+  '/admin/progress': typeof AdminProgressRoute
   '/admin/view': typeof AdminViewRoute
   '/world/$world': typeof WorldWorldRoute
   '/admin': typeof AdminIndexRoute
@@ -174,6 +182,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/take-test': typeof TakeTestRoute
   '/upload-report': typeof UploadReportRoute
+  '/admin/progress': typeof AdminProgressRoute
   '/admin/view': typeof AdminViewRoute
   '/world/$world': typeof WorldWorldRoute
   '/admin/': typeof AdminIndexRoute
@@ -196,6 +205,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/take-test'
     | '/upload-report'
+    | '/admin/progress'
     | '/admin/view'
     | '/world/$world'
     | '/admin/'
@@ -215,6 +225,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/take-test'
     | '/upload-report'
+    | '/admin/progress'
     | '/admin/view'
     | '/world/$world'
     | '/admin'
@@ -235,6 +246,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/take-test'
     | '/upload-report'
+    | '/admin/progress'
     | '/admin/view'
     | '/world/$world'
     | '/admin/'
@@ -361,6 +373,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/progress': {
+      id: '/admin/progress'
+      path: '/progress'
+      fullPath: '/admin/progress'
+      preLoaderRoute: typeof AdminProgressRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/view': {
       id: '/admin/view'
       path: '/view'
@@ -393,11 +412,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminProgressRoute: typeof AdminProgressRoute
   AdminViewRoute: typeof AdminViewRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminProgressRoute: AdminProgressRoute,
   AdminViewRoute: AdminViewRoute,
   AdminIndexRoute: AdminIndexRoute,
 }

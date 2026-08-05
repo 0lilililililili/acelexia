@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { listProgress } from "@/lib/auth.functions";
 
 export const Route = createFileRoute("/admin/progress")({
@@ -94,8 +94,8 @@ function ProgressAdmin() {
               );
               const s = r.settings ?? {};
               return (
-                <>
-                  <tr key={r.user_id} className="border-t border-border">
+                <Fragment key={r.user_id}>
+                  <tr className="border-t border-border">
                     <td className="p-3 font-mono text-xs">{r.user_id.slice(0, 8)}</td>
                     <td className="p-3 font-bold">{r.username}</td>
                     <td className="p-3">{r.grade ?? "—"}</td>
@@ -115,7 +115,7 @@ function ProgressAdmin() {
                     </td>
                   </tr>
                   {open === r.user_id && (
-                    <tr key={`${r.user_id}-d`} className="border-t border-border bg-muted/30">
+                    <tr className="border-t border-border bg-muted/30">
                       <td colSpan={8} className="p-4">
                         <div className="grid gap-4 md:grid-cols-2">
                           <div>
@@ -144,7 +144,7 @@ function ProgressAdmin() {
                       </td>
                     </tr>
                   )}
-                </>
+                </Fragment>
               );
             })}
             {rows.length === 0 && !err && (
