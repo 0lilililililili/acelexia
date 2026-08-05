@@ -10,12 +10,19 @@ const Credentials = z.object({
   password: z.string().min(6).max(72),
 });
 
+export type RevisionItem = {
+  prompt: string;
+  answer: string;
+  topic: string;
+  ts: number;
+};
+
 export type ProgressSnapshot = {
   grade: string | null;
   onboarded: boolean;
   towers: Record<string, number>;
-  revision: Record<string, Record<string, unknown[]>>;
-  settings: Record<string, unknown>;
+  revision: Record<string, Record<string, RevisionItem[]>>;
+  settings: Record<string, string | number | boolean>;
 };
 
 async function hash(password: string, salt: string) {
@@ -105,7 +112,7 @@ export const logInUser = createServerFn({ method: "POST" })
             onboarded: prog.onboarded,
             towers: (prog.towers ?? {}) as Record<string, number>,
             revision: (prog.revision_bank ?? {}) as ProgressSnapshot["revision"],
-            settings: (prog.settings ?? {}) as Record<string, unknown>,
+            settings: (prog.settings ?? {}) as Record<string, string | number | boolean>,
           } satisfies ProgressSnapshot)
         : null,
     };
@@ -120,8 +127,21 @@ export const saveProgress = createServerFn({ method: "POST" })
         grade: z.string().nullable().optional(),
         onboarded: z.boolean().optional(),
         towers: z.record(z.string(), z.number()),
-        revision: z.record(z.string(), z.record(z.string(), z.array(z.any()))),
-        settings: z.record(z.string(), z.any()),
+        revision: z.record(
+          z.string(),
+          z.record(
+            z.string(),
+            z.array(
+              z.object({
+                prompt: z.string(),
+                answer: z.string(),
+                topic: z.string(),
+                ts: z.number(),
+              }),
+            ),
+          ),
+        ),
+        settings: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
       })
       .parse(d),
   )
