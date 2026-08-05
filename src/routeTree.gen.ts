@@ -17,6 +17,7 @@ import { Route as Home2RouteImport } from './routes/home2'
 import { Route as InputDataRouteImport } from './routes/input-data'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ResultRouteImport } from './routes/result'
+import { Route as RevisionRouteImport } from './routes/revision'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as TakeTestRouteImport } from './routes/take-test'
@@ -65,6 +66,11 @@ const LoginRoute = LoginRouteImport.update({
 const ResultRoute = ResultRouteImport.update({
   id: '/result',
   path: '/result',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RevisionRoute = RevisionRouteImport.update({
+  id: '/revision',
+  path: '/revision',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/input-data': typeof InputDataRoute
   '/login': typeof LoginRoute
   '/result': typeof ResultRoute
+  '/revision': typeof RevisionRoute
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/take-test': typeof TakeTestRoute
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/input-data': typeof InputDataRoute
   '/login': typeof LoginRoute
   '/result': typeof ResultRoute
+  '/revision': typeof RevisionRoute
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/take-test': typeof TakeTestRoute
@@ -161,6 +169,7 @@ export interface FileRoutesById {
   '/input-data': typeof InputDataRoute
   '/login': typeof LoginRoute
   '/result': typeof ResultRoute
+  '/revision': typeof RevisionRoute
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/take-test': typeof TakeTestRoute
@@ -182,6 +191,7 @@ export interface FileRouteTypes {
     | '/input-data'
     | '/login'
     | '/result'
+    | '/revision'
     | '/settings'
     | '/signup'
     | '/take-test'
@@ -200,6 +210,7 @@ export interface FileRouteTypes {
     | '/input-data'
     | '/login'
     | '/result'
+    | '/revision'
     | '/settings'
     | '/signup'
     | '/take-test'
@@ -219,6 +230,7 @@ export interface FileRouteTypes {
     | '/input-data'
     | '/login'
     | '/result'
+    | '/revision'
     | '/settings'
     | '/signup'
     | '/take-test'
@@ -239,6 +251,7 @@ export interface RootRouteChildren {
   InputDataRoute: typeof InputDataRoute
   LoginRoute: typeof LoginRoute
   ResultRoute: typeof ResultRoute
+  RevisionRoute: typeof RevisionRoute
   SettingsRoute: typeof SettingsRoute
   SignupRoute: typeof SignupRoute
   TakeTestRoute: typeof TakeTestRoute
@@ -304,6 +317,13 @@ declare module '@tanstack/react-router' {
       path: '/result'
       fullPath: '/result'
       preLoaderRoute: typeof ResultRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/revision': {
+      id: '/revision'
+      path: '/revision'
+      fullPath: '/revision'
+      preLoaderRoute: typeof RevisionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -393,6 +413,7 @@ const rootRouteChildren: RootRouteChildren = {
   InputDataRoute: InputDataRoute,
   LoginRoute: LoginRoute,
   ResultRoute: ResultRoute,
+  RevisionRoute: RevisionRoute,
   SettingsRoute: SettingsRoute,
   SignupRoute: SignupRoute,
   TakeTestRoute: TakeTestRoute,

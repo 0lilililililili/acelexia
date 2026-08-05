@@ -61,12 +61,6 @@ function Home1() {
           >
             Start Trial
           </Link>
-          <Link
-            to="/code"
-            className="rounded-2xl bg-card border-2 border-border px-6 py-5 text-lg font-bold hover:scale-[1.03] transition sm:col-span-2"
-          >
-            {"</> Code"}
-          </Link>
         </div>
 
         <p className="mt-8 text-sm text-foreground/70">
