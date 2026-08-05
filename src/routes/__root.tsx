@@ -132,8 +132,8 @@ function RootComponent() {
       document.documentElement.style.fontSize = `${scale * 100}%`;
     };
     applyFont();
-    window.addEventListener("settings-updated", applyFont);
-    return () => window.removeEventListener("settings-updated", applyFont);
+    window.addEventListener("wq-updated", applyFont);
+    return () => window.removeEventListener("wq-updated", applyFont);
   }, []);
 
   return (

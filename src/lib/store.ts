@@ -93,9 +93,6 @@ export function setState(next: State, { sync = true } = {}) {
       }
     })();
   }, 600);
-  if (typeof window !== "undefined") {
-    window.dispatchEvent(new CustomEvent("settings-updated"));
-  }
 }
 
 export function updateState(fn: (s: State) => State) {
