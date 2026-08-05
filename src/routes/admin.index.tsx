@@ -48,6 +48,12 @@ function AdminPage() {
           <Link to="/admin/view" className="rounded-xl bg-primary text-primary-foreground px-3 py-2 text-sm font-bold">
             View submissions →
           </Link>
+          <Link to="/admin/progress" className="rounded-xl bg-accent text-accent-foreground px-3 py-2 text-sm font-bold">
+            PROGRESS database →
+          </Link>
+          <Link to="/code" className="rounded-xl bg-card border-2 border-border px-3 py-2 text-sm font-bold">
+            {"</> Code"}
+          </Link>
           <button
             onClick={() => exportJson(subs)}
             className="rounded-xl bg-card border-2 border-border px-3 py-2 text-sm font-bold"

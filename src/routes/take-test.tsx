@@ -4,6 +4,7 @@ import {
   GRADES, QUESTIONS_BY_GRADE, type Grade, type QResult,
 } from "@/lib/input-questions";
 import pirateMap from "@/assets/pirate-map.jpg";
+import { getState, setState } from "@/lib/store";
 
 const pageBg: React.CSSProperties = {
   backgroundImage: `url(${pirateMap})`,
@@ -85,6 +86,7 @@ function TestPage() {
               try {
                 window.localStorage.setItem("player", JSON.stringify({ name, grade }));
               } catch {}
+              setState({ ...getState(), grade: grade || null, onboarded: true });
               startedAt.current = Date.now();
               setStarted(true);
             }}

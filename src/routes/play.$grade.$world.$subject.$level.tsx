@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { generateLevelItems } from "@/lib/qb.functions";
 import { useSpeech } from "@/hooks/use-speech";
 import { markCleared } from "@/lib/progress";
+import { addRevisionItem, DEFAULT_SETTINGS, getState } from "@/lib/store";
 import { WORLD_ART, mutedBgStyle } from "@/lib/world-art";
 
 export const Route = createFileRoute("/play/$grade/$world/$subject/$level")({
@@ -18,9 +19,7 @@ const SUBJECT_LANG: Record<string, "en-US" | "zh-HK"> = {
 };
 
 
-const FALL_SECONDS = 35; // time before the enemy falls off-screen / question expires
-
-type Item = { prompt: string; answer: string; hint?: string };
+type Item = { prompt: string; answer: string; hint?: string; topic?: string };
 
 const NUM_WORDS: Record<string, string> = {
   zero: "0", oh: "0",
@@ -91,6 +90,10 @@ function PlayPage() {
   const art = WORLD_ART[world] ?? WORLD_ART.forest;
   const lang = SUBJECT_LANG[subject] ?? "en-US";
 
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+  useEffect(() => setSettings(getState().settings), []);
+  const timeLimit = settings.timeLimit;
+
   const generate = useServerFn(generateLevelItems);
   const { data, isLoading, error } = useQuery({
     queryKey: ["qb", subject, grade, world, level],
@@ -110,7 +113,7 @@ function PlayPage() {
   const items: Item[] = data?.items ?? [];
   const [idx, setIdx] = useState(0);
   const [score, setScore] = useState(0);
-  const [defeated, setDefeated] = useState(false);
+  const [phase, setPhase] = useState<"enter" | "active" | "defeat" | "escape">("enter");
   const [skipped, setSkipped] = useState<Set<string>>(new Set());
   const [transcript, setTranscript] = useState("");
   const [tick, setTick] = useState(0);
@@ -124,60 +127,83 @@ function PlayPage() {
     setIdx(0);
     setScore(0);
     setSkipped(new Set());
-    setDefeated(false);
+    setPhase("enter");
     setTranscript("");
     setTick(0);
     itemKeyRef.current++;
   }, [level, subject, world, grade]);
 
-  const handleResult = useCallback((t: string) => {
-    setTranscript(t);
-    if (!current) return;
-    if (matches(t, current.answer)) {
-      setDefeated(true);
-      setScore((s) => s + 1);
-      setTimeout(() => {
-        setDefeated(false);
-        setTranscript("");
-        itemKeyRef.current++;
-        setIdx((i) => i + 1);
-        setTick(0);
-      }, 700);
-    } else {
-      setFeedback("wrong");
-      setTimeout(() => setFeedback("none"), 400);
-    }
-  }, [current]);
+  const advance = useCallback(() => {
+    itemKeyRef.current++;
+    setTranscript("");
+    setTick(0);
+    setPhase("enter");
+    setIdx((i) => i + 1);
+  }, []);
+
+  // Boss slides in from the left, then the countdown starts
+  useEffect(() => {
+    if (phase !== "enter") return;
+    const t = setTimeout(() => setPhase("active"), 700);
+    return () => clearTimeout(t);
+  }, [phase, idx]);
+
+  const missed = useCallback(
+    (item: Item) => {
+      addRevisionItem(subject, {
+        prompt: item.prompt,
+        answer: item.answer,
+        topic: item.topic?.trim() || `${art.label} practice`,
+        ts: Date.now(),
+      });
+    },
+    [subject, art.label],
+  );
+
+  const handleResult = useCallback(
+    (t: string) => {
+      setTranscript(t);
+      if (!current || phase !== "active") return;
+      if (matches(t, current.answer)) {
+        setPhase("defeat");
+        setScore((s) => s + 1);
+        setTimeout(advance, 700);
+      } else {
+        setFeedback("wrong");
+        setTimeout(() => setFeedback("none"), 400);
+      }
+    },
+    [current, phase, advance],
+  );
 
   const { listening, supported, start } = useSpeech({ lang, onResult: handleResult });
 
-  // countdown
+  // countdown attached to the question bubble
   useEffect(() => {
-    if (!current || defeated) return;
-    setTick(0);
+    if (phase !== "active") return;
     const id = setInterval(() => setTick((t) => t + 0.1), 100);
     return () => clearInterval(id);
-  }, [idx, current, defeated]);
+  }, [phase, idx]);
 
+  // time up → boss escapes to the right, question goes to the revision bank
   useEffect(() => {
-    if (tick >= FALL_SECONDS && current && !defeated) {
-      // expire
-      itemKeyRef.current++;
-      setIdx((i) => i + 1);
-      setTranscript("");
-    }
-  }, [tick, current, defeated]);
+    if (phase !== "active" || tick < timeLimit || !current) return;
+    missed(current);
+    setPhase("escape");
+    const t = setTimeout(advance, 600);
+    return () => clearTimeout(t);
+  }, [tick, phase, current, timeLimit, missed, advance]);
 
   const onSkip = () => {
-    if (!current) return;
+    if (!current || phase !== "active") return;
     if (skipped.has(current.prompt)) return; // can only skip once per word
     setSkipped((s) => new Set(s).add(current.prompt));
-    itemKeyRef.current++;
-    setIdx((i) => i + 1);
-    setTranscript("");
+    missed(current);
+    setPhase("escape");
+    setTimeout(advance, 600);
   };
 
-  const canSkip = current ? !skipped.has(current.prompt) : false;
+  const canSkip = current ? !skipped.has(current.prompt) && phase === "active" : false;
   const finished = !isLoading && items.length > 0 && idx >= items.length;
 
   useEffect(() => {
@@ -185,8 +211,9 @@ function PlayPage() {
       markCleared(grade, world, subject, parseInt(level, 10) || 1);
     }
   }, [finished, grade, world, subject, level]);
-  const remaining = Math.max(0, FALL_SECONDS - tick);
-  const fallPct = Math.min(100, (tick / FALL_SECONDS) * 100);
+
+  const remaining = Math.max(0, timeLimit - tick);
+  const pctLeft = Math.max(0, Math.min(100, (remaining / timeLimit) * 100));
 
   if (isLoading) {
     return (
@@ -215,15 +242,15 @@ function PlayPage() {
   if (finished) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
-        <div className="text-7xl">🏆</div>
+        <img src={art.boss} alt="" className="w-32 h-32 object-contain" />
         <h1 className="text-4xl font-extrabold mt-3">Level {level} cleared!</h1>
         <p className="text-muted-foreground mt-2">Score: {score} / {items.length}</p>
-        <div className="mt-8 flex gap-3">
+        <div className="mt-8 flex gap-3 flex-wrap justify-center">
           <button
-            onClick={() => { setIdx(0); setScore(0); setSkipped(new Set()); }}
+            onClick={() => { setIdx(0); setScore(0); setSkipped(new Set()); setPhase("enter"); setTick(0); }}
             className="rounded-2xl bg-card border-2 border-border px-6 py-3 font-bold"
           >
-            🔁 Play again
+            Play again
           </button>
           <button
             onClick={() => nav({ to: "/play/$grade/$world/$subject/$level", params: { grade, world, subject, level: String((parseInt(level, 10) || 1) + 1) } })}
@@ -232,17 +259,23 @@ function PlayPage() {
             Next level →
           </button>
         </div>
-        <Link to="/tower/$grade/$world/$subject" params={{ grade, world, subject }} className="text-primary font-semibold mt-6">
-          ← Back to tower
-        </Link>
+        <div className="mt-6 flex gap-4">
+          <Link to="/tower/$grade/$world/$subject" params={{ grade, world, subject }} className="text-primary font-semibold">
+            ← Back to tower
+          </Link>
+          <Link to="/revision" className="text-primary font-semibold">Revision bank →</Link>
+        </div>
       </main>
     );
   }
 
+  const bossAnim =
+    phase === "enter" ? "animate-enter-left" : phase === "escape" ? "animate-exit-right" : phase === "defeat" ? "animate-defeated" : "";
+
   return (
     <main
       className="min-h-screen relative overflow-hidden flex flex-col"
-      style={{ ...mutedBgStyle(art.bg), backgroundAttachment: "fixed" }}
+      style={{ ...mutedBgStyle(art.bg), backgroundAttachment: "fixed", fontSize: `${settings.fontScale}rem` }}
     >
       <div className="absolute inset-0 bg-background/40 pointer-events-none" />
       {/* HUD */}
@@ -255,38 +288,46 @@ function PlayPage() {
         <Link to="/settings" className="font-bold">Settings</Link>
       </header>
 
-      {/* Falling enemy */}
+      {/* Boss enters from the left and waits in the middle */}
       <div className="relative flex-1">
-        {current && !defeated && (
+        {current && (
           <div
             key={itemKeyRef.current}
-            className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center"
-            style={{
-              top: `${fallPct * 0.7}vh`,
-              transition: "top 0.1s linear",
-            }}
+            className={`absolute left-1/2 top-1/2 flex flex-col items-center ${bossAnim}`}
+            style={phase === "active" ? { transform: "translate(-50%, -50%)" } : undefined}
           >
-            <img src={art.boss} alt="boss" className="w-40 h-40 sm:w-48 sm:h-48 object-contain drop-shadow-2xl" />
-            <div className="mt-2 bg-card border-4 border-foreground/80 rounded-2xl px-6 py-3 shadow-2xl">
-              <div className="text-4xl sm:text-5xl font-extrabold tracking-wide text-center">
-                {current.prompt}
+            <img
+              src={art.boss}
+              alt="boss"
+              className={`w-40 h-40 sm:w-48 sm:h-48 object-contain drop-shadow-2xl ${phase === "defeat" ? "grayscale opacity-70" : ""}`}
+            />
+            <div className="relative mt-2">
+              {/* Countdown ring attached to the question bubble */}
+              <div
+                className="absolute -inset-1 rounded-3xl"
+                style={{
+                  background: `conic-gradient(var(--color-primary) ${pctLeft}%, transparent ${pctLeft}%)`,
+                  filter: "blur(0.2px)",
+                }}
+                aria-hidden
+              />
+              <div className="relative bg-card border-4 border-foreground/80 rounded-2xl px-6 py-3 shadow-2xl">
+                <div className="text-4xl sm:text-5xl font-extrabold tracking-wide text-center">
+                  {current.prompt}
+                </div>
+                <div className="mt-2 h-2 rounded-full bg-muted overflow-hidden">
+                  <div
+                    className="h-full bg-primary transition-[width] duration-100"
+                    style={{ width: `${pctLeft}%` }}
+                  />
+                </div>
+                <div className="text-center text-xs font-bold text-muted-foreground mt-1">
+                  {Math.ceil(remaining)}s
+                </div>
               </div>
             </div>
           </div>
         )}
-        {defeated && (
-          <div className="absolute left-1/2 -translate-x-1/2 top-1/3 animate-defeated">
-            <img src={art.boss} alt="" className="w-40 h-40 object-contain grayscale opacity-70" />
-          </div>
-        )}
-
-        {/* Timer bar */}
-        <div className="absolute top-2 left-4 right-4 h-2 rounded-full bg-white/30 overflow-hidden">
-          <div
-            className="h-full bg-white transition-[width] duration-100"
-            style={{ width: `${100 - fallPct}%` }}
-          />
-        </div>
       </div>
 
       {/* Transcript */}
@@ -310,15 +351,15 @@ function PlayPage() {
               className="rounded-2xl bg-card border-2 border-border px-5 py-3 font-bold disabled:opacity-40"
               title={canSkip ? "Skip this word (once per word)" : "Already skipped"}
             >
-              ⏭️ Skip
+              Skip
             </button>
             <button
               onClick={start}
-              disabled={listening}
+              disabled={listening || phase !== "active"}
               className={`rounded-full w-24 h-24 bg-primary text-primary-foreground text-4xl font-extrabold shadow-2xl flex items-center justify-center ${listening ? "mic-pulse" : "hover:scale-105"}`}
-              aria-label="Speak"
+              aria-label="Speak your answer"
             >
-              🎤
+              <MicIcon />
             </button>
             <div className="w-[88px] text-xs text-muted-foreground text-center">
               {listening ? "Listening…" : "Tap & speak"}
@@ -327,5 +368,16 @@ function PlayPage() {
         )}
       </footer>
     </main>
+  );
+}
+
+function MicIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+      <rect x="9" y="2" width="6" height="12" rx="3" fill="currentColor" stroke="none" />
+      <path d="M5 11a7 7 0 0 0 14 0" />
+      <path d="M12 18v3" />
+      <path d="M8 21h8" />
+    </svg>
   );
 }

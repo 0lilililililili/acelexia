@@ -13,6 +13,7 @@ const Item = z.object({
   prompt: z.string(),       // word to recognize or arithmetic expression
   answer: z.string(),       // expected spoken answer (lowercase)
   hint: z.string().optional(),
+  topic: z.string().optional(),   // syllabus sub-topic, e.g. "percentages", "past tense", "成語"
 });
 const Schema = z.object({ items: z.array(Item) });
 
@@ -59,7 +60,7 @@ export const generateLevelItems = createServerFn({ method: "POST" })
       math: `Mathematics aligned to HKEAA ${data.grade} strictly on: ${msyl}. 'prompt' is a short expression or question (e.g. '3456 + 1289', '25% of 80', '3/4 + 1/8'). 'answer' is the numeric result (e.g. '4745', '20', '7/8').`,
     }[data.subject];
 
-    const sys = `You generate dyslexia-friendly practice items for Hong Kong primary students strictly within the HKEAA syllabus for ${data.grade}. Difficulty scales gently with level ${data.level}/500 but must NOT exceed ${data.grade} scope. Theme items around "${data.theme}" when natural. ${subjectDesc} Return ONLY JSON matching: {"items":[{"prompt":"","answer":"","hint":""}]}`;
+    const sys = `You generate dyslexia-friendly practice items for Hong Kong primary students strictly within the HKEAA syllabus for ${data.grade}. Difficulty scales gently with level ${data.level}/500 but must NOT exceed ${data.grade} scope. Theme items around "${data.theme}" when natural. ${subjectDesc} Each item also carries a short syllabus sub-topic label in "topic" (e.g. "percentages", "fractions", "past simple tense", "成語", "radicals"). Return ONLY JSON matching: {"items":[{"prompt":"","answer":"","hint":"","topic":""}]}`;
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

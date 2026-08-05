@@ -11,6 +11,8 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { registerOfflineApp } from "../lib/register-sw";
+import { getState } from "../lib/store";
 
 function NotFoundComponent() {
   return (
@@ -77,20 +79,26 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Word Quest — Chinese, English & Math Adventure" },
+      {
+        name: "description",
+        content:
+          "A cartoon voice-powered learning quest helping K3–P6 learners in Hong Kong master Chinese, English and Math.",
+      },
+      { name: "theme-color", content: "#f97316" },
+      { property: "og:title", content: "Word Quest — Chinese, English & Math Adventure" },
+      {
+        property: "og:description",
+        content: "Defeat bosses by speaking the right answer. Built for dyslexia-friendly learning.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
+      { rel: "stylesheet", href: appCss },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "icon", type: "image/png", href: "/favicon.png" },
+      { rel: "apple-touch-icon", href: "/icon-192.png" },
     ],
   }),
   shellComponent: RootShell,
@@ -115,6 +123,18 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  // Offline app support + user font-size preference
+  useEffect(() => {
+    registerOfflineApp();
+    const applyFont = () => {
+      const scale = getState().settings.fontScale || 1;
+      document.documentElement.style.fontSize = `${scale * 100}%`;
+    };
+    applyFont();
+    window.addEventListener("wq-updated", applyFont);
+    return () => window.removeEventListener("wq-updated", applyFont);
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

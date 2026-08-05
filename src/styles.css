@@ -138,3 +138,17 @@
   50% { box-shadow: 0 0 0 18px transparent; }
 }
 .mic-pulse { animation: mic-pulse 1.4s ease-out infinite; }
+
+/* Boss enters from the left and settles in the middle */
+@keyframes slide-in-left {
+  0% { transform: translate(-120vw, -50%); opacity: 0; }
+  100% { transform: translate(-50%, -50%); opacity: 1; }
+}
+.animate-enter-left { animation: slide-in-left 0.7s cubic-bezier(.2,.9,.3,1) both; }
+
+/* Boss escapes to the right when time runs out or the answer is wrong */
+@keyframes slide-out-right {
+  0% { transform: translate(-50%, -50%); opacity: 1; }
+  100% { transform: translate(120vw, -50%); opacity: 0; }
+}
+.animate-exit-right { animation: slide-out-right 0.6s ease-in both; }
