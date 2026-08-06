@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { isFestivalOpen, nextOpening } from "@/lib/festivals";
 import { WORLD_ART } from "@/lib/world-art";
+import towerImg from "@/assets/tower.png";
+
 
 export const Route = createFileRoute("/world/$world")({
   component: WorldPage,
