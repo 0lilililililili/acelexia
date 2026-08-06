@@ -57,12 +57,13 @@ export const generateLevelItems = createServerFn({ method: "POST" })
     const esyl = engSyllabus[data.grade] ?? engSyllabus.P3;
 
     const subjectDesc = {
-      chi: `Traditional Chinese for HK students strictly at HKEAA ${data.grade} level: ${csyl}. 'prompt' is a single Chinese character, 2-character word, or (from P3+) a 4-character 成語. 'answer' is the Cantonese jyutping OR the characters themselves.`,
+      chi: `Traditional Chinese for HK students strictly at HKEAA ${data.grade} level: ${csyl}. 'prompt' is a single Chinese character, 2-character word, or (from P3+) a 成語 question. IMPORTANT: every 成語 item MUST be multiple choice — set "topic":"成語", write 'prompt' as a short question (e.g. 「形容非常高興，應該用哪個成語？」or a sentence with ＿＿ to fill), give exactly 4 options in "choices" (plain 成語 text, no a/b/c/d labels), and set 'answer' to the exact text of the correct option. Non-成語 items have no "choices" and 'answer' is the Cantonese jyutping OR the characters themselves.`,
       eng: `English aligned to HKEAA primary syllabus ${data.grade}: ${esyl}. 'prompt' is EITHER a single age-appropriate word to read aloud, OR a short fill-in sentence targeting the grade's grammar (e.g. P3: "Yesterday I ___ (go) to school." → answer "went"; P6: "If I ___ (be) you, I would study harder." → answer "were"). Mix vocabulary and grammar items. 'answer' is the target word in lowercase.`,
       math: `Mathematics aligned to HKEAA ${data.grade} strictly on: ${msyl}. 'prompt' is a short expression or question (e.g. '3456 + 1289', '25% of 80', '3/4 + 1/8'). 'answer' is the numeric result (e.g. '4745', '20', '7/8').`,
     }[data.subject];
 
-    const sys = `You generate dyslexia-friendly practice items for Hong Kong primary students strictly within the HKEAA syllabus for ${data.grade}. Difficulty scales gently with level ${data.level}/500 but must NOT exceed ${data.grade} scope. Theme items around "${data.theme}" when natural. ${subjectDesc} Each item also carries a short syllabus sub-topic label in "topic" (e.g. "percentages", "fractions", "past simple tense", "成語", "radicals"). Return ONLY JSON matching: {"items":[{"prompt":"","answer":"","hint":"","topic":""}]}`;
+    const sys = `You generate dyslexia-friendly practice items for Hong Kong primary students strictly within the HKEAA syllabus for ${data.grade}. Difficulty scales gently with level ${data.level}/500 but must NOT exceed ${data.grade} scope. Theme items around "${data.theme}" when natural. ${subjectDesc} Each item also carries a short syllabus sub-topic label in "topic" (e.g. "percentages", "fractions", "past simple tense", "成語", "radicals"). Return ONLY JSON matching: {"items":[{"prompt":"","answer":"","hint":"","topic":"","choices":["","","",""]}]} — omit "choices" for items that are not multiple choice.`;
+
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
