@@ -7,9 +7,9 @@ import pirateMap from "@/assets/pirate-map.jpg";
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
-      { title: "Log in to WordQuest" },
-      { name: "description", content: "Log in to restore your towers, revision bank and settings in WordQuest." },
-      { property: "og:title", content: "Log in to WordQuest" },
+      { title: "Log in to Acalexia" },
+      { name: "description", content: "Log in to restore your towers, revision bank and settings in Acalexia." },
+      { property: "og:title", content: "Log in to Acalexia" },
       { property: "og:description", content: "Your adventure continues where you left off." },
     ],
   }),

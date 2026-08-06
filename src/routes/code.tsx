@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 
 export const Route = createFileRoute("/code")({
-  head: () => ({ meta: [{ title: "Code — WordQuest" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Code — Acalexia" }, { name: "robots", content: "noindex" }] }),
   component: CodePage,
 });
 

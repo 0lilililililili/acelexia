@@ -5,10 +5,10 @@ import { DEFAULT_SETTINGS, getState, setState, type Settings } from "@/lib/store
 export const Route = createFileRoute("/settings")({
   head: () => ({
     meta: [
-      { title: "Settings — WordQuest" },
-      { name: "description", content: "Change text size, question time limit, or reset your WordQuest progress." },
-      { property: "og:title", content: "Settings — WordQuest" },
-      { property: "og:description", content: "Make WordQuest comfortable for you." },
+      { title: "Settings — Acalexia" },
+      { name: "description", content: "Change text size, question time limit, or reset your Acalexia progress." },
+      { property: "og:title", content: "Settings — Acalexia" },
+      { property: "og:description", content: "Make Acalexia comfortable for you." },
     ],
   }),
   component: SettingsPage,
