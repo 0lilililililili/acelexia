@@ -56,8 +56,9 @@ function TestPage() {
   if (!started) {
     return (
       <main className="min-h-screen flex items-center justify-center p-6 relative" style={pageBg}>
-        <div className="absolute inset-0 bg-[oklch(0.97_0.05_80)]/55 pointer-events-none" />
-        <div className="bg-card border-2 border-border rounded-3xl p-8 w-full max-w-md shadow-lg">
+        <div className="absolute inset-0 bg-foreground/35 pointer-events-none" />
+        <div className="relative bg-card border-4 border-primary rounded-3xl p-8 w-full max-w-md shadow-2xl">
+
           <h1 className="text-3xl font-extrabold">Quick test ✏️</h1>
           <p className="text-muted-foreground mt-2">24 short questions (8 per subject) matching your grade's HKEAA syllabus.</p>
 
@@ -104,7 +105,7 @@ function TestPage() {
   if (!q) return null;
   return (
     <main className="min-h-screen flex items-center justify-center p-6 relative" style={pageBg}>
-      <div className="absolute inset-0 bg-[oklch(0.97_0.05_80)]/60 pointer-events-none" />
+      <div className="absolute inset-0 bg-foreground/30 pointer-events-none" />
       <div className="w-full max-w-2xl relative">
         <div className="flex items-center justify-between mb-4">
           <div className="text-sm text-muted-foreground">
