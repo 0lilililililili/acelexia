@@ -14,7 +14,9 @@ const Item = z.object({
   answer: z.string(),       // expected spoken answer (lowercase)
   hint: z.string().optional(),
   topic: z.string().optional(),   // syllabus sub-topic, e.g. "percentages", "past tense", "成語"
+  choices: z.array(z.string()).optional(), // multiple-choice options (成語 items): exactly 4
 });
+
 const Schema = z.object({ items: z.array(Item) });
 
 export const generateLevelItems = createServerFn({ method: "POST" })
