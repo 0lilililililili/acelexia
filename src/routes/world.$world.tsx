@@ -70,7 +70,7 @@ function WorldPage() {
             params={{ grade, world, subject: t.key }}
             className="bg-card border-4 border-white/70 rounded-3xl p-6 text-center shadow-2xl hover:scale-[1.03] transition"
           >
-            <img src={art.boss} alt="" className="mx-auto w-24 h-24 object-contain" />
+            <img src={towerImg} alt="" loading="lazy" width={768} height={1024} className="mx-auto w-28 h-36 object-contain" />
             <h2 className="text-xl font-extrabold mt-2">{t.label}</h2>
             <p className="text-sm text-muted-foreground mt-1">{grade} {art.label} {t.subject}</p>
             <div className="mt-4 inline-block bg-primary text-primary-foreground rounded-full px-4 py-2 font-bold">Enter tower</div>
