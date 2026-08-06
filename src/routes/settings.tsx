@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { DEFAULT_SETTINGS, emptyState, getState, setState, type Settings } from "@/lib/store";
+import { DEFAULT_SETTINGS, getState, setState, type Settings } from "@/lib/store";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -38,12 +38,14 @@ function SettingsPage() {
   };
 
   const reset = () => {
-    if (!window.confirm("Reset everything? Your tower levels, revision bank and settings will be cleared.")) return;
-    const fresh = emptyState();
-    setState(fresh);
-    setSettings(fresh.settings);
-    window.dispatchEvent(new CustomEvent("progress-updated"));
+    if (!window.confirm("Reset text size and question time limit back to normal?")) return;
+    const fresh = { ...DEFAULT_SETTINGS };
+    setSettings(fresh);
+    setState({ ...getState(), settings: fresh });
+    setSaved(true);
+    setTimeout(() => setSaved(false), 1200);
   };
+
 
   return (
     <main className="min-h-screen px-6 py-8">
@@ -88,27 +90,21 @@ function SettingsPage() {
           </div>
         </section>
 
-        <section className="mt-6 bg-card border-2 border-destructive/40 rounded-3xl p-6 shadow">
+        <section className="mt-6 bg-card border-2 border-border rounded-3xl p-6 shadow">
           <h2 className="text-xl font-extrabold">Reset</h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Clears tower levels, revision bank and settings for this account.
+            Puts text size and question time limit back to normal. Your progress is kept.
           </p>
           <button
             onClick={reset}
-            className="mt-4 rounded-2xl bg-destructive text-destructive-foreground px-6 py-3 font-bold"
+            className="mt-4 rounded-2xl bg-primary text-primary-foreground px-6 py-3 font-bold"
           >
-            Reset my progress
+            Reset text size &amp; time limit
           </button>
         </section>
 
         {saved && <p className="mt-4 text-sm font-semibold text-primary">Saved ✓</p>}
 
-        <Link
-          to="/revision"
-          className="mt-8 inline-block rounded-2xl bg-accent text-accent-foreground px-6 py-3 font-bold"
-        >
-          Open my revision bank →
-        </Link>
       </div>
     </main>
   );
