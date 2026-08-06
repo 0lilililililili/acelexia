@@ -176,20 +176,28 @@ function PlayPage() {
     [subject, art.label],
   );
 
-  const handleResult = useCallback(
-    (t: string) => {
-      setTranscript(t);
+  const submit = useCallback(
+    (text: string, spoken: boolean) => {
       if (!current || phase !== "active") return;
-      if (matches(t, current.answer)) {
+      const choices = current.choices;
+      const value = spoken && choices ? (choiceFromSpeech(text, choices) ?? text) : text;
+      if (matches(value, current.answer)) {
         setPhase("defeat");
         setScore((s) => s + 1);
-        setTimeout(advance, 700);
       } else {
         setFeedback("wrong");
         setTimeout(() => setFeedback("none"), 400);
       }
     },
-    [current, phase, advance],
+    [current, phase],
+  );
+
+  const handleResult = useCallback(
+    (t: string) => {
+      setTranscript(t);
+      submit(t, true);
+    },
+    [submit],
   );
 
   const { listening, supported, start } = useSpeech({ lang, onResult: handleResult });
@@ -206,9 +214,14 @@ function PlayPage() {
     if (phase !== "active" || tick < timeLimit || !current) return;
     missed(current);
     setPhase("escape");
-    const t = setTimeout(advance, 600);
+  }, [tick, phase, current, timeLimit, missed]);
+
+  // once the boss has left (defeated or escaped), bring in the next question
+  useEffect(() => {
+    if (phase !== "escape" && phase !== "defeat") return;
+    const t = setTimeout(advance, phase === "defeat" ? 700 : 600);
     return () => clearTimeout(t);
-  }, [tick, phase, current, timeLimit, missed, advance]);
+  }, [phase, idx, advance]);
 
   const onSkip = () => {
     if (!current || phase !== "active") return;
@@ -216,8 +229,8 @@ function PlayPage() {
     setSkipped((s) => new Set(s).add(current.prompt));
     missed(current);
     setPhase("escape");
-    setTimeout(advance, 600);
   };
+
 
   const canSkip = current ? !skipped.has(current.prompt) && phase === "active" : false;
   const finished = !isLoading && items.length > 0 && idx >= items.length;
