@@ -67,9 +67,10 @@ function TowerPage() {
           const locked = lv > unlockedThrough + 1;
           const cleared = lv <= unlockedThrough;
           return locked ? (
-            <div key={lv} className="aspect-square rounded-xl bg-muted text-muted-foreground flex items-center justify-center font-bold text-sm">
-              🔒
+            <div key={lv} title="Locked" className="aspect-square rounded-xl bg-muted text-muted-foreground flex items-center justify-center">
+              <Lock size={16} aria-hidden />
             </div>
+
           ) : (
             <Link
               key={lv}
@@ -80,7 +81,7 @@ function TowerPage() {
               }`}
             >
               <span className="text-base">{lv}</span>
-              {cleared && <span className="text-[10px]">⭐</span>}
+              {cleared && <Star size={12} className="fill-current" aria-hidden />}
             </Link>
           );
         })}
