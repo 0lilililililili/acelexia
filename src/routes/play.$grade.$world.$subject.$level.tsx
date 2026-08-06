@@ -314,7 +314,7 @@ function PlayPage() {
           <div className="text-xs opacity-90 uppercase tracking-wider">{art.label} • {subject.toUpperCase()} • {grade}</div>
           <div className="font-extrabold">Level {level} • Score {score}</div>
         </div>
-        <Link to="/settings" className="font-bold">Settings</Link>
+        <Link to="/settings" aria-label="Settings" title="Settings" className="font-bold"><Gear size={22} aria-hidden /></Link>
       </header>
 
       {/* Boss enters from the left and waits in the middle */}
