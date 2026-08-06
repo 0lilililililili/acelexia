@@ -1,5 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Settings as Gear } from "lucide-react";
+
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { generateLevelItems } from "@/lib/qb.functions";
@@ -19,7 +21,23 @@ const SUBJECT_LANG: Record<string, "en-US" | "zh-HK"> = {
 };
 
 
-type Item = { prompt: string; answer: string; hint?: string; topic?: string };
+type Item = { prompt: string; answer: string; hint?: string; topic?: string; choices?: string[] };
+
+const LETTERS = ["a", "b", "c", "d"];
+
+/** For multiple-choice items, map a spoken "a" / "letter b" / "option c" to the choice text. */
+function choiceFromSpeech(transcript: string, choices: string[]): string | null {
+  for (const alt of transcript.split("|")) {
+    const raw = alt.toLowerCase().trim();
+    const m = raw.match(/^(?:option\s+|letter\s+|answer\s+)?([abcd])[.)]?$/);
+    if (m) {
+      const i = LETTERS.indexOf(m[1]);
+      if (choices[i]) return choices[i];
+    }
+  }
+  return null;
+}
+
 
 const NUM_WORDS: Record<string, string> = {
   zero: "0", oh: "0",
@@ -160,20 +178,28 @@ function PlayPage() {
     [subject, art.label],
   );
 
-  const handleResult = useCallback(
-    (t: string) => {
-      setTranscript(t);
+  const submit = useCallback(
+    (text: string, spoken: boolean) => {
       if (!current || phase !== "active") return;
-      if (matches(t, current.answer)) {
+      const choices = current.choices;
+      const value = spoken && choices ? (choiceFromSpeech(text, choices) ?? text) : text;
+      if (matches(value, current.answer)) {
         setPhase("defeat");
         setScore((s) => s + 1);
-        setTimeout(advance, 700);
       } else {
         setFeedback("wrong");
         setTimeout(() => setFeedback("none"), 400);
       }
     },
-    [current, phase, advance],
+    [current, phase],
+  );
+
+  const handleResult = useCallback(
+    (t: string) => {
+      setTranscript(t);
+      submit(t, true);
+    },
+    [submit],
   );
 
   const { listening, supported, start } = useSpeech({ lang, onResult: handleResult });
@@ -190,9 +216,14 @@ function PlayPage() {
     if (phase !== "active" || tick < timeLimit || !current) return;
     missed(current);
     setPhase("escape");
-    const t = setTimeout(advance, 600);
+  }, [tick, phase, current, timeLimit, missed]);
+
+  // once the boss has left (defeated or escaped), bring in the next question
+  useEffect(() => {
+    if (phase !== "escape" && phase !== "defeat") return;
+    const t = setTimeout(advance, phase === "defeat" ? 700 : 600);
     return () => clearTimeout(t);
-  }, [tick, phase, current, timeLimit, missed, advance]);
+  }, [phase, idx, advance]);
 
   const onSkip = () => {
     if (!current || phase !== "active") return;
@@ -200,8 +231,8 @@ function PlayPage() {
     setSkipped((s) => new Set(s).add(current.prompt));
     missed(current);
     setPhase("escape");
-    setTimeout(advance, 600);
   };
+
 
   const canSkip = current ? !skipped.has(current.prompt) && phase === "active" : false;
   const finished = !isLoading && items.length > 0 && idx >= items.length;
@@ -285,7 +316,7 @@ function PlayPage() {
           <div className="text-xs opacity-90 uppercase tracking-wider">{art.label} • {subject.toUpperCase()} • {grade}</div>
           <div className="font-extrabold">Level {level} • Score {score}</div>
         </div>
-        <Link to="/settings" className="font-bold">Settings</Link>
+        <Link to="/settings" aria-label="Settings" title="Settings" className="font-bold"><Gear size={22} aria-hidden /></Link>
       </header>
 
       {/* Boss enters from the left and waits in the middle */}
@@ -311,10 +342,24 @@ function PlayPage() {
                 }}
                 aria-hidden
               />
-              <div className="relative bg-card border-4 border-foreground/80 rounded-2xl px-6 py-3 shadow-2xl">
-                <div className="text-4xl sm:text-5xl font-extrabold tracking-wide text-center">
+              <div className="relative bg-card border-4 border-foreground/80 rounded-2xl px-6 py-3 shadow-2xl max-w-[92vw]">
+                <div className="text-3xl sm:text-4xl font-extrabold tracking-wide text-center">
                   {current.prompt}
                 </div>
+                {current.choices && current.choices.length > 0 && (
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    {current.choices.slice(0, 4).map((c, i) => (
+                      <button
+                        key={i}
+                        onClick={() => submit(c, false)}
+                        disabled={phase !== "active"}
+                        className="rounded-xl border-2 border-border bg-background hover:border-primary px-3 py-2 text-lg font-bold text-left disabled:opacity-50"
+                      >
+                        <span className="text-primary mr-2 uppercase">{LETTERS[i]}.</span>{c}
+                      </button>
+                    ))}
+                  </div>
+                )}
                 <div className="mt-2 h-2 rounded-full bg-muted overflow-hidden">
                   <div
                     className="h-full bg-primary transition-[width] duration-100"
@@ -325,6 +370,7 @@ function PlayPage() {
                   {Math.ceil(remaining)}s
                 </div>
               </div>
+
             </div>
           </div>
         )}

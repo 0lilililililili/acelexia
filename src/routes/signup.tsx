@@ -7,9 +7,9 @@ import pirateMap from "@/assets/pirate-map.jpg";
 export const Route = createFileRoute("/signup")({
   head: () => ({
     meta: [
-      { title: "Create your WordQuest account" },
-      { name: "description", content: "Sign up to save your tower progress, revision bank and settings in WordQuest." },
-      { property: "og:title", content: "Create your WordQuest account" },
+      { title: "Create your Acalexia account" },
+      { name: "description", content: "Sign up to save your tower progress, revision bank and settings in Acalexia." },
+      { property: "og:title", content: "Create your Acalexia account" },
       { property: "og:description", content: "Save your progress across every world and tower." },
     ],
   }),

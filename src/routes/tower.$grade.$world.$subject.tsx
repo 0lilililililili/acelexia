@@ -1,7 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { Lock, Star } from "lucide-react";
 import { getCleared } from "@/lib/progress";
 import { WORLD_ART, mutedBgStyle } from "@/lib/world-art";
+import towerImg from "@/assets/tower.png";
+
 
 export const Route = createFileRoute("/tower/$grade/$world/$subject")({
   component: TowerPage,
@@ -38,11 +41,13 @@ function TowerPage() {
       <Link to="/world/$world" params={{ world }} className="text-primary font-semibold">← Back to {world}</Link>
 
       <header className="mt-4 mb-6 text-center">
+        <img src={towerImg} alt="" width={768} height={1024} className="mx-auto w-32 h-40 object-contain drop-shadow-xl" />
         <h1 className="text-3xl font-extrabold">
           {grade}{world.charAt(0).toUpperCase() + world.slice(1)}{subject.toUpperCase()}
         </h1>
         <p className="text-muted-foreground">{SUBJECT_LABEL[subject] ?? subject} tower • 500 levels</p>
       </header>
+
 
       <div className="flex justify-center gap-2 mb-6 flex-wrap">
         {Array.from({ length: pages }, (_, i) => (
@@ -62,9 +67,10 @@ function TowerPage() {
           const locked = lv > unlockedThrough + 1;
           const cleared = lv <= unlockedThrough;
           return locked ? (
-            <div key={lv} className="aspect-square rounded-xl bg-muted text-muted-foreground flex items-center justify-center font-bold text-sm">
-              🔒
+            <div key={lv} title="Locked" className="aspect-square rounded-xl bg-muted text-muted-foreground flex items-center justify-center">
+              <Lock size={16} aria-hidden />
             </div>
+
           ) : (
             <Link
               key={lv}
@@ -75,7 +81,7 @@ function TowerPage() {
               }`}
             >
               <span className="text-base">{lv}</span>
-              {cleared && <span className="text-[10px]">⭐</span>}
+              {cleared && <Star size={12} className="fill-current" aria-hidden />}
             </Link>
           );
         })}

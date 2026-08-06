@@ -5,9 +5,9 @@ import { getState, setState, type State } from "@/lib/store";
 export const Route = createFileRoute("/revision")({
   head: () => ({
     meta: [
-      { title: "Revision bank — WordQuest" },
+      { title: "Revision bank — Acalexia" },
       { name: "description", content: "Every question you missed, grouped by subject and topic, ready to practise again." },
-      { property: "og:title", content: "Revision bank — WordQuest" },
+      { property: "og:title", content: "Revision bank — Acalexia" },
       { property: "og:description", content: "Practise the questions you missed, grouped by topic." },
     ],
   }),
