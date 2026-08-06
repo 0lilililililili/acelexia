@@ -340,10 +340,24 @@ function PlayPage() {
                 }}
                 aria-hidden
               />
-              <div className="relative bg-card border-4 border-foreground/80 rounded-2xl px-6 py-3 shadow-2xl">
-                <div className="text-4xl sm:text-5xl font-extrabold tracking-wide text-center">
+              <div className="relative bg-card border-4 border-foreground/80 rounded-2xl px-6 py-3 shadow-2xl max-w-[92vw]">
+                <div className="text-3xl sm:text-4xl font-extrabold tracking-wide text-center">
                   {current.prompt}
                 </div>
+                {current.choices && current.choices.length > 0 && (
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    {current.choices.slice(0, 4).map((c, i) => (
+                      <button
+                        key={i}
+                        onClick={() => submit(c, false)}
+                        disabled={phase !== "active"}
+                        className="rounded-xl border-2 border-border bg-background hover:border-primary px-3 py-2 text-lg font-bold text-left disabled:opacity-50"
+                      >
+                        <span className="text-primary mr-2 uppercase">{LETTERS[i]}.</span>{c}
+                      </button>
+                    ))}
+                  </div>
+                )}
                 <div className="mt-2 h-2 rounded-full bg-muted overflow-hidden">
                   <div
                     className="h-full bg-primary transition-[width] duration-100"
@@ -354,6 +368,7 @@ function PlayPage() {
                   {Math.ceil(remaining)}s
                 </div>
               </div>
+
             </div>
           </div>
         )}
