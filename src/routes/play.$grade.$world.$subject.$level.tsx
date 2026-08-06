@@ -19,7 +19,23 @@ const SUBJECT_LANG: Record<string, "en-US" | "zh-HK"> = {
 };
 
 
-type Item = { prompt: string; answer: string; hint?: string; topic?: string };
+type Item = { prompt: string; answer: string; hint?: string; topic?: string; choices?: string[] };
+
+const LETTERS = ["a", "b", "c", "d"];
+
+/** For multiple-choice items, map a spoken "a" / "letter b" / "option c" to the choice text. */
+function choiceFromSpeech(transcript: string, choices: string[]): string | null {
+  for (const alt of transcript.split("|")) {
+    const raw = alt.toLowerCase().trim();
+    const m = raw.match(/^(?:option\s+|letter\s+|answer\s+)?([abcd])[.)]?$/);
+    if (m) {
+      const i = LETTERS.indexOf(m[1]);
+      if (choices[i]) return choices[i];
+    }
+  }
+  return null;
+}
+
 
 const NUM_WORDS: Record<string, string> = {
   zero: "0", oh: "0",
