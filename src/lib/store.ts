@@ -116,9 +116,11 @@ export function setState(next: State, { sync = true } = {}) {
             onboarded: next.onboarded,
             towers: next.towers,
             revision: next.revision,
+            wallet: next.wallet,
             settings: { fontScale: next.settings.fontScale, timeLimit: next.settings.timeLimit },
           },
         });
+
       } catch (e) {
         console.error("progress sync failed", e);
       }
