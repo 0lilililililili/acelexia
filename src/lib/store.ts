@@ -85,8 +85,10 @@ export function getState(): State {
     return {
       ...emptyState(),
       ...parsed,
+      wallet: normalizeWallet(parsed.wallet),
       settings: { ...DEFAULT_SETTINGS, ...(parsed.settings ?? {}) },
     };
+
   } catch {
     return emptyState();
   }
