@@ -56,6 +56,7 @@ export type Database = {
           updated_at: string
           user_id: string
           username: string
+          wallet: Json
         }
         Insert: {
           created_at?: string
@@ -68,6 +69,7 @@ export type Database = {
           updated_at?: string
           user_id: string
           username: string
+          wallet?: Json
         }
         Update: {
           created_at?: string
@@ -80,6 +82,7 @@ export type Database = {
           updated_at?: string
           user_id?: string
           username?: string
+          wallet?: Json
         }
         Relationships: [
           {
