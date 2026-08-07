@@ -16,6 +16,7 @@ import { Route as GameRouteImport } from './routes/game'
 import { Route as Home2RouteImport } from './routes/home2'
 import { Route as InputDataRouteImport } from './routes/input-data'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as RequizRouteImport } from './routes/requiz'
 import { Route as ResultRouteImport } from './routes/result'
 import { Route as RevisionRouteImport } from './routes/revision'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -63,6 +64,11 @@ const InputDataRoute = InputDataRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RequizRoute = RequizRouteImport.update({
+  id: '/requiz',
+  path: '/requiz',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResultRoute = ResultRouteImport.update({
@@ -140,6 +146,7 @@ export interface FileRoutesByFullPath {
   '/home2': typeof Home2Route
   '/input-data': typeof InputDataRoute
   '/login': typeof LoginRoute
+  '/requiz': typeof RequizRoute
   '/result': typeof ResultRoute
   '/revision': typeof RevisionRoute
   '/settings': typeof SettingsRoute
@@ -161,6 +168,7 @@ export interface FileRoutesByTo {
   '/home2': typeof Home2Route
   '/input-data': typeof InputDataRoute
   '/login': typeof LoginRoute
+  '/requiz': typeof RequizRoute
   '/result': typeof ResultRoute
   '/revision': typeof RevisionRoute
   '/settings': typeof SettingsRoute
@@ -184,6 +192,7 @@ export interface FileRoutesById {
   '/home2': typeof Home2Route
   '/input-data': typeof InputDataRoute
   '/login': typeof LoginRoute
+  '/requiz': typeof RequizRoute
   '/result': typeof ResultRoute
   '/revision': typeof RevisionRoute
   '/settings': typeof SettingsRoute
@@ -208,6 +217,7 @@ export interface FileRouteTypes {
     | '/home2'
     | '/input-data'
     | '/login'
+    | '/requiz'
     | '/result'
     | '/revision'
     | '/settings'
@@ -229,6 +239,7 @@ export interface FileRouteTypes {
     | '/home2'
     | '/input-data'
     | '/login'
+    | '/requiz'
     | '/result'
     | '/revision'
     | '/settings'
@@ -251,6 +262,7 @@ export interface FileRouteTypes {
     | '/home2'
     | '/input-data'
     | '/login'
+    | '/requiz'
     | '/result'
     | '/revision'
     | '/settings'
@@ -274,6 +286,7 @@ export interface RootRouteChildren {
   Home2Route: typeof Home2Route
   InputDataRoute: typeof InputDataRoute
   LoginRoute: typeof LoginRoute
+  RequizRoute: typeof RequizRoute
   ResultRoute: typeof ResultRoute
   RevisionRoute: typeof RevisionRoute
   SettingsRoute: typeof SettingsRoute
@@ -335,6 +348,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/requiz': {
+      id: '/requiz'
+      path: '/requiz'
+      fullPath: '/requiz'
+      preLoaderRoute: typeof RequizRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/result': {
@@ -453,6 +473,7 @@ const rootRouteChildren: RootRouteChildren = {
   Home2Route: Home2Route,
   InputDataRoute: InputDataRoute,
   LoginRoute: LoginRoute,
+  RequizRoute: RequizRoute,
   ResultRoute: ResultRoute,
   RevisionRoute: RevisionRoute,
   SettingsRoute: SettingsRoute,
