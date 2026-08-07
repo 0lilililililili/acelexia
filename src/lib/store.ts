@@ -150,3 +150,57 @@ export function addRevisionItem(subject: string, item: RevisionItem) {
     return { ...s, revision: { ...s.revision, [subject]: subj } };
   });
 }
+
+/* ---------------- wallet helpers ---------------- */
+
+export function addStars(color: StarColor, n: number) {
+  updateState((s) => ({
+    ...s,
+    wallet: { ...s.wallet, stars: { ...s.wallet.stars, [color]: (s.wallet.stars[color] ?? 0) + n } },
+  }));
+}
+
+export function spendStars(color: StarColor, n: number): boolean {
+  const s = getState();
+  if ((s.wallet.stars[color] ?? 0) < n) return false;
+  setState({
+    ...s,
+    wallet: { ...s.wallet, stars: { ...s.wallet.stars, [color]: s.wallet.stars[color] - n } },
+  });
+  return true;
+}
+
+export function grantItem(key: ItemKey, n = 1) {
+  updateState((s) => ({
+    ...s,
+    wallet: { ...s.wallet, items: { ...s.wallet.items, [key]: (s.wallet.items[key] ?? 0) + n } },
+  }));
+}
+
+export function consumeItem(key: ItemKey): boolean {
+  const s = getState();
+  if ((s.wallet.items[key] ?? 0) < 1) return false;
+  setState({
+    ...s,
+    wallet: { ...s.wallet, items: { ...s.wallet.items, [key]: s.wallet.items[key] - 1 } },
+  });
+  return true;
+}
+
+export function addExp(n: number) {
+  if (n <= 0) return;
+  updateState((s) => ({ ...s, wallet: { ...s.wallet, exp: (s.wallet.exp ?? 0) + n } }));
+}
+
+/** Records the star rating (1-3) for a finished tower level, keeping the best result. */
+export function recordLevelStars(grade: string, world: string, subject: string, level: number, stars: number) {
+  updateState((s) => {
+    const key = `${towerKey(grade, world, subject)}:${level}`;
+    if ((s.stars[key] ?? 0) >= stars) return s;
+    return { ...s, stars: { ...s.stars, [key]: stars } };
+  });
+}
+
+export function getLevelStars(grade: string, world: string, subject: string, level: number) {
+  return getState().stars[`${towerKey(grade, world, subject)}:${level}`] ?? 0;
+}
