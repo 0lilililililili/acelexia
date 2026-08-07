@@ -1,0 +1,195 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Star } from "lucide-react";
+import { addExp, getState, type State } from "@/lib/store";
+import { useSpeech } from "@/hooks/use-speech";
+import { matches } from "@/lib/answer-match";
+
+export const Route = createFileRoute("/requiz")({
+  head: () => ({
+    meta: [
+      { title: "Re-quiz — Acelexia" },
+      { name: "description", content: "Practise 15 questions from your revision bank. No items allowed — every correct answer earns exp." },
+      { property: "og:title", content: "Re-quiz — Acelexia" },
+      { property: "og:description", content: "Redo the questions you missed and earn exp." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+  component: RequizPage,
+});
+
+const QUIZ_SIZE = 15;
+const LANG: Record<string, "en-US" | "zh-HK"> = { eng: "en-US", chi: "zh-HK", math: "en-US" };
+
+type QuizItem = { subject: string; topic: string; prompt: string; answer: string };
+
+function poolFrom(state: State): QuizItem[] {
+  const out: QuizItem[] = [];
+  for (const [subject, topics] of Object.entries(state.revision ?? {})) {
+    for (const [topic, list] of Object.entries(topics ?? {})) {
+      for (const it of list) out.push({ subject, topic, prompt: it.prompt, answer: it.answer });
+    }
+  }
+  return out;
+}
+
+function shuffle<T>(a: T[]): T[] {
+  const arr = [...a];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function RequizPage() {
+  const [pool, setPool] = useState<QuizItem[] | null>(null);
+  const [round, setRound] = useState(0);
+  const [idx, setIdx] = useState(0);
+  const [score, setScore] = useState(0);
+  const [transcript, setTranscript] = useState("");
+  const [wrongFlash, setWrongFlash] = useState(false);
+  const [typed, setTyped] = useState("");
+  const answeredRef = useRef(false);
+
+  useEffect(() => setPool(poolFrom(getState())), []);
+
+  const quiz = useMemo(() => (pool ? shuffle(pool).slice(0, QUIZ_SIZE) : []), [pool, round]);
+  const current = quiz[idx];
+  const lang = LANG[current?.subject ?? "eng"] ?? "en-US";
+  const finished = quiz.length > 0 && idx >= quiz.length;
+
+  const next = useCallback(() => {
+    answeredRef.current = false;
+    setTranscript("");
+    setTyped("");
+    setIdx((i) => i + 1);
+  }, []);
+
+  const check = useCallback(
+    (text: string) => {
+      if (!current || answeredRef.current) return;
+      if (matches(text, current.answer)) {
+        answeredRef.current = true;
+        setScore((s) => s + 1);
+        addExp(1);
+        setTimeout(next, 600);
+      } else {
+        setWrongFlash(true);
+        setTimeout(() => setWrongFlash(false), 400);
+      }
+    },
+    [current, next],
+  );
+
+  const handleResult = useCallback(
+    (t: string) => {
+      setTranscript(t);
+      check(t);
+    },
+    [check],
+  );
+
+  const { listening, supported, start } = useSpeech({ lang, onResult: handleResult });
+
+  if (pool && pool.length === 0) {
+    return (
+      <main className="min-h-screen grid place-items-center p-6 text-center">
+        <div>
+          <h1 className="text-3xl font-extrabold">Nothing to re-quiz yet</h1>
+          <p className="text-muted-foreground mt-2">Missed questions land in your revision bank automatically.</p>
+          <Link to="/revision" className="text-primary font-semibold mt-6 inline-block">← Back to revision bank</Link>
+        </div>
+      </main>
+    );
+  }
+
+  if (finished) {
+    return (
+      <main className="min-h-screen grid place-items-center p-6 text-center">
+        <div>
+          <Star size={56} className="mx-auto text-primary fill-current" aria-hidden />
+          <h1 className="text-4xl font-extrabold mt-3">Re-quiz done!</h1>
+          <p className="text-muted-foreground mt-2">You answered {score} / {quiz.length} correctly — +{score} exp.</p>
+          <div className="mt-8 flex gap-3 justify-center flex-wrap">
+            <button
+              onClick={() => { setIdx(0); setScore(0); setRound((r) => r + 1); }}
+              className="rounded-2xl bg-primary text-primary-foreground px-6 py-3 font-bold shadow"
+            >
+              Another 15
+            </button>
+            <Link to="/revision" className="rounded-2xl bg-card border-2 border-border px-6 py-3 font-bold">
+              Revision bank
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className="min-h-screen px-6 py-8 flex flex-col">
+      <div className="max-w-3xl mx-auto w-full flex-1 flex flex-col">
+        <Link to="/revision" className="text-primary font-semibold">← Back to revision bank</Link>
+        <div className="mt-3 flex items-center justify-between">
+          <h1 className="text-3xl font-extrabold">Re-quiz</h1>
+          <span className="font-extrabold">{Math.min(idx + 1, quiz.length)} / {quiz.length} • Score {score}</span>
+        </div>
+        <p className="text-sm text-muted-foreground">No items here — every correct answer gives +1 exp.</p>
+
+        {current && (
+          <div className="mt-8 bg-card border-4 border-foreground/80 rounded-3xl p-8 text-center shadow-2xl">
+            <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              {current.subject.toUpperCase()} • {current.topic}
+            </div>
+            {current.subject === "eng" && !/\s/.test(current.prompt) && (
+              <div className="mt-2 text-sm font-bold text-muted-foreground">Read out loud:</div>
+            )}
+            <div className="text-4xl font-extrabold mt-1">{current.prompt}</div>
+          </div>
+        )}
+
+        {transcript && (
+          <p className={`text-center mt-4 font-semibold ${wrongFlash ? "text-destructive" : ""}`}>
+            You said: "{transcript.split("|")[0]}"
+          </p>
+        )}
+
+        <div className="mt-auto pt-8 flex flex-col items-center gap-4">
+          {supported ? (
+            <button
+              onClick={start}
+              disabled={listening}
+              className={`rounded-full w-24 h-24 bg-primary text-primary-foreground shadow-2xl grid place-items-center ${listening ? "mic-pulse" : "hover:scale-105"}`}
+              aria-label="Speak your answer"
+            >
+              <svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+                <rect x="9" y="2" width="6" height="12" rx="3" fill="currentColor" stroke="none" />
+                <path d="M5 11a7 7 0 0 0 14 0" />
+                <path d="M12 18v3" />
+                <path d="M8 21h8" />
+              </svg>
+            </button>
+          ) : (
+            <form
+              onSubmit={(e) => { e.preventDefault(); check(typed); }}
+              className="flex gap-2 w-full max-w-sm"
+            >
+              <input
+                value={typed}
+                onChange={(e) => setTyped(e.target.value)}
+                placeholder="Type your answer"
+                className="flex-1 rounded-2xl border-2 border-border bg-background px-4 py-3 font-bold"
+              />
+              <button className="rounded-2xl bg-primary text-primary-foreground px-5 py-3 font-bold">Check</button>
+            </form>
+          )}
+          <button onClick={next} className="text-sm font-bold text-muted-foreground hover:text-foreground">
+            Next question →
+          </button>
+        </div>
+      </div>
+    </main>
+  );
+}
