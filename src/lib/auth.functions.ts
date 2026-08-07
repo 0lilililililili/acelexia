@@ -22,8 +22,10 @@ export type ProgressSnapshot = {
   onboarded: boolean;
   towers: Record<string, number>;
   revision: Record<string, Record<string, RevisionItem[]>>;
+  wallet: Record<string, unknown>;
   settings: Record<string, string | number | boolean>;
 };
+
 
 async function hash(password: string, salt: string) {
   const enc = new TextEncoder();
