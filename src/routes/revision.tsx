@@ -41,8 +41,18 @@ function RevisionPage() {
     <main className="min-h-screen px-6 py-8">
       <div className="max-w-3xl mx-auto">
         <Link to="/game" className="text-primary font-semibold">← Back to map</Link>
-        <h1 className="text-4xl font-extrabold mt-3">Revision bank</h1>
-        <p className="text-muted-foreground mt-1">Questions you missed, grouped by subject and topic.</p>
+        <div className="mt-3 flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <h1 className="text-4xl font-extrabold">Revision bank</h1>
+            <p className="text-muted-foreground mt-1">Questions you missed, grouped by subject and topic.</p>
+          </div>
+          {subjects.length > 0 && (
+            <Link to="/requiz" className="rounded-2xl bg-primary text-primary-foreground px-6 py-3 font-bold shadow">
+              Re-quiz (15 questions)
+            </Link>
+          )}
+        </div>
+
 
         {subjects.length === 0 ? (
           <div className="mt-10 bg-card border-2 border-border rounded-3xl p-10 text-center">

@@ -1,14 +1,28 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Settings as Gear } from "lucide-react";
+import { Settings as Gear, Star, Check, X, Lock } from "lucide-react";
 
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { generateLevelItems } from "@/lib/qb.functions";
 import { useSpeech } from "@/hooks/use-speech";
 import { markCleared } from "@/lib/progress";
-import { addRevisionItem, DEFAULT_SETTINGS, getState } from "@/lib/store";
+import {
+  addExp,
+  addRevisionItem,
+  addStars,
+  consumeItem,
+  DEFAULT_SETTINGS,
+  getState,
+  recordLevelStars,
+  type ItemKey,
+} from "@/lib/store";
 import { WORLD_ART, mutedBgStyle } from "@/lib/world-art";
+import { LETTERS, choiceFromSpeech, matches, parseCommand } from "@/lib/answer-match";
+import { playerLv, requiredLv, starsForWrong, worldStarColor, STAR_HEX } from "@/lib/leveling";
+import hourglassImg from "@/assets/icon-hourglass.png";
+import potionImg from "@/assets/icon-potion.png";
+import torchImg from "@/assets/icon-torch.png";
 
 export const Route = createFileRoute("/play/$grade/$world/$subject/$level")({
   component: PlayPage,
@@ -20,97 +34,34 @@ const SUBJECT_LANG: Record<string, "en-US" | "zh-HK"> = {
   math: "en-US",
 };
 
-
 type Item = { prompt: string; answer: string; hint?: string; topic?: string; choices?: string[] };
 
-const LETTERS = ["a", "b", "c", "d"];
-
-/** For multiple-choice items, map a spoken "a" / "letter b" / "option c" to the choice text. */
-function choiceFromSpeech(transcript: string, choices: string[]): string | null {
-  for (const alt of transcript.split("|")) {
-    const raw = alt.toLowerCase().trim();
-    const m = raw.match(/^(?:option\s+|letter\s+|answer\s+)?([abcd])[.)]?$/);
-    if (m) {
-      const i = LETTERS.indexOf(m[1]);
-      if (choices[i]) return choices[i];
-    }
-  }
-  return null;
-}
-
-
-const NUM_WORDS: Record<string, string> = {
-  zero: "0", oh: "0",
-  one: "1", two: "2", three: "3", four: "4", five: "5",
-  six: "6", seven: "7", eight: "8", nine: "9", ten: "10",
-  eleven: "11", twelve: "12", thirteen: "13", fourteen: "14", fifteen: "15",
-  sixteen: "16", seventeen: "17", eighteen: "18", nineteen: "19", twenty: "20",
-  thirty: "30", forty: "40", fifty: "50", sixty: "60", seventy: "70", eighty: "80", ninety: "90",
-  hundred: "100", thousand: "1000",
-  half: "1/2", halves: "1/2",
-  third: "1/3", thirds: "1/3",
-  quarter: "1/4", quarters: "1/4", fourth: "1/4", fourths: "1/4",
-  fifth: "1/5", fifths: "1/5", sixth: "1/6", sixths: "1/6",
-  seventh: "1/7", sevenths: "1/7", eighth: "1/8", eighths: "1/8",
-  ninth: "1/9", ninths: "1/9", tenth: "1/10", tenths: "1/10",
-};
-
-function wordsToFraction(s: string): string | null {
-  // "two over three", "two thirds", "two out of three", "two divided by three"
-  const t = s.toLowerCase().trim();
-  const overMatch = t.match(/^([a-z]+)\s+(?:over|out of|divided by|on)\s+([a-z0-9]+)$/);
-  if (overMatch) {
-    const n = NUM_WORDS[overMatch[1]] ?? overMatch[1];
-    const d = NUM_WORDS[overMatch[2]] ?? overMatch[2];
-    if (/^\d+$/.test(n) && /^\d+$/.test(d)) return `${n}/${d}`;
-  }
-  const thirdsMatch = t.match(/^([a-z]+)\s+([a-z]+)$/);
-  if (thirdsMatch) {
-    const n = NUM_WORDS[thirdsMatch[1]];
-    const dWord = NUM_WORDS[thirdsMatch[2]];
-    if (n && dWord && dWord.startsWith("1/")) {
-      return `${n}${dWord.slice(1)}`; // "two" + "/3" → "2/3"
-    }
-  }
-  return null;
-}
-
-function normalize(s: string) {
-  return s.toLowerCase().replace(/[^\p{Letter}\p{Number}]/gu, "");
-}
-
-function matches(transcript: string, answer: string) {
-  const a = normalize(answer);
-  if (!a) return false;
-  const answerIsFraction = /^\d+\/\d+$/.test(answer.trim());
-  return transcript.split("|").some((alt) => {
-    const raw = alt.toLowerCase().trim();
-    const n = normalize(raw);
-    if (!n) return false;
-    if (n === a) return true;
-    // exact word match against any token in transcript (avoids "bee" ⊂ "beach")
-    const tokens = raw.split(/[^\p{Letter}\p{Number}]+/u).filter(Boolean);
-    if (tokens.some((tok) => normalize(tok) === a)) return true;
-    // fraction: "two over three" / "two thirds" → "2/3"
-    if (answerIsFraction) {
-      const frac = wordsToFraction(raw);
-      if (frac && frac === answer.trim()) return true;
-    }
-    // long answers: allow containment either direction (min length 4)
-    if (a.length >= 4 && (n.includes(a) || a.includes(n))) return true;
-    return false;
-  });
-}
+const GLASS_SECONDS: Record<"A" | "B" | "C", number> = { A: 15, B: 20, C: 25 };
+const GLASS_KEY: Record<"A" | "B" | "C", ItemKey> = { A: "glassA", B: "glassB", C: "glassC" };
+const QUESTIONS_PER_LEVEL = 8;
 
 function PlayPage() {
   const { grade, world, subject, level } = Route.useParams();
   const nav = useNavigate();
   const art = WORLD_ART[world] ?? WORLD_ART.forest;
   const lang = SUBJECT_LANG[subject] ?? "en-US";
+  const levelNum = Math.min(500, Math.max(1, parseInt(level, 10) || 1));
 
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
-  useEffect(() => setSettings(getState().settings), []);
-  const timeLimit = settings.timeLimit;
+  const [wallet, setWallet] = useState(() => getState().wallet);
+  useEffect(() => {
+    const sync = () => {
+      setSettings(getState().settings);
+      setWallet(getState().wallet);
+    };
+    sync();
+    window.addEventListener("wq-updated", sync);
+    return () => window.removeEventListener("wq-updated", sync);
+  }, []);
+
+  const lv = playerLv(wallet.exp);
+  const needLv = requiredLv(levelNum);
+  const lvLocked = lv < needLv;
 
   const generate = useServerFn(generateLevelItems);
   const { data, isLoading, error } = useQuery({
@@ -121,40 +72,66 @@ function PlayPage() {
           subject: subject as "chi" | "eng" | "math",
           grade,
           theme: art.label,
-          level: Math.min(500, Math.max(1, parseInt(level, 10) || 1)),
-          count: 8,
+          level: levelNum,
+          count: 14, // 8 for the level + spares for POTION swaps
         },
       }),
     staleTime: Infinity,
+    enabled: !lvLocked,
   });
 
-  const items: Item[] = data?.items ?? [];
+  const [queue, setQueue] = useState<Item[]>([]);
+  const [spares, setSpares] = useState<Item[]>([]);
   const [idx, setIdx] = useState(0);
-  const [score, setScore] = useState(0);
-  const [phase, setPhase] = useState<"enter" | "active" | "defeat" | "escape">("enter");
-  const [skipped, setSkipped] = useState<Set<string>>(new Set());
+  const [correct, setCorrect] = useState(0);
+  const [wrong, setWrong] = useState(0);
+  const [phase, setPhase] = useState<"enter" | "active" | "defeat" | "escape" | "back" | "offer">("enter");
   const [transcript, setTranscript] = useState("");
   const [tick, setTick] = useState(0);
+  const [bonus, setBonus] = useState(0);
+  const [usedItem, setUsedItem] = useState(false);
+  const [offered, setOffered] = useState(false);
+  const [buffetUntil, setBuffetUntil] = useState(0);
   const [feedback, setFeedback] = useState<"none" | "wrong">("none");
+  const [note, setNote] = useState<string | null>(null);
   const itemKeyRef = useRef(0);
+  const awardedRef = useRef<string | null>(null);
 
-  const current = items[idx];
+  const current = queue[idx];
+  const timeLimit = settings.timeLimit + bonus;
 
-  // Reset progress whenever the level (or its content) changes
+  const flash = (t: string) => {
+    setNote(t);
+    setTimeout(() => setNote(null), 1600);
+  };
+
+  // Load / reset the level whenever the route or the generated items change
   useEffect(() => {
+    const all = data?.items ?? [];
+    setQueue(all.slice(0, QUESTIONS_PER_LEVEL));
+    setSpares(all.slice(QUESTIONS_PER_LEVEL));
     setIdx(0);
-    setScore(0);
-    setSkipped(new Set());
+    setCorrect(0);
+    setWrong(0);
     setPhase("enter");
     setTranscript("");
     setTick(0);
+    setBonus(0);
+    setUsedItem(false);
+    setOffered(false);
+    setBuffetUntil(0);
+    awardedRef.current = null;
     itemKeyRef.current++;
-  }, [level, subject, world, grade]);
+  }, [data, level, subject, world, grade]);
 
   const advance = useCallback(() => {
     itemKeyRef.current++;
     setTranscript("");
     setTick(0);
+    setBonus(0);
+    setUsedItem(false);
+    setOffered(false);
+    setBuffetUntil(0);
     setPhase("enter");
     setIdx((i) => i + 1);
   }, []);
@@ -164,9 +141,9 @@ function PlayPage() {
     if (phase !== "enter") return;
     const t = setTimeout(() => setPhase("active"), 700);
     return () => clearTimeout(t);
-  }, [phase, idx]);
+  }, [phase, idx, itemKeyRef.current]);
 
-  const missed = useCallback(
+  const toRevision = useCallback(
     (item: Item) => {
       addRevisionItem(subject, {
         prompt: item.prompt,
@@ -178,6 +155,83 @@ function PlayPage() {
     [subject, art.label],
   );
 
+  /** Swap the current question for a fresh spare (POTION). */
+  const swapQuestion = useCallback(() => {
+    if (!current) return;
+    toRevision(current);
+    const spare = spares[0];
+    setSpares((s) => s.slice(1));
+    setPhase("back");
+    setTimeout(() => {
+      setQueue((q) => {
+        const next = [...q];
+        next[idx] = spare ?? { prompt: current.prompt, answer: current.answer, topic: current.topic };
+        return next;
+      });
+      itemKeyRef.current++;
+      setTick(0);
+      setTranscript("");
+      setPhase("enter");
+    }, 620);
+  }, [current, spares, idx, toRevision]);
+
+  const useTorch = useCallback(() => {
+    if (!consumeItem("torch")) {
+      flash("You don't own a PASS torch.");
+      return;
+    }
+    if (current) toRevision(current);
+    setUsedItem(true);
+    setCorrect((c) => c + 1);
+    setPhase("defeat");
+    flash("PASS used — question passed!");
+  }, [current, toRevision]);
+
+  const usePotion = useCallback(
+    (which: "A" | "B") => {
+      const buffetActive = Date.now() < buffetUntil;
+      if (buffetActive) {
+        swapQuestion();
+        return;
+      }
+      const key: ItemKey = which === "A" ? "potionA" : "potionB";
+      if (!consumeItem(key)) {
+        flash(`You don't own POTION ${which}.`);
+        return;
+      }
+      setUsedItem(true);
+      if (which === "B") {
+        setBuffetUntil(Date.now() + 7000);
+        flash("POTION B — change questions freely for 7s!");
+      } else {
+        flash("POTION A — question changed!");
+      }
+      swapQuestion();
+    },
+    [buffetUntil, swapQuestion],
+  );
+
+  const useGlass = useCallback(
+    (which: "A" | "B" | "C") => {
+      if (!consumeItem(GLASS_KEY[which])) {
+        flash(`You don't own HOUR-GLASS ${which}.`);
+        return;
+      }
+      if (current) toRevision(current);
+      setUsedItem(true);
+      setBonus((b) => b + GLASS_SECONDS[which]);
+      setPhase("active");
+      flash(`HOUR-GLASS ${which} — +${GLASS_SECONDS[which]}s!`);
+    },
+    [current, toRevision],
+  );
+
+  const failQuestion = useCallback(() => {
+    if (current) toRevision(current);
+    setWrong((w) => w + 1);
+    setPhase("escape");
+  }, [current, toRevision]);
+
   const submit = useCallback(
     (text: string, spoken: boolean) => {
       if (!current || phase !== "active") return;
@@ -185,66 +239,100 @@ function PlayPage() {
       const value = spoken && choices ? (choiceFromSpeech(text, choices) ?? text) : text;
       if (matches(value, current.answer)) {
         setPhase("defeat");
-        setScore((s) => s + 1);
+        setCorrect((c) => c + 1);
+        if (!usedItem) addExp(1);
       } else {
         setFeedback("wrong");
         setTimeout(() => setFeedback("none"), 400);
       }
     },
-    [current, phase],
+    [current, phase, usedItem],
   );
+
+  const ownedGlasses = (["A", "B", "C"] as const).filter((w) => (wallet.items[GLASS_KEY[w]] ?? 0) > 0);
 
   const handleResult = useCallback(
     (t: string) => {
       setTranscript(t);
+      const cmd = parseCommand(t);
+      if (phase === "offer") {
+        if (cmd?.kind === "glass") useGlass(cmd.which);
+        else if (cmd?.kind === "yes" && ownedGlasses[0]) useGlass(ownedGlasses[0]);
+        else if (cmd?.kind === "no") failQuestion();
+        return;
+      }
+      const mentionsItem = /item|potion|torch|glass|pass/i.test(t);
+      if (phase === "active" && cmd && mentionsItem) {
+        if (cmd.kind === "potion") return usePotion(cmd.which);
+        if (cmd.kind === "torch") return useTorch();
+        if (cmd.kind === "glass") return flash("HOUR-GLASS only works after the timer runs out.");
+      }
       submit(t, true);
     },
-    [submit],
+    [phase, submit, usePotion, useTorch, useGlass, failQuestion, ownedGlasses],
   );
 
   const { listening, supported, start } = useSpeech({ lang, onResult: handleResult });
 
-  // countdown attached to the question bubble
+  // Countdown attached to the question bubble (paused while the offer is showing)
   useEffect(() => {
     if (phase !== "active") return;
     const id = setInterval(() => setTick((t) => t + 0.1), 100);
     return () => clearInterval(id);
   }, [phase, idx]);
 
-  // time up → boss escapes to the right, question goes to the revision bank
+  // Time up → offer an HOUR-GLASS if owned, otherwise the boss escapes
   useEffect(() => {
     if (phase !== "active" || tick < timeLimit || !current) return;
-    missed(current);
-    setPhase("escape");
-  }, [tick, phase, current, timeLimit, missed]);
+    if (!offered && ownedGlasses.length > 0) {
+      setOffered(true);
+      setPhase("offer");
+      return;
+    }
+    failQuestion();
+  }, [tick, phase, current, timeLimit, offered, ownedGlasses.length, failQuestion]);
 
-  // once the boss has left (defeated or escaped), bring in the next question
+  // Once the boss has left (defeated or escaped), bring in the next question
   useEffect(() => {
     if (phase !== "escape" && phase !== "defeat") return;
     const t = setTimeout(advance, phase === "defeat" ? 700 : 600);
     return () => clearTimeout(t);
   }, [phase, idx, advance]);
 
-  const onSkip = () => {
-    if (!current || phase !== "active") return;
-    if (skipped.has(current.prompt)) return; // can only skip once per word
-    setSkipped((s) => new Set(s).add(current.prompt));
-    missed(current);
-    setPhase("escape");
-  };
-
-
-  const canSkip = current ? !skipped.has(current.prompt) && phase === "active" : false;
-  const finished = !isLoading && items.length > 0 && idx >= items.length;
+  const finished = !isLoading && queue.length > 0 && idx >= queue.length;
+  const starsEarned = starsForWrong(wrong);
+  const passed = starsEarned > 0;
+  const starColor = worldStarColor(world);
 
   useEffect(() => {
-    if (finished) {
-      markCleared(grade, world, subject, parseInt(level, 10) || 1);
+    if (!finished) return;
+    const tag = `${grade}:${world}:${subject}:${level}`;
+    if (awardedRef.current === tag) return;
+    awardedRef.current = tag;
+    if (starsEarned > 0) {
+      markCleared(grade, world, subject, levelNum);
+      recordLevelStars(grade, world, subject, levelNum, starsEarned);
+      addStars(starColor, starsEarned);
     }
-  }, [finished, grade, world, subject, level]);
+  }, [finished, grade, world, subject, level, levelNum, starsEarned, starColor]);
 
   const remaining = Math.max(0, timeLimit - tick);
   const pctLeft = Math.max(0, Math.min(100, (remaining / timeLimit) * 100));
+
+  if (lvLocked) {
+    return (
+      <main className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
+        <Lock size={56} className="text-muted-foreground" aria-hidden />
+        <h1 className="text-3xl font-extrabold mt-4">Not enough Lv</h1>
+        <p className="text-muted-foreground mt-2">
+          Level {levelNum} needs Lv{needLv}. You are Lv{lv} — answer more questions without items to level up.
+        </p>
+        <Link to="/tower/$grade/$world/$subject" params={{ grade, world, subject }} className="text-primary font-semibold mt-6">
+          ← Back to tower
+        </Link>
+      </main>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -273,22 +361,50 @@ function PlayPage() {
   if (finished) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
-        <img src={art.boss} alt="" className="w-32 h-32 object-contain" />
-        <h1 className="text-4xl font-extrabold mt-3">Level {level} cleared!</h1>
-        <p className="text-muted-foreground mt-2">Score: {score} / {items.length}</p>
+        <img src={art.boss} alt="" className={`w-32 h-32 object-contain ${passed ? "" : "grayscale opacity-70"}`} />
+        <h1 className="text-4xl font-extrabold mt-3">
+          {passed ? `Level ${level} cleared!` : `Level ${level} failed`}
+        </h1>
+        <div className="mt-3 flex gap-2 justify-center">
+          {[1, 2, 3].map((n) => (
+            <Star
+              key={n}
+              size={44}
+              aria-hidden
+              style={{
+                color: n <= starsEarned ? STAR_HEX[starColor] : "var(--color-muted-foreground)",
+                fill: n <= starsEarned ? STAR_HEX[starColor] : "transparent",
+              }}
+            />
+          ))}
+        </div>
+        <p className="text-muted-foreground mt-2">
+          Correct {correct} / {queue.length} • Wrong {wrong}
+        </p>
+        <p className="mt-1 font-bold">
+          {passed
+            ? `You earned ${starsEarned} ${starColor} star${starsEarned > 1 ? "s" : ""}!`
+            : "4 or more wrong — try this level again to move on."}
+        </p>
+
         <div className="mt-8 flex gap-3 flex-wrap justify-center">
           <button
-            onClick={() => { setIdx(0); setScore(0); setSkipped(new Set()); setPhase("enter"); setTick(0); }}
+            onClick={() => {
+              setIdx(0); setCorrect(0); setWrong(0); setPhase("enter"); setTick(0);
+              setBonus(0); setUsedItem(false); setOffered(false); awardedRef.current = null;
+            }}
             className="rounded-2xl bg-card border-2 border-border px-6 py-3 font-bold"
           >
             Play again
           </button>
-          <button
-            onClick={() => nav({ to: "/play/$grade/$world/$subject/$level", params: { grade, world, subject, level: String((parseInt(level, 10) || 1) + 1) } })}
-            className="rounded-2xl bg-primary text-primary-foreground px-6 py-3 font-bold shadow"
-          >
-            Next level →
-          </button>
+          {passed && (
+            <button
+              onClick={() => nav({ to: "/play/$grade/$world/$subject/$level", params: { grade, world, subject, level: String(levelNum + 1) } })}
+              className="rounded-2xl bg-primary text-primary-foreground px-6 py-3 font-bold shadow"
+            >
+              Next level →
+            </button>
+          )}
         </div>
         <div className="mt-6 flex gap-4">
           <Link to="/tower/$grade/$world/$subject" params={{ grade, world, subject }} className="text-primary font-semibold">
@@ -301,7 +417,18 @@ function PlayPage() {
   }
 
   const bossAnim =
-    phase === "enter" ? "animate-enter-left" : phase === "escape" ? "animate-exit-right" : phase === "defeat" ? "animate-defeated" : "";
+    phase === "enter"
+      ? "animate-enter-left"
+      : phase === "escape"
+        ? "animate-exit-right"
+        : phase === "back"
+          ? "animate-exit-left"
+          : phase === "defeat"
+            ? "animate-defeated"
+            : "";
+
+  const readAloud = subject === "eng" && !current?.choices && !!current && !/\s/.test(current.prompt);
+  const buffetLeft = Math.max(0, Math.ceil((buffetUntil - Date.now()) / 1000));
 
   return (
     <main
@@ -314,10 +441,18 @@ function PlayPage() {
         <Link to="/tower/$grade/$world/$subject" params={{ grade, world, subject }} className="font-bold">← Exit</Link>
         <div className="text-center">
           <div className="text-xs opacity-90 uppercase tracking-wider">{art.label} • {subject.toUpperCase()} • {grade}</div>
-          <div className="font-extrabold">Level {level} • Score {score}</div>
+          <div className="font-extrabold">Level {level} • Correct {correct} • Wrong {wrong} • Lv{lv}</div>
         </div>
         <Link to="/settings" aria-label="Settings" title="Settings" className="font-bold"><Gear size={22} aria-hidden /></Link>
       </header>
+
+      {/* Item bag */}
+      <div className="relative flex items-center justify-center gap-4 py-2 bg-black/25 text-white text-xs font-bold">
+        <span className="inline-flex items-center gap-1"><img src={hourglassImg} alt="Hour-glass" width={512} height={512} loading="lazy" className="w-6 h-6 object-contain" />{(wallet.items.glassA ?? 0) + (wallet.items.glassB ?? 0) + (wallet.items.glassC ?? 0)}</span>
+        <span className="inline-flex items-center gap-1"><img src={potionImg} alt="Potion" width={512} height={512} loading="lazy" className="w-6 h-6 object-contain" />{(wallet.items.potionA ?? 0) + (wallet.items.potionB ?? 0)}</span>
+        <span className="inline-flex items-center gap-1"><img src={torchImg} alt="Pass torch" width={512} height={512} loading="lazy" className="w-6 h-6 object-contain" />{wallet.items.torch ?? 0}</span>
+        <span className="opacity-80">Say “item potion A/B” or “item torch”</span>
+      </div>
 
       {/* Boss enters from the left and waits in the middle */}
       <div className="relative flex-1">
@@ -325,7 +460,7 @@ function PlayPage() {
           <div
             key={itemKeyRef.current}
             className={`absolute left-1/2 top-1/2 flex flex-col items-center ${bossAnim}`}
-            style={phase === "active" ? { transform: "translate(-50%, -50%)" } : undefined}
+            style={phase === "active" || phase === "offer" ? { transform: "translate(-50%, -50%)" } : undefined}
           >
             <img
               src={art.boss}
@@ -333,57 +468,90 @@ function PlayPage() {
               className={`w-40 h-40 sm:w-48 sm:h-48 object-contain drop-shadow-2xl ${phase === "defeat" ? "grayscale opacity-70" : ""}`}
             />
             <div className="relative mt-2">
-              {/* Countdown ring attached to the question bubble */}
               <div
                 className="absolute -inset-1 rounded-3xl"
-                style={{
-                  background: `conic-gradient(var(--color-primary) ${pctLeft}%, transparent ${pctLeft}%)`,
-                  filter: "blur(0.2px)",
-                }}
+                style={{ background: `conic-gradient(var(--color-primary) ${pctLeft}%, transparent ${pctLeft}%)` }}
                 aria-hidden
               />
               <div className="relative bg-card border-4 border-foreground/80 rounded-2xl px-6 py-3 shadow-2xl max-w-[92vw]">
+                {readAloud && (
+                  <div className="text-sm font-bold text-muted-foreground text-center">Read out loud:</div>
+                )}
                 <div className="text-3xl sm:text-4xl font-extrabold tracking-wide text-center">
                   {current.prompt}
                 </div>
                 {current.choices && current.choices.length > 0 && (
-                  <div className="mt-3 grid grid-cols-2 gap-2">
-                    {current.choices.slice(0, 4).map((c, i) => (
-                      <button
-                        key={i}
-                        onClick={() => submit(c, false)}
-                        disabled={phase !== "active"}
-                        className="rounded-xl border-2 border-border bg-background hover:border-primary px-3 py-2 text-lg font-bold text-left disabled:opacity-50"
-                      >
-                        <span className="text-primary mr-2 uppercase">{LETTERS[i]}.</span>{c}
-                      </button>
-                    ))}
-                  </div>
+                  <>
+                    <div className="mt-3 grid grid-cols-2 gap-2">
+                      {current.choices.slice(0, 4).map((c, i) => (
+                        <button
+                          key={i}
+                          onClick={() => submit(c, false)}
+                          disabled={phase !== "active"}
+                          className="rounded-xl border-2 border-border bg-background hover:border-primary px-3 py-2 text-lg font-bold text-left disabled:opacity-50"
+                        >
+                          <span className="text-primary mr-2 uppercase">{LETTERS[i]}.</span>{c}
+                        </button>
+                      ))}
+                    </div>
+                    <p className="mt-2 text-center text-xs font-semibold text-muted-foreground">
+                      Say the letter: “A”, “B”, “C” or “D”
+                    </p>
+                  </>
                 )}
                 <div className="mt-2 h-2 rounded-full bg-muted overflow-hidden">
-                  <div
-                    className="h-full bg-primary transition-[width] duration-100"
-                    style={{ width: `${pctLeft}%` }}
-                  />
+                  <div className="h-full bg-primary transition-[width] duration-100" style={{ width: `${pctLeft}%` }} />
                 </div>
                 <div className="text-center text-xs font-bold text-muted-foreground mt-1">
-                  {Math.ceil(remaining)}s
+                  {Math.ceil(remaining)}s{buffetLeft > 0 ? ` • POTION B ${buffetLeft}s` : ""}
                 </div>
               </div>
+            </div>
+          </div>
+        )}
 
+        {/* HOUR-GLASS offer once the timer runs out */}
+        {phase === "offer" && (
+          <div className="absolute inset-0 grid place-items-center bg-black/50 p-6">
+            <div className="bg-card border-4 border-border rounded-3xl p-6 text-center max-w-sm shadow-2xl animate-pop">
+              <img src={hourglassImg} alt="" width={512} height={512} loading="lazy" className="w-20 h-20 mx-auto object-contain" />
+              <h2 className="text-2xl font-extrabold mt-2">Use?</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Time is up. Say “yes item glass A/B/C” to add more time.
+              </p>
+              <div className="mt-4 flex justify-center gap-6">
+                <button
+                  onClick={() => ownedGlasses[0] && useGlass(ownedGlasses[0])}
+                  className="grid place-items-center w-16 h-16 rounded-full bg-primary text-primary-foreground shadow"
+                  aria-label="Use hour-glass"
+                >
+                  <Check size={30} aria-hidden />
+                </button>
+                <button
+                  onClick={failQuestion}
+                  className="grid place-items-center w-16 h-16 rounded-full bg-card border-4 border-border shadow"
+                  aria-label="Don't use"
+                >
+                  <X size={30} aria-hidden />
+                </button>
+              </div>
+              <div className="mt-3 text-xs font-bold text-muted-foreground">
+                You own: {ownedGlasses.map((w) => `${w} ×${wallet.items[GLASS_KEY[w]]}`).join("  ") || "none"}
+              </div>
             </div>
           </div>
         )}
       </div>
 
-      {/* Transcript */}
+      {note && <div className="text-center pb-1 font-extrabold text-primary">{note}</div>}
+
       {transcript && (
         <div className={`text-center pb-2 font-semibold ${feedback === "wrong" ? "text-destructive" : "text-foreground"}`}>
           You said: "{transcript.split("|")[0]}"
         </div>
       )}
 
-      {/* Mic + Skip */}
+      {/* Mic */}
       <footer className="px-6 pb-8 pt-4 bg-background/80 backdrop-blur flex items-center justify-center gap-6">
         {!supported ? (
           <div className="text-destructive font-semibold text-center">
@@ -392,16 +560,8 @@ function PlayPage() {
         ) : (
           <>
             <button
-              onClick={onSkip}
-              disabled={!canSkip}
-              className="rounded-2xl bg-card border-2 border-border px-5 py-3 font-bold disabled:opacity-40"
-              title={canSkip ? "Skip this word (once per word)" : "Already skipped"}
-            >
-              Skip
-            </button>
-            <button
               onClick={start}
-              disabled={listening || phase !== "active"}
+              disabled={listening || (phase !== "active" && phase !== "offer")}
               className={`rounded-full w-24 h-24 bg-primary text-primary-foreground text-4xl font-extrabold shadow-2xl flex items-center justify-center ${listening ? "mic-pulse" : "hover:scale-105"}`}
               aria-label="Speak your answer"
             >

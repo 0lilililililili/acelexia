@@ -1,6 +1,7 @@
-// Central client-side store: session, tower progress, revision bank and settings.
+// Central client-side store: session, tower progress, revision bank, wallet and settings.
 // Mirrors everything into the cloud PROGRESS database whenever a user is logged in.
 import type { RevisionItem } from "./auth.functions";
+import type { StarColor } from "./leveling";
 
 export type Settings = {
   fontScale: number; // 1 = normal
@@ -9,11 +10,36 @@ export type Settings = {
 
 export type Session = { userId: string; username: string; isAdmin: boolean };
 
+export type ItemKey = "glassA" | "glassB" | "glassC" | "potionA" | "potionB" | "torch";
+
+export type Wallet = {
+  stars: Record<StarColor, number>;
+  items: Record<ItemKey, number>;
+  exp: number;
+};
+
+export const emptyWallet = (): Wallet => ({
+  stars: { red: 0, blue: 0, green: 0, yellow: 0 },
+  items: { glassA: 0, glassB: 0, glassC: 0, potionA: 0, potionB: 0, torch: 0 },
+  exp: 0,
+});
+
+export function normalizeWallet(w?: Partial<Wallet> | null): Wallet {
+  const base = emptyWallet();
+  return {
+    stars: { ...base.stars, ...(w?.stars ?? {}) },
+    items: { ...base.items, ...(w?.items ?? {}) },
+    exp: Number(w?.exp ?? 0) || 0,
+  };
+}
+
 export type State = {
   grade: string | null;
   onboarded: boolean;
   towers: Record<string, number>; // "grade:world:subject" -> highest cleared level
+  stars: Record<string, number>; // "grade:world:subject:level" -> stars earned (1-3)
   revision: Record<string, Record<string, RevisionItem[]>>; // subject -> topic -> items
+  wallet: Wallet;
   settings: Settings;
 };
 
@@ -26,9 +52,12 @@ export const emptyState = (): State => ({
   grade: null,
   onboarded: false,
   towers: {},
+  stars: {},
   revision: {},
+  wallet: emptyWallet(),
   settings: { ...DEFAULT_SETTINGS },
 });
+
 
 export function getSession(): Session | null {
   if (typeof window === "undefined") return null;
@@ -56,8 +85,10 @@ export function getState(): State {
     return {
       ...emptyState(),
       ...parsed,
+      wallet: normalizeWallet(parsed.wallet),
       settings: { ...DEFAULT_SETTINGS, ...(parsed.settings ?? {}) },
     };
+
   } catch {
     return emptyState();
   }
@@ -85,9 +116,11 @@ export function setState(next: State, { sync = true } = {}) {
             onboarded: next.onboarded,
             towers: next.towers,
             revision: next.revision,
+            wallet: next.wallet,
             settings: { fontScale: next.settings.fontScale, timeLimit: next.settings.timeLimit },
           },
         });
+
       } catch (e) {
         console.error("progress sync failed", e);
       }
@@ -116,4 +149,58 @@ export function addRevisionItem(subject: string, item: RevisionItem) {
     subj[topic] = list;
     return { ...s, revision: { ...s.revision, [subject]: subj } };
   });
+}
+
+/* ---------------- wallet helpers ---------------- */
+
+export function addStars(color: StarColor, n: number) {
+  updateState((s) => ({
+    ...s,
+    wallet: { ...s.wallet, stars: { ...s.wallet.stars, [color]: (s.wallet.stars[color] ?? 0) + n } },
+  }));
+}
+
+export function spendStars(color: StarColor, n: number): boolean {
+  const s = getState();
+  if ((s.wallet.stars[color] ?? 0) < n) return false;
+  setState({
+    ...s,
+    wallet: { ...s.wallet, stars: { ...s.wallet.stars, [color]: s.wallet.stars[color] - n } },
+  });
+  return true;
+}
+
+export function grantItem(key: ItemKey, n = 1) {
+  updateState((s) => ({
+    ...s,
+    wallet: { ...s.wallet, items: { ...s.wallet.items, [key]: (s.wallet.items[key] ?? 0) + n } },
+  }));
+}
+
+export function consumeItem(key: ItemKey): boolean {
+  const s = getState();
+  if ((s.wallet.items[key] ?? 0) < 1) return false;
+  setState({
+    ...s,
+    wallet: { ...s.wallet, items: { ...s.wallet.items, [key]: s.wallet.items[key] - 1 } },
+  });
+  return true;
+}
+
+export function addExp(n: number) {
+  if (n <= 0) return;
+  updateState((s) => ({ ...s, wallet: { ...s.wallet, exp: (s.wallet.exp ?? 0) + n } }));
+}
+
+/** Records the star rating (1-3) for a finished tower level, keeping the best result. */
+export function recordLevelStars(grade: string, world: string, subject: string, level: number, stars: number) {
+  updateState((s) => {
+    const key = `${towerKey(grade, world, subject)}:${level}`;
+    if ((s.stars[key] ?? 0) >= stars) return s;
+    return { ...s, stars: { ...s.stars, [key]: stars } };
+  });
+}
+
+export function getLevelStars(grade: string, world: string, subject: string, level: number) {
+  return getState().stars[`${towerKey(grade, world, subject)}:${level}`] ?? 0;
 }

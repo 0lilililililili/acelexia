@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Lock, Star } from "lucide-react";
 import { getCleared } from "@/lib/progress";
+import { getState } from "@/lib/store";
+import { playerLv, requiredLv } from "@/lib/leveling";
 import { WORLD_ART, mutedBgStyle } from "@/lib/world-art";
 import towerImg from "@/assets/tower.png";
 
@@ -22,13 +24,19 @@ function TowerPage() {
   const end = Math.min(start + perPage - 1, totalLevels);
 
   const [unlockedThrough, setUnlockedThrough] = useState(0);
+  const [lv, setLv] = useState(1);
   useEffect(() => {
-    const sync = () => setUnlockedThrough(getCleared(grade, world, subject));
+    const sync = () => {
+      setUnlockedThrough(getCleared(grade, world, subject));
+      setLv(playerLv(getState().wallet.exp));
+    };
     sync();
     window.addEventListener("progress-updated", sync);
+    window.addEventListener("wq-updated", sync);
     window.addEventListener("focus", sync);
     return () => {
       window.removeEventListener("progress-updated", sync);
+      window.removeEventListener("wq-updated", sync);
       window.removeEventListener("focus", sync);
     };
   }, [grade, world, subject]);
@@ -45,7 +53,7 @@ function TowerPage() {
         <h1 className="text-3xl font-extrabold">
           {grade}{world.charAt(0).toUpperCase() + world.slice(1)}{subject.toUpperCase()}
         </h1>
-        <p className="text-muted-foreground">{SUBJECT_LABEL[subject] ?? subject} tower • 500 levels</p>
+        <p className="text-muted-foreground">{SUBJECT_LABEL[subject] ?? subject} tower • 500 levels • You are Lv{lv}</p>
       </header>
 
 
@@ -63,24 +71,31 @@ function TowerPage() {
 
       <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
         {Array.from({ length: end - start + 1 }, (_, i) => {
-          const lv = start + i;
-          const locked = lv > unlockedThrough + 1;
-          const cleared = lv <= unlockedThrough;
-          return locked ? (
-            <div key={lv} title="Locked" className="aspect-square rounded-xl bg-muted text-muted-foreground flex items-center justify-center">
-              <Lock size={16} aria-hidden />
+          const lvNum = start + i;
+          const need = requiredLv(lvNum);
+          const lvGated = lv < need;
+          const locked = lvNum > unlockedThrough + 1;
+          const cleared = lvNum <= unlockedThrough;
+          return locked || lvGated ? (
+            <div
+              key={lvNum}
+              title={lvGated ? `Not enough Lv — needs Lv${need}` : "Locked"}
+              className="aspect-square rounded-xl bg-muted text-muted-foreground flex flex-col items-center justify-center text-center p-1"
+            >
+              <Lock size={14} aria-hidden />
+              {lvGated && !locked && <span className="text-[9px] font-bold leading-tight mt-0.5">not enough Lv</span>}
             </div>
 
           ) : (
             <Link
-              key={lv}
+              key={lvNum}
               to="/play/$grade/$world/$subject/$level"
-              params={{ grade, world, subject, level: String(lv) }}
+              params={{ grade, world, subject, level: String(lvNum) }}
               className={`aspect-square rounded-xl flex flex-col items-center justify-center font-extrabold transition hover:scale-110 ${
                 cleared ? "bg-accent text-accent-foreground" : "bg-primary text-primary-foreground ring-4 ring-primary/30 animate-pulse"
               }`}
             >
-              <span className="text-base">{lv}</span>
+              <span className="text-base">{lvNum}</span>
               {cleared && <Star size={12} className="fill-current" aria-hidden />}
             </Link>
           );

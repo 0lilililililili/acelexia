@@ -1,0 +1,1 @@
+ALTER TABLE public.progress ADD COLUMN IF NOT EXISTS wallet jsonb NOT NULL DEFAULT '{}'::jsonb;

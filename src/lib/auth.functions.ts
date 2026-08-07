@@ -17,13 +17,21 @@ export type RevisionItem = {
   ts: number;
 };
 
+export type WalletSnapshot = {
+  stars?: Record<string, number>;
+  items?: Record<string, number>;
+  exp?: number;
+};
+
 export type ProgressSnapshot = {
   grade: string | null;
   onboarded: boolean;
   towers: Record<string, number>;
   revision: Record<string, Record<string, RevisionItem[]>>;
+  wallet: WalletSnapshot;
   settings: Record<string, string | number | boolean>;
 };
+
 
 async function hash(password: string, salt: string) {
   const enc = new TextEncoder();
@@ -97,7 +105,7 @@ export const logInUser = createServerFn({ method: "POST" })
 
     const { data: prog } = await supabaseAdmin
       .from("progress")
-      .select("grade, onboarded, towers, revision_bank, settings")
+      .select("grade, onboarded, towers, revision_bank, wallet, settings")
       .eq("user_id", user.id)
       .maybeSingle();
 
@@ -112,6 +120,7 @@ export const logInUser = createServerFn({ method: "POST" })
             onboarded: prog.onboarded,
             towers: (prog.towers ?? {}) as Record<string, number>,
             revision: (prog.revision_bank ?? {}) as ProgressSnapshot["revision"],
+            wallet: (prog.wallet ?? {}) as WalletSnapshot,
             settings: (prog.settings ?? {}) as Record<string, string | number | boolean>,
           } satisfies ProgressSnapshot)
         : null,
@@ -141,6 +150,13 @@ export const saveProgress = createServerFn({ method: "POST" })
             ),
           ),
         ),
+        wallet: z
+          .object({
+            stars: z.record(z.string(), z.number()).optional(),
+            items: z.record(z.string(), z.number()).optional(),
+            exp: z.number().optional(),
+          })
+          .optional(),
         settings: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
       })
       .parse(d),
@@ -155,6 +171,7 @@ export const saveProgress = createServerFn({ method: "POST" })
         onboarded: data.onboarded ?? false,
         towers: data.towers,
         revision_bank: data.revision,
+        wallet: (data.wallet ?? {}) as never,
         settings: data.settings,
         updated_at: new Date().toISOString(),
       },
@@ -171,7 +188,7 @@ export const listProgress = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: rows, error } = await supabaseAdmin
       .from("progress")
-      .select("user_id, username, grade, onboarded, towers, revision_bank, settings, updated_at")
+      .select("user_id, username, grade, onboarded, towers, revision_bank, wallet, settings, updated_at")
       .order("updated_at", { ascending: false });
     if (error) throw error;
     return { rows: rows ?? [] };

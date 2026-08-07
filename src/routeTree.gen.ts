@@ -16,9 +16,11 @@ import { Route as GameRouteImport } from './routes/game'
 import { Route as Home2RouteImport } from './routes/home2'
 import { Route as InputDataRouteImport } from './routes/input-data'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as RequizRouteImport } from './routes/requiz'
 import { Route as ResultRouteImport } from './routes/result'
 import { Route as RevisionRouteImport } from './routes/revision'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as TakeTestRouteImport } from './routes/take-test'
 import { Route as UploadReportRouteImport } from './routes/upload-report'
@@ -64,6 +66,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RequizRoute = RequizRouteImport.update({
+  id: '/requiz',
+  path: '/requiz',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResultRoute = ResultRouteImport.update({
   id: '/result',
   path: '/result',
@@ -77,6 +84,11 @@ const RevisionRoute = RevisionRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -134,9 +146,11 @@ export interface FileRoutesByFullPath {
   '/home2': typeof Home2Route
   '/input-data': typeof InputDataRoute
   '/login': typeof LoginRoute
+  '/requiz': typeof RequizRoute
   '/result': typeof ResultRoute
   '/revision': typeof RevisionRoute
   '/settings': typeof SettingsRoute
+  '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
   '/take-test': typeof TakeTestRoute
   '/upload-report': typeof UploadReportRoute
@@ -154,9 +168,11 @@ export interface FileRoutesByTo {
   '/home2': typeof Home2Route
   '/input-data': typeof InputDataRoute
   '/login': typeof LoginRoute
+  '/requiz': typeof RequizRoute
   '/result': typeof ResultRoute
   '/revision': typeof RevisionRoute
   '/settings': typeof SettingsRoute
+  '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
   '/take-test': typeof TakeTestRoute
   '/upload-report': typeof UploadReportRoute
@@ -176,9 +192,11 @@ export interface FileRoutesById {
   '/home2': typeof Home2Route
   '/input-data': typeof InputDataRoute
   '/login': typeof LoginRoute
+  '/requiz': typeof RequizRoute
   '/result': typeof ResultRoute
   '/revision': typeof RevisionRoute
   '/settings': typeof SettingsRoute
+  '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
   '/take-test': typeof TakeTestRoute
   '/upload-report': typeof UploadReportRoute
@@ -199,9 +217,11 @@ export interface FileRouteTypes {
     | '/home2'
     | '/input-data'
     | '/login'
+    | '/requiz'
     | '/result'
     | '/revision'
     | '/settings'
+    | '/shop'
     | '/signup'
     | '/take-test'
     | '/upload-report'
@@ -219,9 +239,11 @@ export interface FileRouteTypes {
     | '/home2'
     | '/input-data'
     | '/login'
+    | '/requiz'
     | '/result'
     | '/revision'
     | '/settings'
+    | '/shop'
     | '/signup'
     | '/take-test'
     | '/upload-report'
@@ -240,9 +262,11 @@ export interface FileRouteTypes {
     | '/home2'
     | '/input-data'
     | '/login'
+    | '/requiz'
     | '/result'
     | '/revision'
     | '/settings'
+    | '/shop'
     | '/signup'
     | '/take-test'
     | '/upload-report'
@@ -262,9 +286,11 @@ export interface RootRouteChildren {
   Home2Route: typeof Home2Route
   InputDataRoute: typeof InputDataRoute
   LoginRoute: typeof LoginRoute
+  RequizRoute: typeof RequizRoute
   ResultRoute: typeof ResultRoute
   RevisionRoute: typeof RevisionRoute
   SettingsRoute: typeof SettingsRoute
+  ShopRoute: typeof ShopRoute
   SignupRoute: typeof SignupRoute
   TakeTestRoute: typeof TakeTestRoute
   UploadReportRoute: typeof UploadReportRoute
@@ -324,6 +350,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/requiz': {
+      id: '/requiz'
+      path: '/requiz'
+      fullPath: '/requiz'
+      preLoaderRoute: typeof RequizRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/result': {
       id: '/result'
       path: '/result'
@@ -343,6 +376,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -433,9 +473,11 @@ const rootRouteChildren: RootRouteChildren = {
   Home2Route: Home2Route,
   InputDataRoute: InputDataRoute,
   LoginRoute: LoginRoute,
+  RequizRoute: RequizRoute,
   ResultRoute: ResultRoute,
   RevisionRoute: RevisionRoute,
   SettingsRoute: SettingsRoute,
+  ShopRoute: ShopRoute,
   SignupRoute: SignupRoute,
   TakeTestRoute: TakeTestRoute,
   UploadReportRoute: UploadReportRoute,

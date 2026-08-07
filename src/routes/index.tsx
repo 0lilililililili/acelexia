@@ -5,9 +5,9 @@ import mascot from "@/assets/mascot-dragon.png";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Acalexia — Reading & Math Adventure for Dyslexic Kids" },
+      { title: "Acelexia — Reading & Math Adventure for Dyslexic Kids" },
       { name: "description", content: "A friendly game that helps K3–P6 dyslexic kids in Hong Kong practice Chinese, English and Math through voice." },
-      { property: "og:title", content: "Acalexia" },
+      { property: "og:title", content: "Acelexia" },
       { property: "og:description", content: "Reading & math adventure for dyslexic kids." },
     ],
   }),
@@ -31,13 +31,13 @@ function Home1() {
       <div className="relative z-10 text-center max-w-2xl">
         <img
           src={mascot}
-          alt="Acalexia dragon mascot"
+          alt="Acelexia dragon mascot"
           width={220}
           height={220}
           className="mx-auto drop-shadow-xl"
         />
         <h1 className="text-6xl sm:text-7xl font-extrabold tracking-tight brand-outline">
-          Acalexia
+          Acelexia
         </h1>
 
         <p className="mt-4 text-lg font-semibold text-foreground/80">
