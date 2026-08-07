@@ -1,6 +1,7 @@
-// Central client-side store: session, tower progress, revision bank and settings.
+// Central client-side store: session, tower progress, revision bank, wallet and settings.
 // Mirrors everything into the cloud PROGRESS database whenever a user is logged in.
 import type { RevisionItem } from "./auth.functions";
+import type { StarColor } from "./leveling";
 
 export type Settings = {
   fontScale: number; // 1 = normal
@@ -9,11 +10,36 @@ export type Settings = {
 
 export type Session = { userId: string; username: string; isAdmin: boolean };
 
+export type ItemKey = "glassA" | "glassB" | "glassC" | "potionA" | "potionB" | "torch";
+
+export type Wallet = {
+  stars: Record<StarColor, number>;
+  items: Record<ItemKey, number>;
+  exp: number;
+};
+
+export const emptyWallet = (): Wallet => ({
+  stars: { red: 0, blue: 0, green: 0, yellow: 0 },
+  items: { glassA: 0, glassB: 0, glassC: 0, potionA: 0, potionB: 0, torch: 0 },
+  exp: 0,
+});
+
+export function normalizeWallet(w?: Partial<Wallet> | null): Wallet {
+  const base = emptyWallet();
+  return {
+    stars: { ...base.stars, ...(w?.stars ?? {}) },
+    items: { ...base.items, ...(w?.items ?? {}) },
+    exp: Number(w?.exp ?? 0) || 0,
+  };
+}
+
 export type State = {
   grade: string | null;
   onboarded: boolean;
   towers: Record<string, number>; // "grade:world:subject" -> highest cleared level
+  stars: Record<string, number>; // "grade:world:subject:level" -> stars earned (1-3)
   revision: Record<string, Record<string, RevisionItem[]>>; // subject -> topic -> items
+  wallet: Wallet;
   settings: Settings;
 };
 
@@ -26,9 +52,12 @@ export const emptyState = (): State => ({
   grade: null,
   onboarded: false,
   towers: {},
+  stars: {},
   revision: {},
+  wallet: emptyWallet(),
   settings: { ...DEFAULT_SETTINGS },
 });
+
 
 export function getSession(): Session | null {
   if (typeof window === "undefined") return null;
