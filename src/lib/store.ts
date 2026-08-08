@@ -99,6 +99,39 @@ export function getState(): State {
   }
 }
 
+/** Per-subject accuracy is stored as flat keys inside the PROGRESS settings blob. */
+export function flattenStats(stats: Record<string, SubjectStat>): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const [subject, s] of Object.entries(stats ?? {})) {
+    out[`stat_${subject}_correct`] = s.correct;
+    out[`stat_${subject}_total`] = s.total;
+  }
+  return out;
+}
+
+export function unflattenStats(settings: Record<string, unknown>): Record<string, SubjectStat> {
+  const out: Record<string, SubjectStat> = {};
+  for (const [k, v] of Object.entries(settings ?? {})) {
+    const m = k.match(/^stat_(.+)_(correct|total)$/);
+    if (!m) continue;
+    const cur = out[m[1]] ?? { correct: 0, total: 0 };
+    cur[m[2] as "correct" | "total"] = Number(v) || 0;
+    out[m[1]] = cur;
+  }
+  return out;
+}
+
+/** Records one answered question for the /game profile card. */
+export function recordAnswer(subject: string, correct: boolean) {
+  updateState((s) => {
+    const cur = s.stats[subject] ?? { correct: 0, total: 0 };
+    return {
+      ...s,
+      stats: { ...s.stats, [subject]: { correct: cur.correct + (correct ? 1 : 0), total: cur.total + 1 } },
+    };
+  });
+}
+
 let syncTimer: ReturnType<typeof setTimeout> | null = null;
 
 export function setState(next: State, { sync = true } = {}) {
