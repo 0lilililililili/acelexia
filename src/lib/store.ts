@@ -122,7 +122,11 @@ export function setState(next: State, { sync = true } = {}) {
             towers: next.towers,
             revision: next.revision,
             wallet: next.wallet,
-            settings: { fontScale: next.settings.fontScale, timeLimit: next.settings.timeLimit },
+            settings: {
+              fontScale: next.settings.fontScale,
+              timeLimit: next.settings.timeLimit,
+              ...flattenStats(next.stats),
+            },
           },
         });
 
