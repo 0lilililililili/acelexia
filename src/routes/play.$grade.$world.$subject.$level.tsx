@@ -229,9 +229,10 @@ function PlayPage() {
 
   const failQuestion = useCallback(() => {
     if (current) toRevision(current);
+    recordAnswer(subject, false);
     setWrong((w) => w + 1);
     setPhase("escape");
-  }, [current, toRevision]);
+  }, [current, toRevision, subject]);
 
   const submit = useCallback(
     (text: string, spoken: boolean) => {
@@ -241,13 +242,14 @@ function PlayPage() {
       if (matches(value, current.answer)) {
         setPhase("defeat");
         setCorrect((c) => c + 1);
+        recordAnswer(subject, true);
         if (!usedItem) addExp(1);
       } else {
         setFeedback("wrong");
         setTimeout(() => setFeedback("none"), 400);
       }
     },
-    [current, phase, usedItem],
+    [current, phase, usedItem, subject],
   );
 
   const ownedGlasses = (["A", "B", "C"] as const).filter((w) => (wallet.items[GLASS_KEY[w]] ?? 0) > 0);
