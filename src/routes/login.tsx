@@ -56,6 +56,7 @@ function LoginPage() {
             towers: p.towers ?? {},
             stars: {},
             revision: p.revision ?? {},
+            stats: unflattenStats(p.settings ?? {}),
             wallet: normalizeWallet(p.wallet as Partial<Wallet>),
             settings: { ...DEFAULT_SETTINGS, ...(p.settings ?? {}) },
           }
