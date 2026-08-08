@@ -150,6 +150,7 @@ function PlayPage() {
         answer: item.answer,
         topic: item.topic?.trim() || `${art.label} practice`,
         ts: Date.now(),
+        ...(item.choices && item.choices.length > 1 ? { choices: item.choices.slice(0, 4) } : {}),
       });
     },
     [subject, art.label],
