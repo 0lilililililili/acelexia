@@ -431,7 +431,10 @@ function PlayPage() {
             ? "animate-defeated"
             : "";
 
-  const readAloud = subject === "eng" && !current?.choices && !!current && !/\s/.test(current.prompt);
+  const readAloud =
+    !!current &&
+    !current.choices &&
+    ((subject === "eng" && !/\s/.test(current.prompt)) || subject === "chi");
   const buffetLeft = Math.max(0, Math.ceil((buffetUntil - Date.now()) / 1000));
 
   return (
