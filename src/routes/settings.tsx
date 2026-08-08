@@ -1,6 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { DEFAULT_SETTINGS, getState, setState, type Settings } from "@/lib/store";
+import { LogOut } from "lucide-react";
+import { DEFAULT_SETTINGS, emptyState, getSession, getState, setSession, setState, type Settings } from "@/lib/store";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
