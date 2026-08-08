@@ -14,6 +14,7 @@ import {
   consumeItem,
   DEFAULT_SETTINGS,
   getState,
+  recordAnswer,
   recordLevelStars,
   type ItemKey,
 } from "@/lib/store";
