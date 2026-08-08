@@ -33,12 +33,15 @@ export function normalizeWallet(w?: Partial<Wallet> | null): Wallet {
   };
 }
 
+export type SubjectStat = { correct: number; total: number };
+
 export type State = {
   grade: string | null;
   onboarded: boolean;
   towers: Record<string, number>; // "grade:world:subject" -> highest cleared level
   stars: Record<string, number>; // "grade:world:subject:level" -> stars earned (1-3)
   revision: Record<string, Record<string, RevisionItem[]>>; // subject -> topic -> items
+  stats: Record<string, SubjectStat>; // subject -> answered/correct tally
   wallet: Wallet;
   settings: Settings;
 };
@@ -54,6 +57,7 @@ export const emptyState = (): State => ({
   towers: {},
   stars: {},
   revision: {},
+  stats: {},
   wallet: emptyWallet(),
   settings: { ...DEFAULT_SETTINGS },
 });
