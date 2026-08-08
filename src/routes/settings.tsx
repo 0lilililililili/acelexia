@@ -25,10 +25,27 @@ const FONT_CHOICES: { label: string; value: number }[] = [
 const TIME_CHOICES = [15, 25, 35, 60, 90];
 
 function SettingsPage() {
+  const nav = useNavigate();
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [saved, setSaved] = useState(false);
+  const [username, setUsername] = useState<string | null>(null);
 
-  useEffect(() => setSettings(getState().settings), []);
+  useEffect(() => {
+    setSettings(getState().settings);
+    setUsername(getSession()?.username ?? null);
+  }, []);
+
+  const logOut = () => {
+    if (!window.confirm("Log out of Acelexia? Your progress is saved.")) return;
+    setSession(null);
+    setState(emptyState(), { sync: false });
+    try {
+      window.localStorage.removeItem("player");
+      window.sessionStorage.removeItem("wq_admin");
+      window.sessionStorage.removeItem("wq_admin_pw");
+    } catch {}
+    nav({ to: "/" });
+  };
 
   const update = (patch: Partial<Settings>) => {
     const next = { ...settings, ...patch };
