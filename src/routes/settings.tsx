@@ -121,7 +121,22 @@ function SettingsPage() {
           </button>
         </section>
 
+        <section className="mt-6 bg-card border-2 border-border rounded-3xl p-6 shadow">
+          <h2 className="text-xl font-extrabold">Account</h2>
+          <p className="text-sm mt-1">
+            You stay <strong>logged in</strong>{username ? <> as <strong>{username}</strong></> : null} until you press{" "}
+            <strong>Log out</strong>.
+          </p>
+          <button
+            onClick={logOut}
+            className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-card border-2 border-border px-6 py-3 font-extrabold hover:border-destructive"
+          >
+            <LogOut size={20} aria-hidden /> Log out
+          </button>
+        </section>
+
         {saved && <p className="mt-4 text-sm font-semibold text-primary">Saved ✓</p>}
+
 
       </div>
     </main>
