@@ -553,8 +553,12 @@ function PlayPage() {
       {note && <div className="text-center pb-1 font-extrabold text-primary">{note}</div>}
 
       {transcript && (
-        <div className={`text-center pb-2 font-semibold ${feedback === "wrong" ? "text-destructive" : "text-foreground"}`}>
-          You said: "{transcript.split("|")[0]}"
+        <div className="pointer-events-none fixed inset-x-0 bottom-40 z-[100] flex justify-center px-4">
+          <div
+            className={`speech-readout font-extrabold text-center rounded-2xl px-4 py-2 bg-black/45 ${feedback === "wrong" ? "animate-pulse" : ""}`}
+          >
+            You said: “{transcript.split("|")[0]}”
+          </div>
         </div>
       )}
 
