@@ -14,6 +14,7 @@ import {
   consumeItem,
   DEFAULT_SETTINGS,
   getState,
+  recordAnswer,
   recordLevelStars,
   type ItemKey,
 } from "@/lib/store";
@@ -150,6 +151,7 @@ function PlayPage() {
         answer: item.answer,
         topic: item.topic?.trim() || `${art.label} practice`,
         ts: Date.now(),
+        ...(item.choices && item.choices.length > 1 ? { choices: item.choices.slice(0, 4) } : {}),
       });
     },
     [subject, art.label],
@@ -228,9 +230,10 @@ function PlayPage() {
 
   const failQuestion = useCallback(() => {
     if (current) toRevision(current);
+    recordAnswer(subject, false);
     setWrong((w) => w + 1);
     setPhase("escape");
-  }, [current, toRevision]);
+  }, [current, toRevision, subject]);
 
   const submit = useCallback(
     (text: string, spoken: boolean) => {
@@ -240,13 +243,14 @@ function PlayPage() {
       if (matches(value, current.answer)) {
         setPhase("defeat");
         setCorrect((c) => c + 1);
+        recordAnswer(subject, true);
         if (!usedItem) addExp(1);
       } else {
         setFeedback("wrong");
         setTimeout(() => setFeedback("none"), 400);
       }
     },
-    [current, phase, usedItem],
+    [current, phase, usedItem, subject],
   );
 
   const ownedGlasses = (["A", "B", "C"] as const).filter((w) => (wallet.items[GLASS_KEY[w]] ?? 0) > 0);
@@ -427,7 +431,10 @@ function PlayPage() {
             ? "animate-defeated"
             : "";
 
-  const readAloud = subject === "eng" && !current?.choices && !!current && !/\s/.test(current.prompt);
+  const readAloud =
+    !!current &&
+    !current.choices &&
+    ((subject === "eng" && !/\s/.test(current.prompt)) || subject === "chi");
   const buffetLeft = Math.max(0, Math.ceil((buffetUntil - Date.now()) / 1000));
 
   return (
@@ -475,7 +482,7 @@ function PlayPage() {
               />
               <div className="relative bg-card border-4 border-foreground/80 rounded-2xl px-6 py-3 shadow-2xl max-w-[92vw]">
                 {readAloud && (
-                  <div className="text-sm font-bold text-muted-foreground text-center">Read out loud:</div>
+                  <div className="text-base font-extrabold text-foreground text-center">Read out loud:</div>
                 )}
                 <div className="text-3xl sm:text-4xl font-extrabold tracking-wide text-center">
                   {current.prompt}
@@ -490,12 +497,12 @@ function PlayPage() {
                           disabled={phase !== "active"}
                           className="rounded-xl border-2 border-border bg-background hover:border-primary px-3 py-2 text-lg font-bold text-left disabled:opacity-50"
                         >
-                          <span className="text-primary mr-2 uppercase">{LETTERS[i]}.</span>{c}
+                          <span className="text-primary mr-2 uppercase font-extrabold">{LETTERS[i]}.</span>{c}
                         </button>
                       ))}
                     </div>
-                    <p className="mt-2 text-center text-xs font-semibold text-muted-foreground">
-                      Say the letter: “A”, “B”, “C” or “D”
+                    <p className="mt-2 text-center text-sm font-extrabold">
+                      Say it like this: <span className="text-primary">“letter A”</span> — “letter B”, “letter C”, “letter D”
                     </p>
                   </>
                 )}
@@ -546,8 +553,12 @@ function PlayPage() {
       {note && <div className="text-center pb-1 font-extrabold text-primary">{note}</div>}
 
       {transcript && (
-        <div className={`text-center pb-2 font-semibold ${feedback === "wrong" ? "text-destructive" : "text-foreground"}`}>
-          You said: "{transcript.split("|")[0]}"
+        <div className="pointer-events-none fixed inset-x-0 bottom-40 z-[100] flex justify-center px-4">
+          <div
+            className={`speech-readout font-extrabold text-center rounded-2xl px-4 py-2 bg-black/45 ${feedback === "wrong" ? "animate-pulse" : ""}`}
+          >
+            You said: “{transcript.split("|")[0]}”
+          </div>
         </div>
       )}
 

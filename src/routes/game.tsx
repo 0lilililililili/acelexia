@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Settings as Gear, BookOpen, Waves, Trees, Flame, Lock, Sparkles } from "lucide-react";
 import { isFestivalOpen, nextOpening } from "@/lib/festivals";
 import { WORLD_ART } from "@/lib/world-art";
-import { getState, type Wallet } from "@/lib/store";
+import { getSession, getState, type SubjectStat, type Wallet } from "@/lib/store";
 import { playerLv, lvProgressPct, EXP_PER_LV } from "@/lib/leveling";
 import { StarRow } from "@/components/stars";
 import continentMap from "@/assets/continent-map.jpg";
@@ -30,6 +30,12 @@ const COUNTRIES = [
 
 const EVENTS = ["olympus", "winter", "festival"];
 
+const SUBJECTS = [
+  { key: "chi", label: "Chinese" },
+  { key: "eng", label: "English" },
+  { key: "math", label: "Math" },
+];
+
 function formatDate(d: Date) {
   return d.toLocaleDateString("en-HK", { month: "short", day: "numeric" });
 }
@@ -54,13 +60,20 @@ function IconAction({ to, label, children }: { to: string; label: string; childr
 function GameMap() {
   const [player, setPlayer] = useState<{ name: string; grade: string } | null>(null);
   const [wallet, setWallet] = useState<Wallet | null>(null);
+  const [stats, setStats] = useState<Record<string, SubjectStat>>({});
+  const [account, setAccount] = useState<string | null>(null);
 
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem("player");
       if (raw) setPlayer(JSON.parse(raw));
     } catch {}
-    const sync = () => setWallet(getState().wallet);
+    setAccount(getSession()?.username ?? null);
+    const sync = () => {
+      const st = getState();
+      setWallet(st.wallet);
+      setStats(st.stats ?? {});
+    };
     sync();
     window.addEventListener("wq-updated", sync);
     return () => window.removeEventListener("wq-updated", sync);
@@ -90,7 +103,25 @@ function GameMap() {
       </header>
 
       {/* Stars + Lv */}
-      <div className="max-w-6xl mx-auto mb-4 grid gap-3 sm:grid-cols-2">
+      <div className="max-w-6xl mx-auto mb-4 grid gap-3 sm:grid-cols-3">
+        <div className="bg-card border-2 border-border rounded-3xl px-5 py-4 shadow">
+          <div className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">Profile</div>
+          <div className="mt-1 text-lg font-extrabold">{account ?? player?.name ?? "Explorer"}</div>
+          <div className="text-sm font-bold">Grade <strong>{player?.grade ?? "—"}</strong></div>
+          <ul className="mt-2 space-y-0.5 text-sm font-semibold">
+            {SUBJECTS.map(({ key, label }) => {
+              const s = stats[key];
+              const pct = s && s.total > 0 ? Math.round((s.correct / s.total) * 100) : null;
+              return (
+                <li key={key} className="flex items-center justify-between gap-2">
+                  <span>{label}</span>
+                  <strong>{pct === null ? "—" : `${pct}%`}</strong>
+                </li>
+              );
+            })}
+          </ul>
+          <div className="mt-1 text-[11px] text-muted-foreground font-semibold">Average correct answers</div>
+        </div>
         <div className="bg-card border-2 border-border rounded-3xl px-5 py-4 shadow">
           <div className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">Your stars</div>
           <div className="mt-2">{wallet && <StarRow stars={wallet.stars} size={24} />}</div>

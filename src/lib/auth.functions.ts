@@ -15,6 +15,9 @@ export type RevisionItem = {
   answer: string;
   topic: string;
   ts: number;
+  /** Kept so multiple-choice questions stay multiple-choice in the re-quiz. */
+  choices?: string[];
+  subjectHint?: string;
 };
 
 export type WalletSnapshot = {
@@ -146,6 +149,7 @@ export const saveProgress = createServerFn({ method: "POST" })
                 answer: z.string(),
                 topic: z.string(),
                 ts: z.number(),
+                choices: z.array(z.string()).optional(),
               }),
             ),
           ),

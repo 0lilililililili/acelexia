@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Star } from "lucide-react";
 import { addExp, getState, type State } from "@/lib/store";
 import { useSpeech } from "@/hooks/use-speech";
-import { matches } from "@/lib/answer-match";
+import { LETTERS, choiceFromSpeech, matches } from "@/lib/answer-match";
 
 export const Route = createFileRoute("/requiz")({
   head: () => ({
@@ -22,13 +22,13 @@ export const Route = createFileRoute("/requiz")({
 const QUIZ_SIZE = 15;
 const LANG: Record<string, "en-US" | "zh-HK"> = { eng: "en-US", chi: "zh-HK", math: "en-US" };
 
-type QuizItem = { subject: string; topic: string; prompt: string; answer: string };
+type QuizItem = { subject: string; topic: string; prompt: string; answer: string; choices?: string[] };
 
 function poolFrom(state: State): QuizItem[] {
   const out: QuizItem[] = [];
   for (const [subject, topics] of Object.entries(state.revision ?? {})) {
     for (const [topic, list] of Object.entries(topics ?? {})) {
-      for (const it of list) out.push({ subject, topic, prompt: it.prompt, answer: it.answer });
+      for (const it of list) out.push({ subject, topic, prompt: it.prompt, answer: it.answer, choices: it.choices });
     }
   }
   return out;
@@ -68,9 +68,10 @@ function RequizPage() {
   }, []);
 
   const check = useCallback(
-    (text: string) => {
+    (text: string, spoken = false) => {
       if (!current || answeredRef.current) return;
-      if (matches(text, current.answer)) {
+      const value = spoken && current.choices ? (choiceFromSpeech(text, current.choices) ?? text) : text;
+      if (matches(value, current.answer)) {
         answeredRef.current = true;
         setScore((s) => s + 1);
         addExp(1);
@@ -86,7 +87,7 @@ function RequizPage() {
   const handleResult = useCallback(
     (t: string) => {
       setTranscript(t);
-      check(t);
+      check(t, true);
     },
     [check],
   );
@@ -143,17 +144,37 @@ function RequizPage() {
             <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               {current.subject.toUpperCase()} • {current.topic}
             </div>
-            {current.subject === "eng" && !/\s/.test(current.prompt) && (
-              <div className="mt-2 text-sm font-bold text-muted-foreground">Read out loud:</div>
+            {!current.choices && (current.subject === "chi" || (current.subject === "eng" && !/\s/.test(current.prompt))) && (
+              <div className="mt-2 text-base font-extrabold">Read out loud:</div>
             )}
             <div className="text-4xl font-extrabold mt-1">{current.prompt}</div>
+            {current.choices && current.choices.length > 0 && (
+              <>
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-left">
+                  {current.choices.slice(0, 4).map((c, i) => (
+                    <button
+                      key={i}
+                      onClick={() => check(c)}
+                      className="rounded-xl border-2 border-border bg-background hover:border-primary px-3 py-2 text-lg font-bold"
+                    >
+                      <span className="text-primary mr-2 uppercase font-extrabold">{LETTERS[i]}.</span>{c}
+                    </button>
+                  ))}
+                </div>
+                <p className="mt-3 text-sm font-extrabold">
+                  Say it like this: <span className="text-primary">“letter A”</span> — “letter B”, “letter C”, “letter D”
+                </p>
+              </>
+            )}
           </div>
         )}
 
         {transcript && (
-          <p className={`text-center mt-4 font-semibold ${wrongFlash ? "text-destructive" : ""}`}>
-            You said: "{transcript.split("|")[0]}"
-          </p>
+          <div className="pointer-events-none fixed inset-x-0 bottom-40 z-[100] flex justify-center px-4">
+            <div className={`speech-readout font-extrabold text-center rounded-2xl px-4 py-2 bg-black/45 ${wrongFlash ? "animate-pulse" : ""}`}>
+              You said: “{transcript.split("|")[0]}”
+            </div>
+          </div>
         )}
 
         <div className="mt-auto pt-8 flex flex-col items-center gap-4">

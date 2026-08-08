@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { logInUser } from "@/lib/auth.functions";
-import { DEFAULT_SETTINGS, emptyState, normalizeWallet, setSession, setState, type State, type Wallet } from "@/lib/store";
+import { DEFAULT_SETTINGS, emptyState, normalizeWallet, setSession, setState, unflattenStats, type State, type Wallet } from "@/lib/store";
 import pirateMap from "@/assets/pirate-map.jpg";
 
 export const Route = createFileRoute("/login")({
@@ -56,6 +56,7 @@ function LoginPage() {
             towers: p.towers ?? {},
             stars: {},
             revision: p.revision ?? {},
+            stats: unflattenStats(p.settings ?? {}),
             wallet: normalizeWallet(p.wallet as Partial<Wallet>),
             settings: { ...DEFAULT_SETTINGS, ...(p.settings ?? {}) },
           }

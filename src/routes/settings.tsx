@@ -1,6 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { DEFAULT_SETTINGS, getState, setState, type Settings } from "@/lib/store";
+import { LogOut } from "lucide-react";
+import { DEFAULT_SETTINGS, emptyState, getSession, getState, setSession, setState, type Settings } from "@/lib/store";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -24,10 +25,27 @@ const FONT_CHOICES: { label: string; value: number }[] = [
 const TIME_CHOICES = [15, 25, 35, 60, 90];
 
 function SettingsPage() {
+  const nav = useNavigate();
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [saved, setSaved] = useState(false);
+  const [username, setUsername] = useState<string | null>(null);
 
-  useEffect(() => setSettings(getState().settings), []);
+  useEffect(() => {
+    setSettings(getState().settings);
+    setUsername(getSession()?.username ?? null);
+  }, []);
+
+  const logOut = () => {
+    if (!window.confirm("Log out of Acelexia? Your progress is saved.")) return;
+    setSession(null);
+    setState(emptyState(), { sync: false });
+    try {
+      window.localStorage.removeItem("player");
+      window.sessionStorage.removeItem("wq_admin");
+      window.sessionStorage.removeItem("wq_admin_pw");
+    } catch {}
+    nav({ to: "/" });
+  };
 
   const update = (patch: Partial<Settings>) => {
     const next = { ...settings, ...patch };
@@ -103,7 +121,22 @@ function SettingsPage() {
           </button>
         </section>
 
+        <section className="mt-6 bg-card border-2 border-border rounded-3xl p-6 shadow">
+          <h2 className="text-xl font-extrabold">Account</h2>
+          <p className="text-sm mt-1">
+            You stay <strong>logged in</strong>{username ? <> as <strong>{username}</strong></> : null} until you press{" "}
+            <strong>Log out</strong>.
+          </p>
+          <button
+            onClick={logOut}
+            className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-card border-2 border-border px-6 py-3 font-extrabold hover:border-destructive"
+          >
+            <LogOut size={20} aria-hidden /> Log out
+          </button>
+        </section>
+
         {saved && <p className="mt-4 text-sm font-semibold text-primary">Saved ✓</p>}
+
 
       </div>
     </main>
