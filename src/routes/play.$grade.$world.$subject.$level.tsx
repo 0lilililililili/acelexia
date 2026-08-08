@@ -482,7 +482,7 @@ function PlayPage() {
               />
               <div className="relative bg-card border-4 border-foreground/80 rounded-2xl px-6 py-3 shadow-2xl max-w-[92vw]">
                 {readAloud && (
-                  <div className="text-sm font-bold text-muted-foreground text-center">Read out loud:</div>
+                  <div className="text-base font-extrabold text-foreground text-center">Read out loud:</div>
                 )}
                 <div className="text-3xl sm:text-4xl font-extrabold tracking-wide text-center">
                   {current.prompt}
@@ -497,12 +497,12 @@ function PlayPage() {
                           disabled={phase !== "active"}
                           className="rounded-xl border-2 border-border bg-background hover:border-primary px-3 py-2 text-lg font-bold text-left disabled:opacity-50"
                         >
-                          <span className="text-primary mr-2 uppercase">{LETTERS[i]}.</span>{c}
+                          <span className="text-primary mr-2 uppercase font-extrabold">{LETTERS[i]}.</span>{c}
                         </button>
                       ))}
                     </div>
-                    <p className="mt-2 text-center text-xs font-semibold text-muted-foreground">
-                      Say the letter: “A”, “B”, “C” or “D”
+                    <p className="mt-2 text-center text-sm font-extrabold">
+                      Say it like this: <span className="text-primary">“letter A”</span> — “letter B”, “letter C”, “letter D”
                     </p>
                   </>
                 )}
