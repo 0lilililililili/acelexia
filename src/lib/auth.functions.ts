@@ -10,6 +10,8 @@ const Credentials = z.object({
   password: z.string().min(6).max(72),
 });
 
+export type RevisionReason = "wrong" | "glass" | "potion" | "torch";
+
 export type RevisionItem = {
   prompt: string;
   answer: string;
@@ -18,6 +20,8 @@ export type RevisionItem = {
   /** Kept so multiple-choice questions stay multiple-choice in the re-quiz. */
   choices?: string[];
   subjectHint?: string;
+  /** Why the item landed in the bank — drives the weighted revision plan. */
+  reason?: RevisionReason;
 };
 
 export type WalletSnapshot = {
