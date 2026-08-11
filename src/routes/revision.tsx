@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getState, setState, type State } from "@/lib/store";
+import { buildStudyPlan, REASON_LABEL, type TopicPlan } from "@/lib/study-plan";
 
 export const Route = createFileRoute("/revision")({
   head: () => ({
