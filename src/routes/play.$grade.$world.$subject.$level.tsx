@@ -161,7 +161,7 @@ function PlayPage() {
   /** Swap the current question for a fresh spare (POTION). */
   const swapQuestion = useCallback(() => {
     if (!current) return;
-    toRevision(current);
+    toRevision(current, "potion");
     const spare = spares[0];
     setSpares((s) => s.slice(1));
     setPhase("back");
@@ -183,7 +183,7 @@ function PlayPage() {
       flash("You don't own a PASS torch.");
       return;
     }
-    if (current) toRevision(current);
+    if (current) toRevision(current, "torch");
     setUsedItem(true);
     setCorrect((c) => c + 1);
     setPhase("defeat");
@@ -220,7 +220,7 @@ function PlayPage() {
         flash(`You don't own HOUR-GLASS ${which}.`);
         return;
       }
-      if (current) toRevision(current);
+      if (current) toRevision(current, "glass");
       setUsedItem(true);
       setBonus((b) => b + GLASS_SECONDS[which]);
       setPhase("active");
@@ -230,7 +230,7 @@ function PlayPage() {
   );
 
   const failQuestion = useCallback(() => {
-    if (current) toRevision(current);
+    if (current) toRevision(current, "wrong");
     recordAnswer(subject, false);
     setWrong((w) => w + 1);
     setPhase("escape");
