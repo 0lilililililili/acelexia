@@ -108,11 +108,38 @@
   * { border-color: var(--color-border); }
   html, body {
     font-family: var(--font-sans);
-    letter-spacing: 0.01em;
+    /* Dyslexia-friendly typography: wider letter + word spacing, generous leading */
+    letter-spacing: 0.035em;
+    word-spacing: 0.16em;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
   }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    /* Never justify: rivers of white space are hard for dyslexic readers */
+    text-align: left;
+    text-wrap: pretty;
+  }
+  /* Italics and underlined body text are hard to decode — use weight instead */
+  i, em { font-style: normal; font-weight: 700; }
+  /* Headings stay tighter so they still read as headings */
+  h1, h2, h3, h4 { line-height: 1.25; letter-spacing: 0.015em; text-wrap: balance; }
+  /* Comfortable measure: ~60-70 characters per line */
+  p, li { max-width: 66ch; }
+  /* Clear, thick focus outline for keyboard users */
+  :focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 3px;
+    border-radius: 0.5rem;
+  }
+  /* Bigger, easier tap targets */
+  button, a[role="button"] { min-height: 44px; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
