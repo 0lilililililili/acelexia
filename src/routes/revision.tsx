@@ -38,6 +38,8 @@ function RevisionPage() {
     setState({ ...s, revision: { ...s.revision, [subject]: subj } });
   };
 
+  const plan = useMemo(() => buildStudyPlan(revision), [revision]);
+
   return (
     <main className="min-h-screen px-6 py-8">
       <div className="max-w-3xl mx-auto">
@@ -53,6 +55,64 @@ function RevisionPage() {
             </Link>
           )}
         </div>
+
+        {plan.focus.length > 0 && (
+          <section className="mt-8 bg-card border-2 border-border rounded-3xl p-5 shadow">
+            <h2 className="text-2xl font-extrabold">Your revision plan</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Built from what you got <strong>wrong</strong> and the <strong>tools</strong> you used
+              (glass = 1, potion = 2, torch = 2, wrong = 2), with newer mistakes counting more.
+            </p>
+
+            <div className="mt-3 flex flex-wrap gap-2">
+              {plan.bySubject.map((s) => (
+                <span key={s.subject} className="rounded-full bg-muted px-3 py-1 text-sm font-bold">
+                  {SUBJECT_LABEL[s.subject] ?? s.subject}: <strong>{s.share}%</strong> of your practice
+                </span>
+              ))}
+            </div>
+
+            <ol className="mt-4 space-y-3">
+              {plan.focus.map((t: TopicPlan, i) => (
+                <li key={`${t.subject}:${t.topic}`} className="rounded-2xl border-2 border-border p-4">
+                  <div className="flex items-center justify-between gap-3 flex-wrap">
+                    <h3 className="font-extrabold">
+                      {i + 1}. {t.topic}{" "}
+                      <span className="font-semibold text-muted-foreground">
+                        ({SUBJECT_LABEL[t.subject] ?? t.subject})
+                      </span>
+                    </h3>
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-extrabold ${
+                        t.band === "high"
+                          ? "bg-destructive text-destructive-foreground"
+                          : t.band === "medium"
+                            ? "bg-secondary text-secondary-foreground"
+                            : "bg-muted text-foreground"
+                      }`}
+                    >
+                      {t.band === "high" ? "Do first" : t.band === "medium" ? "Do next" : "Keep warm"}
+                    </span>
+                  </div>
+                  <div className="mt-2 h-3 rounded-full bg-muted overflow-hidden" aria-hidden>
+                    <div className="h-full bg-primary" style={{ width: `${t.priority}%` }} />
+                  </div>
+                  <p className="mt-2 text-sm font-semibold">
+                    Practise about <strong>{t.suggestedQuestions} questions</strong> here.
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground font-semibold">
+                    {(Object.keys(t.reasons) as (keyof typeof t.reasons)[])
+                      .filter((r) => t.reasons[r] > 0)
+                      .map((r) => `${REASON_LABEL[r]}: ${t.reasons[r]}`)
+                      .join(" • ")}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
+
+
 
 
         {subjects.length === 0 ? (
