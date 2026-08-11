@@ -154,6 +154,7 @@ export const saveProgress = createServerFn({ method: "POST" })
                 topic: z.string(),
                 ts: z.number(),
                 choices: z.array(z.string()).optional(),
+                reason: z.enum(["wrong", "glass", "potion", "torch"]).optional(),
               }),
             ),
           ),
