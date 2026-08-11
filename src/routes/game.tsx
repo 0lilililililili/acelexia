@@ -103,7 +103,7 @@ function GameMap() {
       </header>
 
       {/* Stars + Lv */}
-      <div className="max-w-6xl mx-auto mb-4 grid gap-3 sm:grid-cols-3">
+      <div className="max-w-6xl mx-auto mb-4 grid gap-3 sm:grid-cols-2">
         <div className="bg-card border-2 border-border rounded-3xl px-5 py-4 shadow">
           <div className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">Profile</div>
           <div className="mt-1 text-lg font-extrabold">{account ?? player?.name ?? "Explorer"}</div>
@@ -125,9 +125,7 @@ function GameMap() {
         <div className="bg-card border-2 border-border rounded-3xl px-5 py-4 shadow">
           <div className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">Your stars</div>
           <div className="mt-2">{wallet && <StarRow stars={wallet.stars} size={24} />}</div>
-        </div>
-        <div className="bg-card border-2 border-border rounded-3xl px-5 py-4 shadow">
-          <div className="flex items-baseline justify-between">
+          <div className="mt-4 flex items-baseline justify-between">
             <span className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">Level</span>
             <span className="text-xl font-extrabold">Lv{playerLv(exp)}</span>
           </div>
