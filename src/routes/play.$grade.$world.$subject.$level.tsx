@@ -145,12 +145,13 @@ function PlayPage() {
   }, [phase, idx, itemKeyRef.current]);
 
   const toRevision = useCallback(
-    (item: Item) => {
+    (item: Item, reason: "wrong" | "glass" | "potion" | "torch" = "wrong") => {
       addRevisionItem(subject, {
         prompt: item.prompt,
         answer: item.answer,
         topic: item.topic?.trim() || `${art.label} practice`,
         ts: Date.now(),
+        reason,
         ...(item.choices && item.choices.length > 1 ? { choices: item.choices.slice(0, 4) } : {}),
       });
     },
