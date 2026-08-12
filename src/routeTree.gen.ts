@@ -13,7 +13,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as CodeRouteImport } from './routes/code'
 import { Route as GameRouteImport } from './routes/game'
-import { Route as Home2RouteImport } from './routes/home2'
 import { Route as InputDataRouteImport } from './routes/input-data'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as RequizRouteImport } from './routes/requiz'
@@ -23,7 +22,6 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as TakeTestRouteImport } from './routes/take-test'
-import { Route as UploadReportRouteImport } from './routes/upload-report'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminProgressRouteImport } from './routes/admin.progress'
 import { Route as AdminViewRouteImport } from './routes/admin.view'
@@ -49,11 +47,6 @@ const CodeRoute = CodeRouteImport.update({
 const GameRoute = GameRouteImport.update({
   id: '/game',
   path: '/game',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const Home2Route = Home2RouteImport.update({
-  id: '/home2',
-  path: '/home2',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InputDataRoute = InputDataRouteImport.update({
@@ -101,11 +94,6 @@ const TakeTestRoute = TakeTestRouteImport.update({
   path: '/take-test',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UploadReportRoute = UploadReportRouteImport.update({
-  id: '/upload-report',
-  path: '/upload-report',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -143,7 +131,6 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/code': typeof CodeRoute
   '/game': typeof GameRoute
-  '/home2': typeof Home2Route
   '/input-data': typeof InputDataRoute
   '/login': typeof LoginRoute
   '/requiz': typeof RequizRoute
@@ -153,7 +140,6 @@ export interface FileRoutesByFullPath {
   '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
   '/take-test': typeof TakeTestRoute
-  '/upload-report': typeof UploadReportRoute
   '/admin/progress': typeof AdminProgressRoute
   '/admin/view': typeof AdminViewRoute
   '/world/$world': typeof WorldWorldRoute
@@ -165,7 +151,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/code': typeof CodeRoute
   '/game': typeof GameRoute
-  '/home2': typeof Home2Route
   '/input-data': typeof InputDataRoute
   '/login': typeof LoginRoute
   '/requiz': typeof RequizRoute
@@ -175,7 +160,6 @@ export interface FileRoutesByTo {
   '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
   '/take-test': typeof TakeTestRoute
-  '/upload-report': typeof UploadReportRoute
   '/admin/progress': typeof AdminProgressRoute
   '/admin/view': typeof AdminViewRoute
   '/world/$world': typeof WorldWorldRoute
@@ -189,7 +173,6 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/code': typeof CodeRoute
   '/game': typeof GameRoute
-  '/home2': typeof Home2Route
   '/input-data': typeof InputDataRoute
   '/login': typeof LoginRoute
   '/requiz': typeof RequizRoute
@@ -199,7 +182,6 @@ export interface FileRoutesById {
   '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
   '/take-test': typeof TakeTestRoute
-  '/upload-report': typeof UploadReportRoute
   '/admin/progress': typeof AdminProgressRoute
   '/admin/view': typeof AdminViewRoute
   '/world/$world': typeof WorldWorldRoute
@@ -214,7 +196,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/code'
     | '/game'
-    | '/home2'
     | '/input-data'
     | '/login'
     | '/requiz'
@@ -224,7 +205,6 @@ export interface FileRouteTypes {
     | '/shop'
     | '/signup'
     | '/take-test'
-    | '/upload-report'
     | '/admin/progress'
     | '/admin/view'
     | '/world/$world'
@@ -236,7 +216,6 @@ export interface FileRouteTypes {
     | '/'
     | '/code'
     | '/game'
-    | '/home2'
     | '/input-data'
     | '/login'
     | '/requiz'
@@ -246,7 +225,6 @@ export interface FileRouteTypes {
     | '/shop'
     | '/signup'
     | '/take-test'
-    | '/upload-report'
     | '/admin/progress'
     | '/admin/view'
     | '/world/$world'
@@ -259,7 +237,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/code'
     | '/game'
-    | '/home2'
     | '/input-data'
     | '/login'
     | '/requiz'
@@ -269,7 +246,6 @@ export interface FileRouteTypes {
     | '/shop'
     | '/signup'
     | '/take-test'
-    | '/upload-report'
     | '/admin/progress'
     | '/admin/view'
     | '/world/$world'
@@ -283,7 +259,6 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   CodeRoute: typeof CodeRoute
   GameRoute: typeof GameRoute
-  Home2Route: typeof Home2Route
   InputDataRoute: typeof InputDataRoute
   LoginRoute: typeof LoginRoute
   RequizRoute: typeof RequizRoute
@@ -293,7 +268,6 @@ export interface RootRouteChildren {
   ShopRoute: typeof ShopRoute
   SignupRoute: typeof SignupRoute
   TakeTestRoute: typeof TakeTestRoute
-  UploadReportRoute: typeof UploadReportRoute
   WorldWorldRoute: typeof WorldWorldRoute
   TowerGradeWorldSubjectRoute: typeof TowerGradeWorldSubjectRoute
   PlayGradeWorldSubjectLevelRoute: typeof PlayGradeWorldSubjectLevelRoute
@@ -327,13 +301,6 @@ declare module '@tanstack/react-router' {
       path: '/game'
       fullPath: '/game'
       preLoaderRoute: typeof GameRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/home2': {
-      id: '/home2'
-      path: '/home2'
-      fullPath: '/home2'
-      preLoaderRoute: typeof Home2RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/input-data': {
@@ -397,13 +364,6 @@ declare module '@tanstack/react-router' {
       path: '/take-test'
       fullPath: '/take-test'
       preLoaderRoute: typeof TakeTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/upload-report': {
-      id: '/upload-report'
-      path: '/upload-report'
-      fullPath: '/upload-report'
-      preLoaderRoute: typeof UploadReportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -470,7 +430,6 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   CodeRoute: CodeRoute,
   GameRoute: GameRoute,
-  Home2Route: Home2Route,
   InputDataRoute: InputDataRoute,
   LoginRoute: LoginRoute,
   RequizRoute: RequizRoute,
@@ -480,7 +439,6 @@ const rootRouteChildren: RootRouteChildren = {
   ShopRoute: ShopRoute,
   SignupRoute: SignupRoute,
   TakeTestRoute: TakeTestRoute,
-  UploadReportRoute: UploadReportRoute,
   WorldWorldRoute: WorldWorldRoute,
   TowerGradeWorldSubjectRoute: TowerGradeWorldSubjectRoute,
   PlayGradeWorldSubjectLevelRoute: PlayGradeWorldSubjectLevelRoute,
@@ -488,13 +446,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

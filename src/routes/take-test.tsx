@@ -96,7 +96,7 @@ function TestPage() {
             Start test →
           </button>
 
-          <Link to="/home2" className="block mt-4 text-center text-sm text-muted-foreground">← Back</Link>
+          <Link to="/" className="block mt-4 text-center text-sm text-muted-foreground">← Back</Link>
         </div>
       </main>
     );
