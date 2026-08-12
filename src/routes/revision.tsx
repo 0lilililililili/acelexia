@@ -15,7 +15,7 @@ export const Route = createFileRoute("/revision")({
   component: RevisionPage,
 });
 
-const SUBJECT_LABEL: Record<string, string> = { chi: "Chinese", eng: "English", math: "Math" };
+import { SUBJECT_LABEL } from "@/lib/subjects";
 
 function RevisionPage() {
   const [state, setLocal] = useState<State | null>(null);
@@ -51,7 +51,7 @@ function RevisionPage() {
           </div>
           {subjects.length > 0 && (
             <Link to="/requiz" className="rounded-2xl bg-primary text-primary-foreground px-6 py-3 font-bold shadow">
-              Re-quiz (15 questions)
+              Re-quiz (15 Qs)
             </Link>
           )}
         </div>
@@ -98,7 +98,7 @@ function RevisionPage() {
                     <div className="h-full bg-primary" style={{ width: `${t.priority}%` }} />
                   </div>
                   <p className="mt-2 text-sm font-semibold">
-                    Practise about <strong>{t.suggestedQuestions} questions</strong> here.
+                    Practise about <strong>{t.suggestedQuestions} Qs</strong> here.
                   </p>
                   <p className="mt-1 text-sm text-muted-foreground font-semibold">
                     {(Object.keys(t.reasons) as (keyof typeof t.reasons)[])

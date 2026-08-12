@@ -8,6 +8,7 @@ import { playerLv, lvProgressPct, EXP_PER_LV } from "@/lib/leveling";
 import { StarRow } from "@/components/stars";
 import continentMap from "@/assets/continent-map.jpg";
 import shopIcon from "@/assets/icon-shop.png";
+import { SUBJECTS } from "@/lib/subjects";
 
 export const Route = createFileRoute("/game")({
   head: () => ({
@@ -30,11 +31,6 @@ const COUNTRIES = [
 
 const EVENTS = ["olympus", "winter", "festival"];
 
-const SUBJECTS = [
-  { key: "chi", label: "Chinese" },
-  { key: "eng", label: "English" },
-  { key: "math", label: "Math" },
-];
 
 function formatDate(d: Date) {
   return d.toLocaleDateString("en-HK", { month: "short", day: "numeric" });
@@ -102,7 +98,7 @@ function GameMap() {
         </div>
       </header>
 
-      {/* Stars + Lv */}
+      {/* Stars + LV */}
       <div className="max-w-6xl mx-auto mb-4 grid gap-3 sm:grid-cols-2">
         <div className="bg-card border-2 border-border rounded-3xl px-5 py-4 shadow">
           <div className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">Profile</div>
@@ -120,20 +116,20 @@ function GameMap() {
               );
             })}
           </ul>
-          <div className="mt-1 text-[11px] text-muted-foreground font-semibold">Average correct answers</div>
+          <div className="mt-1 text-[11px] text-muted-foreground font-semibold">Avg correct %</div>
         </div>
         <div className="bg-card border-2 border-border rounded-3xl px-5 py-4 shadow">
           <div className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">Your stars</div>
           <div className="mt-2">{wallet && <StarRow stars={wallet.stars} size={24} />}</div>
           <div className="mt-4 flex items-baseline justify-between">
-            <span className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">Level</span>
+            <span className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">LV</span>
             <span className="text-xl font-extrabold">Lv{playerLv(exp)}</span>
           </div>
           <div className="mt-2 h-3 rounded-full bg-muted overflow-hidden">
             <div className="h-full bg-primary" style={{ width: `${lvProgressPct(exp)}%` }} />
           </div>
           <div className="mt-1 text-xs text-muted-foreground font-semibold">
-            {exp % EXP_PER_LV} / {EXP_PER_LV} exp to next Lv
+            {exp % EXP_PER_LV} / {EXP_PER_LV} EXP to next LV
           </div>
         </div>
       </div>

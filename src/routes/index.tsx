@@ -41,7 +41,7 @@ function Home1() {
         </h1>
 
         <p className="mt-4 text-lg font-semibold text-foreground/80">
-          Defeat bosses with your voice. Learn Chinese, English & Math.
+          知識 = power, literally
         </p>
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2">
@@ -57,13 +57,8 @@ function Home1() {
           >
             Log in
           </Link>
-          <Link
-            to="/home2"
-            className="rounded-2xl bg-accent text-accent-foreground px-6 py-5 text-lg font-bold shadow-lg hover:scale-[1.03] transition sm:col-span-2"
-          >
-            Start Trial
-          </Link>
         </div>
+
 
         <p className="mt-8 text-sm text-foreground/70">
           Designed for dyslexic kids • K3 to P6 • Hong Kong

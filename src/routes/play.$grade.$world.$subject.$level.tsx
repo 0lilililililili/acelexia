@@ -328,9 +328,9 @@ function PlayPage() {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
         <Lock size={56} className="text-muted-foreground" aria-hidden />
-        <h1 className="text-3xl font-extrabold mt-4">Not enough Lv</h1>
+        <h1 className="text-3xl font-extrabold mt-4">Not enough LV</h1>
         <p className="text-muted-foreground mt-2">
-          Level {levelNum} needs Lv{needLv}. You are Lv{lv} — answer more questions without items to level up.
+          LV {levelNum} needs LV{needLv}. You are LV{lv} — answer more questions without items to level up.
         </p>
         <Link to="/tower/$grade/$world/$subject" params={{ grade, world, subject }} className="text-primary font-semibold mt-6">
           ← Back to tower
@@ -368,7 +368,7 @@ function PlayPage() {
       <main className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
         <img src={art.boss} alt="" className={`w-32 h-32 object-contain ${passed ? "" : "grayscale opacity-70"}`} />
         <h1 className="text-4xl font-extrabold mt-3">
-          {passed ? `Level ${level} cleared!` : `Level ${level} failed`}
+          {passed ? `LV ${level} cleared!` : `LV ${level} failed`}
         </h1>
         <div className="mt-3 flex gap-2 justify-center">
           {[1, 2, 3].map((n) => (
@@ -449,7 +449,7 @@ function PlayPage() {
         <Link to="/tower/$grade/$world/$subject" params={{ grade, world, subject }} className="font-bold">← Exit</Link>
         <div className="text-center">
           <div className="text-xs opacity-90 uppercase tracking-wider">{art.label} • {subject.toUpperCase()} • {grade}</div>
-          <div className="font-extrabold">Level {level} • Correct {correct} • Wrong {wrong} • Lv{lv}</div>
+          <div className="font-extrabold">LV {level} • Correct {correct} • Wrong {wrong} • LV{lv}</div>
         </div>
         <Link to="/settings" aria-label="Settings" title="Settings" className="font-bold"><Gear size={22} aria-hidden /></Link>
       </header>

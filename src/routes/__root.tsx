@@ -79,14 +79,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Word Quest — Chinese, English & Math Adventure" },
+      { title: "Acelexia — 中 / ENG / MATH Adventure" },
       {
         name: "description",
         content:
-          "A cartoon voice-powered learning quest helping K3–P6 learners in Hong Kong master Chinese, English and Math.",
+          "A cartoon voice-powered learning quest helping K3–P6 dyslexic learners in Hong Kong master 中, ENG and MATH.",
       },
       { name: "theme-color", content: "#f97316" },
-      { property: "og:title", content: "Word Quest — Chinese, English & Math Adventure" },
+      { property: "og:title", content: "Acelexia — 中 / ENG / MATH Adventure" },
       {
         property: "og:description",
         content: "Defeat bosses by speaking the right answer. Built for dyslexia-friendly learning.",
