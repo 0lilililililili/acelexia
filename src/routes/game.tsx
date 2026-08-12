@@ -8,6 +8,7 @@ import { playerLv, lvProgressPct, EXP_PER_LV } from "@/lib/leveling";
 import { StarRow } from "@/components/stars";
 import continentMap from "@/assets/continent-map.jpg";
 import shopIcon from "@/assets/icon-shop.png";
+import { SUBJECTS } from "@/lib/subjects";
 
 export const Route = createFileRoute("/game")({
   head: () => ({
@@ -30,7 +31,6 @@ const COUNTRIES = [
 
 const EVENTS = ["olympus", "winter", "festival"];
 
-import { SUBJECTS } from "@/lib/subjects";
 
 function formatDate(d: Date) {
   return d.toLocaleDateString("en-HK", { month: "short", day: "numeric" });
