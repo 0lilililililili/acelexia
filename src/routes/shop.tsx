@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { Star, ArrowRight } from "lucide-react";
+
 import { getState, grantItem, setState, spendStars, type ItemKey, type State } from "@/lib/store";
 import { STAR_HEX, type StarColor } from "@/lib/leveling";
 import { StarRow } from "@/components/stars";
@@ -125,32 +127,45 @@ function ShopPage() {
         </div>
 
         <section className="mt-8 bg-card border-2 border-border rounded-3xl p-6 shadow">
-          <h2 className="text-xl font-extrabold">Yellow star exchange</h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            Event (yellow) stars can be turned into red, blue or green stars — one way only.
-          </p>
+          <h2 className="text-xl font-extrabold flex items-center gap-2">
+            <Star size={26} style={{ color: STAR_HEX.yellow, fill: STAR_HEX.yellow }} aria-hidden />
+            <ArrowRight size={22} aria-hidden />
+            <span className="flex items-center gap-1">
+              {COLORS.map((c) => (
+                <Star key={c} size={22} style={{ color: STAR_HEX[c], fill: STAR_HEX[c] }} aria-hidden />
+              ))}
+            </span>
+          </h2>
+          <p className="text-sm text-muted-foreground mt-1 font-semibold">One way only.</p>
+
           <div className="mt-4 flex flex-wrap items-center gap-3">
-            <label className="font-bold" htmlFor="convert-amount">Amount</label>
-            <input
-              id="convert-amount"
-              type="number"
-              min={1}
-              value={convert}
-              onChange={(e) => setConvert(parseInt(e.target.value, 10) || 1)}
-              className="w-24 rounded-xl border-2 border-border bg-background px-3 py-2 font-bold"
-            />
+            <label className="sr-only" htmlFor="convert-amount">Amount</label>
+            <span className="flex items-center gap-1 font-extrabold">
+              <Star size={26} style={{ color: STAR_HEX.yellow, fill: STAR_HEX.yellow }} aria-hidden />
+              <input
+                id="convert-amount"
+                type="number"
+                min={1}
+                value={convert}
+                onChange={(e) => setConvert(parseInt(e.target.value, 10) || 1)}
+                className="w-20 rounded-xl border-2 border-border bg-background px-3 py-2 font-bold"
+              />
+            </span>
+            <ArrowRight size={24} aria-hidden />
             {COLORS.map((c) => (
               <button
                 key={c}
                 onClick={() => doConvert(c)}
-                className="rounded-2xl px-4 py-2 font-bold text-white"
-                style={{ background: STAR_HEX[c] }}
+                aria-label={`Convert to ${c} stars`}
+                title={`→ ${c}`}
+                className="grid place-items-center w-14 h-14 rounded-2xl border-4 border-border bg-background hover:scale-105 transition"
               >
-                → {c}
+                <Star size={30} style={{ color: STAR_HEX[c], fill: STAR_HEX[c] }} aria-hidden />
               </button>
             ))}
           </div>
         </section>
+
       </div>
     </main>
   );
