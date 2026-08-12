@@ -28,16 +28,16 @@ function ResultPage() {
   }
 
   const subjects: { key: string; label: string; emoji: string }[] = [
-    { key: "chi", label: "Chinese", emoji: "🀄" },
-    { key: "eng", label: "English", emoji: "🔤" },
-    { key: "math", label: "Math", emoji: "🔢" },
+    { key: "chi", label: "中", emoji: "🀄" },
+    { key: "eng", label: "ENG", emoji: "🔤" },
+    { key: "math", label: "MATH", emoji: "🔢" },
   ];
 
   return (
     <main className="min-h-screen px-6 py-10 max-w-6xl mx-auto">
       <header className="mb-8">
         <h1 className="text-4xl font-extrabold">Great work, {payload.name}! 🎉</h1>
-        <p className="text-muted-foreground mt-1">Grade {payload.age} • Here's how you did across three subjects.</p>
+        <p className="text-muted-foreground mt-1">Grade {payload.age} • Here's how you did across 中 / ENG / MATH.</p>
       </header>
 
       <div className="grid gap-6 lg:grid-cols-3">

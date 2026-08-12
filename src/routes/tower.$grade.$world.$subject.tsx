@@ -12,7 +12,7 @@ export const Route = createFileRoute("/tower/$grade/$world/$subject")({
   component: TowerPage,
 });
 
-const SUBJECT_LABEL: Record<string, string> = { chi: "Chinese", eng: "English", math: "Math" };
+import { SUBJECT_LABEL } from "@/lib/subjects";
 
 function TowerPage() {
   const { grade, world, subject } = Route.useParams();
@@ -53,7 +53,7 @@ function TowerPage() {
         <h1 className="text-3xl font-extrabold">
           {grade}{world.charAt(0).toUpperCase() + world.slice(1)}{subject.toUpperCase()}
         </h1>
-        <p className="text-muted-foreground">{SUBJECT_LABEL[subject] ?? subject} tower • 500 levels • You are Lv{lv}</p>
+        <p className="text-muted-foreground">{SUBJECT_LABEL[subject] ?? subject} tower • 500 LV • You are LV{lv}</p>
       </header>
 
 
@@ -79,11 +79,11 @@ function TowerPage() {
           return locked || lvGated ? (
             <div
               key={lvNum}
-              title={lvGated ? `Not enough Lv — needs Lv${need}` : "Locked"}
+              title={lvGated ? `Not enough LV — needs LV${need}` : "Locked"}
               className="aspect-square rounded-xl bg-muted text-muted-foreground flex flex-col items-center justify-center text-center p-1"
             >
               <Lock size={14} aria-hidden />
-              {lvGated && !locked && <span className="text-[9px] font-bold leading-tight mt-0.5">not enough Lv</span>}
+              {lvGated && !locked && <span className="text-[9px] font-bold leading-tight mt-0.5">not enough LV</span>}
             </div>
 
           ) : (

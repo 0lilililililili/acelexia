@@ -25,9 +25,9 @@ function WorldPage() {
   }, []);
 
   const towers = [
-    { subject: "CHI",  label: "Chinese Tower",  key: "chi" },
-    { subject: "ENG",  label: "English Tower",  key: "eng" },
-    { subject: "MATH", label: "Math Tower",     key: "math" },
+    { subject: "CHI",  label: "中 Tower",    key: "chi" },
+    { subject: "ENG",  label: "ENG Tower",  key: "eng" },
+    { subject: "MATH", label: "MATH Tower", key: "math" },
   ];
 
   if (!isFestivalOpen(world)) {
