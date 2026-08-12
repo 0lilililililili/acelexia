@@ -310,22 +310,22 @@ function rowToSub(r: Row): Submission {
   };
 }
 
-// Load submissions from Lovable Cloud (persistent, non-local). Falls back to
+// Load submissions from Lovable Cloud (admin only, server-side). Falls back to
 // local cache when offline.
-export async function loadSubmissions(): Promise<Submission[]> {
-  const { supabase } = await import("@/integrations/supabase/client");
-  const { data, error } = await supabase
-    .from("submissions")
-    .select("data_id,user_id,grade,dyslexia,results,client_timestamp")
-    .order("client_timestamp", { ascending: false })
-    .limit(2000);
-  if (error || !data) {
-    console.warn("[submissions] cloud load failed, using local", error);
+export async function loadSubmissions(adminPassword?: string): Promise<Submission[]> {
+  try {
+    const pw =
+      adminPassword ??
+      (typeof window !== "undefined" ? window.sessionStorage.getItem("wq_admin_pw") ?? "" : "");
+    const { listSubmissions } = await import("@/lib/submissions.functions");
+    const { rows } = await listSubmissions({ data: { adminPassword: pw } });
+    const subs = (rows as unknown as Row[]).map(rowToSub);
+    writeLocal(subs);
+    return subs;
+  } catch (e) {
+    console.warn("[submissions] cloud load failed, using local", e);
     return loadLocalSubmissions();
   }
-  const subs = (data as unknown as Row[]).map(rowToSub);
-  writeLocal(subs);
-  return subs;
 }
 
 export async function saveSubmission(s: Submission): Promise<void> {
@@ -334,34 +334,34 @@ export async function saveSubmission(s: Submission): Promise<void> {
   all.push(s);
   writeLocal(all);
   try {
-    const { supabase } = await import("@/integrations/supabase/client");
-    const { error } = await supabase.from("submissions").insert({
-      data_id: s.dataId,
-      user_id: s.userId,
-      grade: s.grade,
-      dyslexia: s.dyslexia,
-      results: s.results,
-      client_timestamp: s.timestamp,
-    });
-    if (error) console.error("[submissions] cloud insert failed", error);
+    const { insertSubmissions } = await import("@/lib/submissions.functions");
+    await insertSubmissions({ data: { submissions: [toPayload(s)] } });
   } catch (e) {
-    console.error("[submissions] cloud insert threw", e);
+    console.error("[submissions] cloud insert failed", e);
   }
+}
+
+function toPayload(s: Submission) {
+  return {
+    dataId: s.dataId,
+    userId: s.userId,
+    grade: s.grade,
+    dyslexia: s.dyslexia,
+    timestamp: s.timestamp,
+    results: s.results,
+  };
 }
 
 // Bulk merge for the admin "Import data" button.
 export async function importSubmissions(list: Submission[]): Promise<number> {
   if (!list.length) return 0;
   try {
-    const { supabase } = await import("@/integrations/supabase/client");
-    const { error } = await supabase.from("submissions").insert(
-      list.map((s) => ({
-        data_id: s.dataId, user_id: s.userId, grade: s.grade,
-        dyslexia: s.dyslexia, results: s.results, client_timestamp: s.timestamp,
-      })),
-    );
-    if (error) { console.error("[submissions] import failed", error); return 0; }
+    const { insertSubmissions } = await import("@/lib/submissions.functions");
+    await insertSubmissions({ data: { submissions: list.map(toPayload) } });
     return list.length;
-  } catch { return 0; }
+  } catch (e) {
+    console.error("[submissions] import failed", e);
+    return 0;
+  }
 }
 
