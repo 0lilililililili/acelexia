@@ -63,7 +63,7 @@ function SettingsPage() {
 
   const reset = () => {
     if (!window.confirm("Reset text size and question time limit back to normal?")) return;
-    const fresh = { ...DEFAULT_SETTINGS };
+    const fresh = { ...settings, fontScale: DEFAULT_SETTINGS.fontScale, timeLimit: DEFAULT_SETTINGS.timeLimit };
     setSettings(fresh);
     setState({ ...getState(), settings: fresh });
     setSaved(true);

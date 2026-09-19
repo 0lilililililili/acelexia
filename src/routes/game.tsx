@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Settings as Gear, BookOpen, Waves, Trees, Flame, Lock, Sparkles } from "lucide-react";
+import { Settings as Gear, BookOpen, Waves, Trees, Flame, Lock, Sparkles, Star, Send } from "lucide-react";
 import { isFestivalOpen, nextOpening } from "@/lib/festivals";
 import { WORLD_ART } from "@/lib/world-art";
 import { getSession, getState, type SubjectStat, type Wallet } from "@/lib/store";
@@ -9,6 +9,8 @@ import { StarRow } from "@/components/stars";
 import continentMap from "@/assets/continent-map.jpg";
 import shopIcon from "@/assets/icon-shop.png";
 import { SUBJECTS } from "@/lib/subjects";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/game")({
   head: () => ({
@@ -58,6 +60,9 @@ function GameMap() {
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [stats, setStats] = useState<Record<string, SubjectStat>>({});
   const [account, setAccount] = useState<string | null>(null);
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
 
   useEffect(() => {
     try {
@@ -71,9 +76,37 @@ function GameMap() {
       setStats(st.stats ?? {});
     };
     sync();
+    const state = getState();
+    const answers = Object.values(state.stats ?? {}).reduce((sum, stat) => sum + stat.total, 0);
+    const lastShown = state.settings.lastFeedbackAt ?? 0;
+    if (answers >= 8 && Date.now() - lastShown > 7 * 24 * 60 * 60 * 1000 && Math.random() < 0.35) {
+      const timer = window.setTimeout(() => setReviewOpen(true), 1200);
+      return () => window.clearTimeout(timer);
+    }
     window.addEventListener("wq-updated", sync);
     return () => window.removeEventListener("wq-updated", sync);
   }, []);
+
+  const closeReview = () => {
+    const state = getState();
+    setState({ ...state, settings: { ...state.settings, lastFeedbackAt: Date.now() } });
+    setReviewOpen(false);
+  };
+
+  const sendReview = () => {
+    if (!rating) return;
+    const state = getState();
+    setState({
+      ...state,
+      settings: {
+        ...state.settings,
+        lastFeedbackAt: Date.now(),
+        feedbackRating: rating,
+        feedbackComment: comment.trim().slice(0, 500),
+      },
+    });
+    setReviewOpen(false);
+  };
 
   const openEvents = EVENTS.filter((id) => isFestivalOpen(id));
   const exp = wallet?.exp ?? 0;
@@ -142,8 +175,9 @@ function GameMap() {
           <img
             src={continentMap}
             alt="Map of the Acelexia continent with three lands and a festival island"
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover opacity-60"
           />
+          <div className="absolute inset-0 bg-background/15 pointer-events-none" aria-hidden />
 
           {/* Countries of the continent */}
           {COUNTRIES.map(({ id, name, Icon, x, y }) => {
@@ -228,6 +262,44 @@ function GameMap() {
           </div>
         </div>
       </div>
+
+      <Dialog open={reviewOpen} onOpenChange={(open) => !open && closeReview()}>
+        <DialogContent className="max-w-md rounded-2xl border-2">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-extrabold">How is Acelexia?</DialogTitle>
+            <DialogDescription>What can we do to improve?</DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-center gap-2" role="radiogroup" aria-label="Rating out of five">
+            {[1, 2, 3, 4, 5].map((value) => (
+              <Button
+                key={value}
+                variant="ghost"
+                size="icon"
+                role="radio"
+                aria-checked={rating === value}
+                aria-label={`${value} out of 5 stars`}
+                onClick={() => setRating(value)}
+                className="h-12 w-12"
+              >
+                <Star className={value <= rating ? "fill-accent text-accent" : "text-muted-foreground"} size={32} aria-hidden />
+              </Button>
+            ))}
+          </div>
+          <label htmlFor="ux-comment" className="font-bold">Comment <span className="text-muted-foreground font-normal">(optional)</span></label>
+          <textarea
+            id="ux-comment"
+            value={comment}
+            maxLength={500}
+            onChange={(event) => setComment(event.target.value)}
+            placeholder="What can we do to improve?"
+            className="min-h-28 w-full resize-y rounded-xl border-2 border-input bg-background px-4 py-3"
+          />
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={closeReview}>Later</Button>
+            <Button onClick={sendReview} disabled={!rating}><Send aria-hidden /> Send</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }
