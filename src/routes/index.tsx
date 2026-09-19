@@ -26,7 +26,7 @@ function Home1() {
       }}
     >
       {/* Warm parchment veil for readability */}
-      <div className="absolute inset-0 bg-[oklch(0.97_0.05_80)]/55" />
+      <div className="absolute inset-0 bg-background/80" />
 
       <div className="relative z-10 text-center max-w-2xl">
         <img
@@ -40,7 +40,7 @@ function Home1() {
           Acelexia
         </h1>
 
-        <p className="mt-4 text-lg font-semibold text-foreground/80">
+        <p className="mt-4 inline-block rounded-lg bg-background/90 px-4 py-2 text-lg font-extrabold text-foreground shadow">
           知識 = power, literally
         </p>
 

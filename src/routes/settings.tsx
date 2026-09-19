@@ -24,6 +24,12 @@ const FONT_CHOICES: { label: string; value: number }[] = [
 
 const TIME_CHOICES = [15, 25, 35, 60, 90];
 
+const LANGUAGE_CHOICES: { label: string; value: Settings["language"] }[] = [
+  { label: "繁體中文", value: "zh-TW" },
+  { label: "简体中文", value: "zh-CN" },
+  { label: "English", value: "en" },
+];
+
 function SettingsPage() {
   const nav = useNavigate();
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
@@ -57,7 +63,7 @@ function SettingsPage() {
 
   const reset = () => {
     if (!window.confirm("Reset text size and question time limit back to normal?")) return;
-    const fresh = { ...DEFAULT_SETTINGS };
+    const fresh = { ...settings, fontScale: DEFAULT_SETTINGS.fontScale, timeLimit: DEFAULT_SETTINGS.timeLimit };
     setSettings(fresh);
     setState({ ...getState(), settings: fresh });
     setSaved(true);
@@ -106,6 +112,22 @@ function SettingsPage() {
               </button>
             ))}
           </div>
+        </section>
+
+        <section className="mt-6 bg-card border-2 border-border rounded-3xl p-6 shadow">
+          <h2 className="text-xl font-extrabold">System language</h2>
+          <div className="mt-3 grid gap-2 sm:grid-cols-3">
+            {LANGUAGE_CHOICES.map((option) => (
+              <button
+                key={option.value}
+                onClick={() => update({ language: option.value })}
+                className={`rounded-xl py-3 font-bold border-2 ${settings.language === option.value ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border"}`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+          <p className="mt-3 text-sm text-muted-foreground">ENG stays in English. 中 and MATH follow this choice.</p>
         </section>
 
         <section className="mt-6 bg-card border-2 border-border rounded-3xl p-6 shadow">

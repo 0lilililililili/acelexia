@@ -7,6 +7,7 @@ const Input = z.object({
   theme: z.string(),
   level: z.number().int().min(1).max(500),
   count: z.number().int().min(3).max(20).default(8),
+  language: z.enum(["zh-TW", "zh-CN", "en"]).default("zh-TW"),
 });
 
 const Item = z.object({
@@ -56,10 +57,12 @@ export const generateLevelItems = createServerFn({ method: "POST" })
     const csyl = chiSyllabus[data.grade] ?? chiSyllabus.P3;
     const esyl = engSyllabus[data.grade] ?? engSyllabus.P3;
 
+    const chineseScript = data.language === "zh-CN" ? "Simplified Chinese" : "Traditional Chinese";
+    const mathLanguage = data.language === "en" ? "English" : data.language === "zh-CN" ? "Simplified Chinese" : "Traditional Chinese";
     const subjectDesc = {
-      chi: `Traditional Chinese for HK dyslexic learners at HKEAA ${data.grade} level: ${csyl}. THE MAIN GOAL IS CHARACTER FORM (字形) — at least 70% of items must be multiple choice testing 形近字 / 錯別字 (visually confusable characters), because dyslexic learners mix up character shapes. Use ONLY real, typeable traditional characters: never invent a broken character; instead build the distractors from real look-alike characters (e.g. 「他去學＿」→ choices 校 / 較 / 交 / 效, answer 校; or 「哪個詞語沒有錯別字？」→ 分辨 / 分辯 / 分辦 / 分辮). Set 'topic' to "字形" for these. The rest may be 成語 multiple choice ("topic":"成語", prompt is a short question or a sentence with ＿＿, 4 plain 成語 options) or simple read-aloud items where 'prompt' is JUST a single character or 2-character word and 'answer' is exactly those characters. NEVER ask the student to write, type or spell, and NEVER ask for 粵語讀音/jyutping. For MC items give exactly 4 options in "choices" (no a/b/c/d labels) and set 'answer' to the exact text of the correct option.`,
+      chi: `${chineseScript} for HK dyslexic learners at HKEAA ${data.grade} level: ${csyl}. Use ${chineseScript} for every prompt, choice, answer, hint and topic. THE MAIN GOAL IS CHARACTER FORM (字形) — at least 70% of items must be multiple choice testing visually confusable characters. Use ONLY real, typeable characters: never invent a broken character; instead build distractors from real look-alike characters. The rest may be idiom multiple choice or simple read-aloud items where 'prompt' is JUST a single character or 2-character word and 'answer' is exactly those characters. NEVER ask the student to write, type or spell, and NEVER ask for jyutping. For MC items give exactly 4 options in "choices" (no a/b/c/d labels) and set 'answer' to the exact text of the correct option.`,
       eng: `English for HK dyslexic learners at HKEAA ${data.grade} level: ${esyl}. THE MAIN GOAL IS WORD FORM AND SPELLING — at least 70% of items must be multiple choice on spelling / letter-order confusions typical of dyslexia (b/d, p/q, was/saw, silent letters, double letters, -ed/-ing endings), e.g. "Which spelling is correct?" → choices "because" / "becuase" / "becasue" / "bacause", answer "because"; or "He ___ (stop) the car." → "stopped" / "stoped" / "stopeed" / "stopd". Set 'topic' to "spelling" or "word form". Keep words within grade vocabulary. Remaining items may be a single word to read aloud or a short grammar fill-in; 'answer' is the target word in lowercase. For MC items give exactly 4 options in "choices" and set 'answer' to the exact correct option.`,
-      math: `Mathematics aligned to HKEAA ${data.grade} strictly on: ${msyl}. 'prompt' is a short expression or question (e.g. '3456 + 1289', '25% of 80', '3/4 + 1/8'). 'answer' is the numeric result (e.g. '4745', '20', '7/8').`,
+      math: `Mathematics aligned to HKEAA ${data.grade} strictly on: ${msyl}. Write every prompt, hint and topic in ${mathLanguage}. Keep numerals and mathematical symbols universal. 'prompt' is a short expression or question and 'answer' is the numeric result.`,
     }[data.subject];
 
     const sys = `You generate dyslexia-friendly practice items for Hong Kong primary students with dyslexia, strictly within the HKEAA syllabus for ${data.grade}. Keep prompts SHORT and plain. Difficulty scales gently with level ${data.level}/500 but must NOT exceed ${data.grade} scope. Theme items around "${data.theme}" when natural. ${subjectDesc} Each item also carries a short syllabus sub-topic label in "topic" (e.g. "字形", "成語", "spelling", "word form", "percentages"). Return ONLY JSON matching: {"items":[{"prompt":"","answer":"","hint":"","topic":"","choices":["","","",""]}]} — omit "choices" for items that are not multiple choice.`;

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { getState, setState, type State } from "@/lib/store";
-import { buildStudyPlan, REASON_LABEL, type TopicPlan } from "@/lib/study-plan";
+import { buildStudyPlan, type TopicPlan } from "@/lib/study-plan";
 
 export const Route = createFileRoute("/revision")({
   head: () => ({
@@ -49,20 +49,11 @@ function RevisionPage() {
             <h1 className="text-4xl font-extrabold">Revision bank</h1>
             <p className="text-muted-foreground mt-1">Questions you missed, grouped by subject and topic.</p>
           </div>
-          {subjects.length > 0 && (
-            <Link to="/requiz" className="rounded-2xl bg-primary text-primary-foreground px-6 py-3 font-bold shadow">
-              Re-quiz (15 Qs)
-            </Link>
-          )}
         </div>
 
         {plan.focus.length > 0 && (
           <section className="mt-8 bg-card border-2 border-border rounded-3xl p-5 shadow">
-            <h2 className="text-2xl font-extrabold">Your revision plan</h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Built from what you got <strong>wrong</strong> and the <strong>tools</strong> you used
-              (glass = 1, potion = 2, torch = 2, wrong = 2), with newer mistakes counting more.
-            </p>
+            <h2 className="text-2xl font-extrabold">Re-quiz plan</h2>
 
             <div className="mt-3 flex flex-wrap gap-2">
               {plan.bySubject.map((s) => (
@@ -99,12 +90,6 @@ function RevisionPage() {
                   </div>
                   <p className="mt-2 text-sm font-semibold">
                     Practise about <strong>{t.suggestedQuestions} Qs</strong> here.
-                  </p>
-                  <p className="mt-1 text-sm text-muted-foreground font-semibold">
-                    {(Object.keys(t.reasons) as (keyof typeof t.reasons)[])
-                      .filter((r) => t.reasons[r] > 0)
-                      .map((r) => `${REASON_LABEL[r]}: ${t.reasons[r]}`)
-                      .join(" • ")}
                   </p>
                 </li>
               ))}

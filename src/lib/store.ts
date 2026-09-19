@@ -6,6 +6,10 @@ import type { StarColor } from "./leveling";
 export type Settings = {
   fontScale: number; // 1 = normal
   timeLimit: number; // seconds per question
+  language: "zh-TW" | "zh-CN" | "en";
+  lastFeedbackAt?: number;
+  feedbackRating?: number;
+  feedbackComment?: string;
 };
 
 export type Session = { userId: string; username: string; isAdmin: boolean };
@@ -46,7 +50,7 @@ export type State = {
   settings: Settings;
 };
 
-export const DEFAULT_SETTINGS: Settings = { fontScale: 1, timeLimit: 35 };
+export const DEFAULT_SETTINGS: Settings = { fontScale: 1, timeLimit: 35, language: "zh-TW" };
 
 const STATE_KEY = "wq_state";
 const SESSION_KEY = "wq_session";
@@ -158,6 +162,10 @@ export function setState(next: State, { sync = true } = {}) {
             settings: {
               fontScale: next.settings.fontScale,
               timeLimit: next.settings.timeLimit,
+              language: next.settings.language,
+              ...(next.settings.lastFeedbackAt ? { lastFeedbackAt: next.settings.lastFeedbackAt } : {}),
+              ...(next.settings.feedbackRating ? { feedbackRating: next.settings.feedbackRating } : {}),
+              ...(next.settings.feedbackComment ? { feedbackComment: next.settings.feedbackComment } : {}),
               ...flattenStats(next.stats),
             },
           },

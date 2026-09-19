@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Star, ArrowRight } from "lucide-react";
+import { Star, ArrowRight, Check, X } from "lucide-react";
 
 import { getState, grantItem, setState, spendStars, type ItemKey, type State } from "@/lib/store";
 import { STAR_HEX, type StarColor } from "@/lib/leveling";
@@ -9,6 +9,9 @@ import hourglassImg from "@/assets/icon-hourglass.png";
 import potionImg from "@/assets/icon-potion.png";
 import torchImg from "@/assets/icon-torch.png";
 import shopImg from "@/assets/icon-shop.png";
+import stallImg from "@/assets/bg-shop-stall.jpg";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/shop")({
   head: () => ({
@@ -48,6 +51,8 @@ function ShopPage() {
   const [state, setLocal] = useState<State | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const [convert, setConvert] = useState(1);
+  const [convertTo, setConvertTo] = useState<StarColor>("red");
+  const [confirm, setConfirm] = useState<{ kind: "buy"; product: Product } | { kind: "convert" } | null>(null);
 
   useEffect(() => {
     const sync = () => setLocal(getState());
@@ -86,11 +91,25 @@ function ShopPage() {
       },
     });
     flash(`Converted ${n} yellow → ${n} ${to}. This cannot be undone.`);
+    setConfirm(null);
+  };
+
+  const confirmAction = () => {
+    if (!confirm) return;
+    if (confirm.kind === "buy") {
+      buy(confirm.product);
+      setConfirm(null);
+      return;
+    }
+    doConvert(convertTo);
   };
 
   return (
-    <main className="min-h-screen px-6 py-8">
-      <div className="max-w-4xl mx-auto">
+    <main className="min-h-screen px-6 py-8 relative overflow-hidden">
+      <div className="absolute inset-0 bg-background" />
+      <div className="absolute inset-0 bg-cover bg-center opacity-50" style={{ backgroundImage: `url(${stallImg})` }} aria-hidden />
+      <div className="absolute inset-0 bg-background/35" aria-hidden />
+      <div className="relative max-w-4xl mx-auto">
         <Link to="/game" className="text-primary font-semibold">← Back to map</Link>
 
         <header className="mt-3 flex items-center gap-4 flex-wrap">
@@ -112,61 +131,87 @@ function ShopPage() {
               <img src={p.img} alt={p.name} loading="lazy" width={512} height={512} className="w-24 h-24 mx-auto object-contain" />
               <h2 className="mt-2 text-lg font-extrabold">{p.name}</h2>
               <p className="text-sm text-muted-foreground mt-1 min-h-[2.5rem]">{p.blurb}</p>
-              <p className="mt-2 font-extrabold" style={{ color: STAR_HEX[p.color] }}>
-                {p.price} {p.color} stars
+              <p className="mt-2 inline-flex items-center justify-center gap-2 text-xl font-extrabold">
+                {p.price}<Star size={25} style={{ color: STAR_HEX[p.color], fill: STAR_HEX[p.color] }} aria-label={`${p.color} stars`} />
               </p>
-              <p className="text-xs text-muted-foreground">You own: {wallet?.items[p.key] ?? 0}</p>
-              <button
-                onClick={() => buy(p)}
-                className="mt-3 rounded-2xl bg-primary text-primary-foreground px-5 py-2 font-bold w-full"
+              <p className="text-xs text-muted-foreground">Own: {wallet?.items[p.key] ?? 0}</p>
+              <Button
+                onClick={() => setConfirm({ kind: "buy", product: p })}
+                className="mt-3 rounded-2xl px-5 py-2 font-bold w-full"
               >
                 Buy
-              </button>
+              </Button>
             </div>
           ))}
         </div>
 
         <section className="mt-8 bg-card border-2 border-border rounded-3xl p-6 shadow">
-          <h2 className="text-xl font-extrabold flex items-center gap-2">
+          <h2 className="text-xl font-extrabold flex items-center gap-2" aria-label="Exchange yellow stars">
             <Star size={26} style={{ color: STAR_HEX.yellow, fill: STAR_HEX.yellow }} aria-hidden />
             <ArrowRight size={22} aria-hidden />
-            <span className="flex items-center gap-1">
-              {COLORS.map((c) => (
-                <Star key={c} size={22} style={{ color: STAR_HEX[c], fill: STAR_HEX[c] }} aria-hidden />
-              ))}
-            </span>
+            <Star size={22} style={{ color: STAR_HEX[convertTo], fill: STAR_HEX[convertTo] }} aria-hidden />
           </h2>
-          <p className="text-sm text-muted-foreground mt-1 font-semibold">One way only.</p>
 
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            <label className="sr-only" htmlFor="convert-amount">Amount</label>
-            <span className="flex items-center gap-1 font-extrabold">
-              <Star size={26} style={{ color: STAR_HEX.yellow, fill: STAR_HEX.yellow }} aria-hidden />
+          <div className="mt-4 grid gap-5 md:grid-cols-[auto_1fr_auto] md:items-center">
+            <span className="flex items-center gap-2 text-2xl font-extrabold">
+              <Star size={34} style={{ color: STAR_HEX.yellow, fill: STAR_HEX.yellow }} aria-hidden /> {convert}
+            </span>
+            <div className="flex items-center gap-3">
               <input
                 id="convert-amount"
-                type="number"
+                aria-label="Yellow stars to exchange"
+                type="range"
                 min={1}
-                value={convert}
-                onChange={(e) => setConvert(parseInt(e.target.value, 10) || 1)}
-                className="w-20 rounded-xl border-2 border-border bg-background px-3 py-2 font-bold"
+                max={Math.max(1, wallet?.stars.yellow ?? 1)}
+                value={Math.min(convert, Math.max(1, wallet?.stars.yellow ?? 1))}
+                onChange={(e) => setConvert(Number(e.target.value))}
+                className="w-full accent-primary"
               />
-            </span>
-            <ArrowRight size={24} aria-hidden />
-            {COLORS.map((c) => (
-              <button
-                key={c}
-                onClick={() => doConvert(c)}
-                aria-label={`Convert to ${c} stars`}
-                title={`→ ${c}`}
-                className="grid place-items-center w-14 h-14 rounded-2xl border-4 border-border bg-background hover:scale-105 transition"
-              >
-                <Star size={30} style={{ color: STAR_HEX[c], fill: STAR_HEX[c] }} aria-hidden />
-              </button>
-            ))}
+              <ArrowRight size={30} className="text-primary shrink-0" aria-hidden />
+            </div>
+            <div className="flex items-center gap-2">
+              {COLORS.map((c, i) => (
+                <span key={c} className="contents">
+                  {i > 0 && <span className="font-extrabold text-muted-foreground">or</span>}
+                  <Button
+                    variant={convertTo === c ? "default" : "outline"}
+                    size="icon"
+                    onClick={() => setConvertTo(c)}
+                    aria-label={`Choose ${c} stars`}
+                    title={c}
+                    className="w-14 h-14 rounded-2xl border-2"
+                  >
+                    <Star size={30} style={{ color: STAR_HEX[c], fill: STAR_HEX[c] }} aria-hidden />
+                  </Button>
+                </span>
+              ))}
+            </div>
           </div>
+          <Button className="mt-5 rounded-2xl px-6 font-bold" onClick={() => setConfirm({ kind: "convert" })} disabled={(wallet?.stars.yellow ?? 0) < 1}>
+            <Check aria-hidden /> Confirm
+          </Button>
         </section>
 
       </div>
+
+      <Dialog open={confirm !== null} onOpenChange={(open) => !open && setConfirm(null)}>
+        <DialogContent className="max-w-sm rounded-2xl border-2">
+          <DialogHeader>
+            <DialogTitle>Confirm</DialogTitle>
+            <DialogDescription>
+              {confirm?.kind === "buy" ? (
+                <>Buy {confirm.product.name} for {confirm.product.price} {confirm.product.color} stars?</>
+              ) : (
+                <>Exchange {convert} yellow stars for {convert} {convertTo} stars?</>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setConfirm(null)}><X aria-hidden /> Cancel</Button>
+            <Button onClick={confirmAction}><Check aria-hidden /> Confirm</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }
