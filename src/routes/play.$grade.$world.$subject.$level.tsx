@@ -29,12 +29,6 @@ export const Route = createFileRoute("/play/$grade/$world/$subject/$level")({
   component: PlayPage,
 });
 
-const SUBJECT_LANG: Record<string, "en-US" | "zh-HK"> = {
-  eng: "en-US",
-  chi: "zh-HK",
-  math: "en-US",
-};
-
 type Item = { prompt: string; answer: string; hint?: string; topic?: string; choices?: string[] };
 
 const GLASS_SECONDS: Record<"A" | "B" | "C", number> = { A: 15, B: 20, C: 25 };
@@ -45,7 +39,6 @@ function PlayPage() {
   const { grade, world, subject, level } = Route.useParams();
   const nav = useNavigate();
   const art = WORLD_ART[world] ?? WORLD_ART.forest;
-  const lang = SUBJECT_LANG[subject] ?? "en-US";
   const levelNum = Math.min(500, Math.max(1, parseInt(level, 10) || 1));
 
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
@@ -61,12 +54,15 @@ function PlayPage() {
   }, []);
 
   const lv = playerLv(wallet.exp);
+  const lang = subject === "eng" || subject === "math" && settings.language === "en"
+    ? "en-US"
+    : settings.language === "zh-CN" ? "zh-CN" : "zh-HK";
   const needLv = requiredLv(levelNum);
   const lvLocked = lv < needLv;
 
   const generate = useServerFn(generateLevelItems);
   const { data, isLoading, error } = useQuery({
-    queryKey: ["qb", subject, grade, world, level],
+    queryKey: ["qb", subject, grade, world, level, settings.language],
     queryFn: () =>
       generate({
         data: {
@@ -75,6 +71,7 @@ function PlayPage() {
           theme: art.label,
           level: levelNum,
           count: 14, // 8 for the level + spares for POTION swaps
+          language: settings.language,
         },
       }),
     staleTime: Infinity,
