@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Settings as Gear, BookOpen, Waves, Trees, Flame, Lock, Sparkles, Star, Send } from "lucide-react";
 import { isFestivalOpen, nextOpening } from "@/lib/festivals";
 import { WORLD_ART } from "@/lib/world-art";
-import { getSession, getState, type SubjectStat, type Wallet } from "@/lib/store";
+import { getSession, getState, setState, type SubjectStat, type Wallet } from "@/lib/store";
 import { playerLv, lvProgressPct, EXP_PER_LV } from "@/lib/leveling";
 import { StarRow } from "@/components/stars";
 import continentMap from "@/assets/continent-map.jpg";
