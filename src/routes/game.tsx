@@ -79,12 +79,15 @@ function GameMap() {
     const state = getState();
     const answers = Object.values(state.stats ?? {}).reduce((sum, stat) => sum + stat.total, 0);
     const lastShown = state.settings.lastFeedbackAt ?? 0;
+    let timer: number | undefined;
     if (answers >= 8 && Date.now() - lastShown > 7 * 24 * 60 * 60 * 1000 && Math.random() < 0.35) {
-      const timer = window.setTimeout(() => setReviewOpen(true), 1200);
-      return () => window.clearTimeout(timer);
+      timer = window.setTimeout(() => setReviewOpen(true), 1200);
     }
     window.addEventListener("wq-updated", sync);
-    return () => window.removeEventListener("wq-updated", sync);
+    return () => {
+      if (timer) window.clearTimeout(timer);
+      window.removeEventListener("wq-updated", sync);
+    };
   }, []);
 
   const closeReview = () => {
