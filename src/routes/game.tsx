@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Settings as Gear, BookOpen, Waves, Trees, Flame, Lock, Sparkles, Star, Send } from "lucide-react";
-import { isFestivalOpen, nextOpening } from "@/lib/festivals";
+import { isFestivalOpen, nextEventOpening, festivalName, EVENT_WORLDS } from "@/lib/festivals";
 import { WORLD_ART } from "@/lib/world-art";
 import { getSession, getState, setState, type SubjectStat, type Wallet } from "@/lib/store";
+import { useLang } from "@/lib/i18n";
 import { playerLv, lvProgressPct, EXP_PER_LV } from "@/lib/leveling";
 import { StarRow } from "@/components/stars";
 import continentMap from "@/assets/continent-map.jpg";
@@ -26,17 +27,10 @@ export const Route = createFileRoute("/game")({
 
 /** Countries of the continent — positioned as % over the map illustration. */
 const COUNTRIES = [
-  { id: "aquatic", name: "Aquatic Bay", Icon: Waves, x: 30, y: 55 },
-  { id: "forest", name: "Forest Land", Icon: Trees, x: 56, y: 32 },
-  { id: "fire", name: "Fire Land", Icon: Flame, x: 78, y: 52 },
+  { id: "aquatic", key: "aquatic", Icon: Waves, x: 30, y: 55 },
+  { id: "forest", key: "forest", Icon: Trees, x: 56, y: 32 },
+  { id: "fire", key: "fire", Icon: Flame, x: 78, y: 52 },
 ];
-
-const EVENTS = ["olympus", "winter", "festival"];
-
-
-function formatDate(d: Date) {
-  return d.toLocaleDateString("en-HK", { month: "short", day: "numeric" });
-}
 
 /** Icon button with a hover label (dyslexia-friendly: picture first, word on hover). */
 function IconAction({ to, label, children }: { to: string; label: string; children: React.ReactNode }) {
@@ -111,7 +105,7 @@ function GameMap() {
     setReviewOpen(false);
   };
 
-  const openEvents = EVENTS.filter((id) => isFestivalOpen(id));
+  const openEvents = EVENT_WORLDS.filter((id) => isFestivalOpen(id));
   const exp = wallet?.exp ?? 0;
 
   return (
@@ -119,16 +113,16 @@ function GameMap() {
       <header className="flex items-center justify-between max-w-6xl mx-auto mb-4 gap-4 flex-wrap">
         <div>
           <div className="text-sm text-muted-foreground">
-            {player?.name ? `${player.name} • ` : "Player • "}Grade {player?.grade ?? "—"}
+            {player?.name ? `${player.name} • ` : `${t("player")} • `}{t("grade")} {player?.grade ?? "—"}
           </div>
           <h1 className="text-4xl font-extrabold brand-outline">Acelexia</h1>
         </div>
 
         <div className="flex items-center gap-3">
-          <IconAction to="/revision" label="Revision bank">
+          <IconAction to="/revision" label={t("revision_bank")}>
             <BookOpen className="text-primary" size={26} aria-hidden />
           </IconAction>
-          <IconAction to="/settings" label="Settings">
+          <IconAction to="/settings" label={t("settings")}>
             <Gear className="text-primary" size={26} aria-hidden />
           </IconAction>
         </div>

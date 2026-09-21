@@ -21,6 +21,10 @@ export const WORLD_ART: Record<string, WorldArt> = {
   olympus:  { boss: bossOlympus,  bg: bgOlympus,  label: "Olympus",  color: "var(--color-grape)" },
   winter:   { boss: bossWinter,   bg: bgWinter,   label: "Workshop", color: "var(--color-fire)" },
   festival: { boss: bossFestival, bg: bgFestival, label: "Festival", color: "var(--color-sun)" },
+  // Extra seasonal specials reuse bundled artwork so the app stays offline-ready.
+  easter:    { boss: bossForest,   bg: bgForest,   label: "Easter",     color: "var(--color-forest)" },
+  midautumn: { boss: bossFestival, bg: bgFestival, label: "Mid-Autumn", color: "var(--color-sun)" },
+  halloween: { boss: bossFire,     bg: bgFire,     label: "Halloween",  color: "var(--color-grape)" },
 };
 
 /** Toned-down (desaturated, dimmer) background style for gameplay/tower pages. */

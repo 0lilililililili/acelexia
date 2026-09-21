@@ -1,49 +1,67 @@
-// HK official festival windows that gate limited-event worlds on the map.
-// Dates follow the Hong Kong public-holiday calendar (Gregorian dates given
-// for lunar festivals from the HK Government Gazette).
+// Hong Kong seasonal festival windows that gate the limited event worlds.
+// Fixed-date festivals repeat every year; lunar / movable ones are listed per year.
+import type { Lang } from "./i18n";
 
 export type FestivalWindow = {
   worldId: string;
-  name: string;
-  // Inclusive [start, end] month/day pairs. Year is matched against `year`
-  // when given (for lunar dates that shift each year); otherwise any year.
+  name: Record<Lang, string>;
+  // Inclusive [month, day] pairs. `year` pins a movable date to one year.
   ranges: Array<{ year?: number; from: [number, number]; to: [number, number] }>;
 };
 
-// Lunar/variable dates are listed per year from the HK gov calendar.
-// Add new years as they're published.
 export const FESTIVALS: FestivalWindow[] = [
   {
-    worldId: "winter",
-    name: "Santa's Workshop (Christmas)",
-    // Christmas season: 20 Dec – 28 Dec every year
-    ranges: [{ from: [12, 20], to: [12, 28] }],
-  },
-  {
     worldId: "festival",
-    name: "Lunar Festival (Chinese New Year)",
-    // HK Gazetted CNY windows (eve + 3 days, padded a little)
+    name: { en: "Lunar New Year", "zh-TW": "農曆新年", "zh-CN": "农历新年" },
     ranges: [
       { year: 2025, from: [1, 28], to: [2, 2] },
       { year: 2026, from: [2, 16], to: [2, 21] },
-      { year: 2027, from: [2, 5],  to: [2, 10] },
+      { year: 2027, from: [2, 5], to: [2, 10] },
+      { year: 2028, from: [1, 25], to: [1, 30] },
+    ],
+  },
+  {
+    worldId: "easter",
+    name: { en: "Easter", "zh-TW": "復活節", "zh-CN": "复活节" },
+    ranges: [
+      { year: 2026, from: [4, 3], to: [4, 6] },
+      { year: 2027, from: [3, 26], to: [3, 29] },
+      { year: 2028, from: [4, 14], to: [4, 17] },
     ],
   },
   {
     worldId: "olympus",
-    name: "Mount Olympus (Summer Games)",
-    // Hidden summer quest: 1 Jul – 31 Aug
+    name: { en: "Summer Holiday", "zh-TW": "暑假特別活動", "zh-CN": "暑假特别活动" },
     ranges: [{ from: [7, 1], to: [8, 31] }],
+  },
+  {
+    worldId: "midautumn",
+    name: { en: "Mid-Autumn Festival", "zh-TW": "中秋節", "zh-CN": "中秋节" },
+    ranges: [
+      { year: 2026, from: [9, 23], to: [9, 27] },
+      { year: 2027, from: [9, 13], to: [9, 17] },
+      { year: 2028, from: [10, 1], to: [10, 5] },
+    ],
+  },
+  {
+    worldId: "halloween",
+    name: { en: "Halloween", "zh-TW": "萬聖節", "zh-CN": "万圣节" },
+    ranges: [{ from: [10, 25], to: [11, 1] }],
+  },
+  {
+    worldId: "winter",
+    name: { en: "Christmas", "zh-TW": "聖誕節", "zh-CN": "圣诞节" },
+    ranges: [{ from: [12, 18], to: [1, 1] }],
   },
 ];
 
+export const EVENT_WORLDS = FESTIVALS.map((f) => f.worldId);
+
 function inRange(now: Date, from: [number, number], to: [number, number]) {
-  const m = now.getMonth() + 1;
-  const d = now.getDate();
-  const cur = m * 100 + d;
+  const cur = (now.getMonth() + 1) * 100 + now.getDate();
   const a = from[0] * 100 + from[1];
   const b = to[0] * 100 + to[1];
-  // Handle wrap-around (e.g. Dec → Jan) just in case
+  // Wrap-around windows (e.g. 18 Dec → 1 Jan)
   return a <= b ? cur >= a && cur <= b : cur >= a || cur <= b;
 }
 
@@ -61,19 +79,32 @@ export function festivalFor(worldId: string): FestivalWindow | undefined {
   return FESTIVALS.find((x) => x.worldId === worldId);
 }
 
+export function festivalName(worldId: string, lang: Lang): string | null {
+  return festivalFor(worldId)?.name[lang] ?? null;
+}
+
 export function nextOpening(worldId: string, now: Date = new Date()): Date | null {
   const f = festivalFor(worldId);
   if (!f) return null;
   const candidates: Date[] = [];
   for (const r of f.ranges) {
-    const year = r.year ?? now.getFullYear();
-    const start = new Date(year, r.from[0] - 1, r.from[1]);
-    if (start >= now) candidates.push(start);
-    if (r.year == null) {
-      const nextYear = new Date(year + 1, r.from[0] - 1, r.from[1]);
-      if (nextYear >= now) candidates.push(nextYear);
+    if (r.year != null) {
+      const start = new Date(r.year, r.from[0] - 1, r.from[1]);
+      if (start >= now) candidates.push(start);
+      continue;
+    }
+    for (const y of [now.getFullYear(), now.getFullYear() + 1]) {
+      const start = new Date(y, r.from[0] - 1, r.from[1]);
+      if (start >= now) candidates.push(start);
     }
   }
   candidates.sort((a, b) => a.getTime() - b.getTime());
   return candidates[0] ?? null;
+}
+
+/** Soonest upcoming event across every limited world. */
+export function nextEventOpening(now: Date = new Date()): Date | null {
+  const all = EVENT_WORLDS.map((id) => nextOpening(id, now)).filter(Boolean) as Date[];
+  all.sort((a, b) => a.getTime() - b.getTime());
+  return all[0] ?? null;
 }
