@@ -105,7 +105,7 @@ function GameMap() {
     setReviewOpen(false);
   };
 
-  const openEvents = EVENTS.filter((id) => isFestivalOpen(id));
+  const openEvents = EVENT_WORLDS.filter((id) => isFestivalOpen(id));
   const exp = wallet?.exp ?? 0;
 
   return (
@@ -113,16 +113,16 @@ function GameMap() {
       <header className="flex items-center justify-between max-w-6xl mx-auto mb-4 gap-4 flex-wrap">
         <div>
           <div className="text-sm text-muted-foreground">
-            {player?.name ? `${player.name} • ` : "Player • "}Grade {player?.grade ?? "—"}
+            {player?.name ? `${player.name} • ` : `${t("player")} • `}{t("grade")} {player?.grade ?? "—"}
           </div>
           <h1 className="text-4xl font-extrabold brand-outline">Acelexia</h1>
         </div>
 
         <div className="flex items-center gap-3">
-          <IconAction to="/revision" label="Revision bank">
+          <IconAction to="/revision" label={t("revision_bank")}>
             <BookOpen className="text-primary" size={26} aria-hidden />
           </IconAction>
-          <IconAction to="/settings" label="Settings">
+          <IconAction to="/settings" label={t("settings")}>
             <Gear className="text-primary" size={26} aria-hidden />
           </IconAction>
         </div>
