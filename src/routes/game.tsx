@@ -50,6 +50,7 @@ function IconAction({ to, label, children }: { to: string; label: string; childr
 }
 
 function GameMap() {
+  const { lang, t, fmtDate } = useLang();
   const [player, setPlayer] = useState<{ name: string; grade: string } | null>(null);
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [stats, setStats] = useState<Record<string, SubjectStat>>({});
