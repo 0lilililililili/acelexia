@@ -44,7 +44,7 @@ function SettingsPage() {
   }, []);
 
   const logOut = () => {
-    if (!window.confirm("Log out of Acelexia? Your progress is saved.")) return;
+    if (!window.confirm(t("log_out_confirm"))) return;
     setSession(null);
     setState(emptyState(), { sync: false });
     try {
@@ -64,7 +64,7 @@ function SettingsPage() {
   };
 
   const reset = () => {
-    if (!window.confirm("Reset text size and question time limit back to normal?")) return;
+    if (!window.confirm(t("reset_confirm"))) return;
     const fresh = { ...settings, fontScale: DEFAULT_SETTINGS.fontScale, timeLimit: DEFAULT_SETTINGS.timeLimit };
     setSettings(fresh);
     setState({ ...getState(), settings: fresh });
