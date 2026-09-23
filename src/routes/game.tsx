@@ -178,8 +178,9 @@ function GameMap() {
           <div className="absolute inset-0 bg-background/15 pointer-events-none" aria-hidden />
 
           {/* Countries of the continent */}
-          {COUNTRIES.map(({ id, name, Icon, x, y }) => {
+          {COUNTRIES.map(({ id, key, Icon, x, y }) => {
             const art = WORLD_ART[id];
+            const name = t(key);
             return (
               <Link
                 key={id}
