@@ -266,10 +266,10 @@ function GameMap() {
       <Dialog open={reviewOpen} onOpenChange={(open) => !open && closeReview()}>
         <DialogContent className="max-w-md rounded-2xl border-2">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-extrabold">How is Acelexia?</DialogTitle>
-            <DialogDescription>What can we do to improve?</DialogDescription>
+            <DialogTitle className="text-2xl font-extrabold">{t("feedback_title")}</DialogTitle>
+            <DialogDescription>{t("feedback_desc")}</DialogDescription>
           </DialogHeader>
-          <div className="flex justify-center gap-2" role="radiogroup" aria-label="Rating out of five">
+          <div className="flex justify-center gap-2" role="radiogroup" aria-label={t("rating_label")}>
             {[1, 2, 3, 4, 5].map((value) => (
               <Button
                 key={value}
@@ -277,7 +277,7 @@ function GameMap() {
                 size="icon"
                 role="radio"
                 aria-checked={rating === value}
-                aria-label={`${value} out of 5 stars`}
+                aria-label={t("rating_stars", { n: value })}
                 onClick={() => setRating(value)}
                 className="h-12 w-12"
               >
@@ -285,18 +285,18 @@ function GameMap() {
               </Button>
             ))}
           </div>
-          <label htmlFor="ux-comment" className="font-bold">Comment <span className="text-muted-foreground font-normal">(optional)</span></label>
+          <label htmlFor="ux-comment" className="font-bold">{t("comment")} <span className="text-muted-foreground font-normal">{t("optional")}</span></label>
           <textarea
             id="ux-comment"
             value={comment}
             maxLength={500}
             onChange={(event) => setComment(event.target.value)}
-            placeholder="What can we do to improve?"
+            placeholder={t("feedback_desc")}
             className="min-h-28 w-full resize-y rounded-xl border-2 border-input bg-background px-4 py-3"
           />
           <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={closeReview}>Later</Button>
-            <Button onClick={sendReview} disabled={!rating}><Send aria-hidden /> Send</Button>
+            <Button variant="outline" onClick={closeReview}>{t("later")}</Button>
+            <Button onClick={sendReview} disabled={!rating}><Send aria-hidden /> {t("send")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
