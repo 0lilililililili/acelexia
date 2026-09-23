@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { LogOut } from "lucide-react";
 import { DEFAULT_SETTINGS, emptyState, getSession, getState, setSession, setState, type Settings } from "@/lib/store";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -31,6 +32,7 @@ const LANGUAGE_CHOICES: { label: string; value: Settings["language"] }[] = [
 ];
 
 function SettingsPage() {
+  const { t } = useLang();
   const nav = useNavigate();
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [saved, setSaved] = useState(false);
