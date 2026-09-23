@@ -224,17 +224,17 @@ function GameMap() {
           <div className="absolute left-[3%] bottom-[4%] w-[26%] min-w-[150px]">
             <div className="rounded-[2rem] bg-[oklch(0.95_0.06_90)]/90 border-4 border-white/80 shadow-2xl p-3 text-center">
               <div className="flex items-center justify-center gap-1 text-xs font-extrabold uppercase tracking-wider">
-                <Sparkles size={14} aria-hidden /> Event Isle
+                <Sparkles size={14} aria-hidden /> {t("event_isle")}
               </div>
 
               {openEvents.length === 0 ? (
-                <div className="mt-3 flex flex-col items-center gap-1" title="No event is open right now">
+                <div className="mt-3 flex flex-col items-center gap-1" title={t("no_event")}>
                   <Lock size={28} className="text-foreground/70" aria-hidden />
-                  <span className="text-[11px] font-semibold text-foreground/70">Locked</span>
+                  <span className="text-[11px] font-semibold text-foreground/70">{t("locked")}</span>
                   {(() => {
-                    const next = EVENTS.map((id) => nextOpening(id)).filter(Boolean).sort((a, b) => a!.getTime() - b!.getTime())[0];
+                    const next = nextEventOpening();
                     return next ? (
-                      <span className="text-[11px] text-foreground/60">Opens {formatDate(next)}</span>
+                      <span className="text-[11px] text-foreground/60">{t("opens", { date: fmtDate(next) })}</span>
                     ) : null;
                   })()}
                 </div>
