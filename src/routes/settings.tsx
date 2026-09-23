@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { LogOut } from "lucide-react";
 import { DEFAULT_SETTINGS, emptyState, getSession, getState, setSession, setState, type Settings } from "@/lib/store";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -15,11 +16,11 @@ export const Route = createFileRoute("/settings")({
   component: SettingsPage,
 });
 
-const FONT_CHOICES: { label: string; value: number }[] = [
-  { label: "Small", value: 0.9 },
-  { label: "Normal", value: 1 },
-  { label: "Large", value: 1.2 },
-  { label: "Extra large", value: 1.45 },
+const FONT_CHOICES: { key: string; value: number }[] = [
+  { key: "small", value: 0.9 },
+  { key: "normal", value: 1 },
+  { key: "large", value: 1.2 },
+  { key: "xlarge", value: 1.45 },
 ];
 
 const TIME_CHOICES = [15, 25, 35, 60, 90];
@@ -31,6 +32,7 @@ const LANGUAGE_CHOICES: { label: string; value: Settings["language"] }[] = [
 ];
 
 function SettingsPage() {
+  const { t } = useLang();
   const nav = useNavigate();
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [saved, setSaved] = useState(false);
@@ -42,7 +44,7 @@ function SettingsPage() {
   }, []);
 
   const logOut = () => {
-    if (!window.confirm("Log out of Acelexia? Your progress is saved.")) return;
+    if (!window.confirm(t("log_out_confirm"))) return;
     setSession(null);
     setState(emptyState(), { sync: false });
     try {
@@ -62,7 +64,7 @@ function SettingsPage() {
   };
 
   const reset = () => {
-    if (!window.confirm("Reset text size and question time limit back to normal?")) return;
+    if (!window.confirm(t("reset_confirm"))) return;
     const fresh = { ...settings, fontScale: DEFAULT_SETTINGS.fontScale, timeLimit: DEFAULT_SETTINGS.timeLimit };
     setSettings(fresh);
     setState({ ...getState(), settings: fresh });
@@ -74,14 +76,12 @@ function SettingsPage() {
   return (
     <main className="min-h-screen px-6 py-8">
       <div className="max-w-2xl mx-auto">
-        <Link to="/game" className="text-primary font-semibold">← Back to map</Link>
-        <h1 className="text-4xl font-extrabold mt-3">Settings</h1>
-        <p className="text-muted-foreground mt-1">
-          These are saved with your account and come back next time you log in.
-        </p>
+        <Link to="/game" className="text-primary font-semibold">{t("back_map")}</Link>
+        <h1 className="text-4xl font-extrabold mt-3">{t("settings")}</h1>
+        <p className="text-muted-foreground mt-1">{t("settings_sub")}</p>
 
         <section className="mt-8 bg-card border-2 border-border rounded-3xl p-6 shadow">
-          <h2 className="text-xl font-extrabold">Text size</h2>
+          <h2 className="text-xl font-extrabold">{t("text_size")}</h2>
           <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2">
             {FONT_CHOICES.map((f) => (
               <button
@@ -89,33 +89,31 @@ function SettingsPage() {
                 onClick={() => update({ fontScale: f.value })}
                 className={`rounded-xl py-3 font-bold border-2 ${settings.fontScale === f.value ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border"}`}
               >
-                {f.label}
+                {t(f.key)}
               </button>
             ))}
           </div>
-          <p className="mt-3" style={{ fontSize: `${settings.fontScale}rem` }}>
-            Preview: the quick brown fox reads every word.
-          </p>
+          <p className="mt-3" style={{ fontSize: `${settings.fontScale}rem` }}>{t("preview_text")}</p>
         </section>
 
         <section className="mt-6 bg-card border-2 border-border rounded-3xl p-6 shadow">
-          <h2 className="text-xl font-extrabold">Question time limit</h2>
-          <p className="text-sm text-muted-foreground mt-1">How long you get to answer each question.</p>
+          <h2 className="text-xl font-extrabold">{t("time_limit")}</h2>
+          <p className="text-sm text-muted-foreground mt-1">{t("time_limit_sub")}</p>
           <div className="mt-3 grid grid-cols-3 sm:grid-cols-5 gap-2">
-            {TIME_CHOICES.map((t) => (
+            {TIME_CHOICES.map((secs) => (
               <button
-                key={t}
-                onClick={() => update({ timeLimit: t })}
-                className={`rounded-xl py-3 font-bold border-2 ${settings.timeLimit === t ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border"}`}
+                key={secs}
+                onClick={() => update({ timeLimit: secs })}
+                className={`rounded-xl py-3 font-bold border-2 ${settings.timeLimit === secs ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border"}`}
               >
-                {t}s
+                {secs}s
               </button>
             ))}
           </div>
         </section>
 
         <section className="mt-6 bg-card border-2 border-border rounded-3xl p-6 shadow">
-          <h2 className="text-xl font-extrabold">System language</h2>
+          <h2 className="text-xl font-extrabold">{t("system_language")}</h2>
           <div className="mt-3 grid gap-2 sm:grid-cols-3">
             {LANGUAGE_CHOICES.map((option) => (
               <button
@@ -127,37 +125,34 @@ function SettingsPage() {
               </button>
             ))}
           </div>
-          <p className="mt-3 text-sm text-muted-foreground">ENG stays in English. 中 and MATH follow this choice.</p>
+          <p className="mt-3 text-sm text-muted-foreground">{t("language_note")}</p>
         </section>
 
         <section className="mt-6 bg-card border-2 border-border rounded-3xl p-6 shadow">
-          <h2 className="text-xl font-extrabold">Reset</h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            Puts text size and question time limit back to normal. Your progress is kept.
-          </p>
+          <h2 className="text-xl font-extrabold">{t("reset")}</h2>
+          <p className="text-sm text-muted-foreground mt-1">{t("reset_sub")}</p>
           <button
             onClick={reset}
             className="mt-4 rounded-2xl bg-primary text-primary-foreground px-6 py-3 font-bold"
           >
-            Reset text size &amp; time limit
+            {t("reset_btn")}
           </button>
         </section>
 
         <section className="mt-6 bg-card border-2 border-border rounded-3xl p-6 shadow">
-          <h2 className="text-xl font-extrabold">Account</h2>
+          <h2 className="text-xl font-extrabold">{t("account")}</h2>
           <p className="text-sm mt-1">
-            You stay <strong>logged in</strong>{username ? <> as <strong>{username}</strong></> : null} until you press{" "}
-            <strong>Log out</strong>.
+            {username ? <><strong>{username}</strong> — </> : null}{t("stay_logged_in")}
           </p>
           <button
             onClick={logOut}
             className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-card border-2 border-border px-6 py-3 font-extrabold hover:border-destructive"
           >
-            <LogOut size={20} aria-hidden /> Log out
+            <LogOut size={20} aria-hidden /> {t("log_out")}
           </button>
         </section>
 
-        {saved && <p className="mt-4 text-sm font-semibold text-primary">Saved ✓</p>}
+        {saved && <p className="mt-4 text-sm font-semibold text-primary">{t("saved")}</p>}
 
 
       </div>

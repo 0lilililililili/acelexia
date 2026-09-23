@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { isFestivalOpen, nextOpening } from "@/lib/festivals";
+import { isFestivalOpen, nextOpening, festivalName } from "@/lib/festivals";
 import { WORLD_ART } from "@/lib/world-art";
+import { useLang } from "@/lib/i18n";
+import { SUBJECT_LABEL } from "@/lib/subjects";
 import towerImg from "@/assets/tower.png";
 
 

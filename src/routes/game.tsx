@@ -50,6 +50,7 @@ function IconAction({ to, label, children }: { to: string; label: string; childr
 }
 
 function GameMap() {
+  const { lang, t, fmtDate } = useLang();
   const [player, setPlayer] = useState<{ name: string; grade: string } | null>(null);
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [stats, setStats] = useState<Record<string, SubjectStat>>({});
@@ -131,9 +132,9 @@ function GameMap() {
       {/* Stars + LV */}
       <div className="max-w-6xl mx-auto mb-4 grid gap-3 sm:grid-cols-2">
         <div className="bg-card border-2 border-border rounded-3xl px-5 py-4 shadow">
-          <div className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">Profile</div>
-          <div className="mt-1 text-lg font-extrabold">{account ?? player?.name ?? "Explorer"}</div>
-          <div className="text-sm font-bold">Grade <strong>{player?.grade ?? "—"}</strong></div>
+          <div className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">{t("profile")}</div>
+          <div className="mt-1 text-lg font-extrabold">{account ?? player?.name ?? t("explorer")}</div>
+          <div className="text-sm font-bold">{t("grade")} <strong>{player?.grade ?? "—"}</strong></div>
           <ul className="mt-2 space-y-0.5 text-sm font-semibold">
             {SUBJECTS.map(({ key, label }) => {
               const s = stats[key];
@@ -146,10 +147,10 @@ function GameMap() {
               );
             })}
           </ul>
-          <div className="mt-1 text-[11px] text-muted-foreground font-semibold">Avg correct %</div>
+          <div className="mt-1 text-[11px] text-muted-foreground font-semibold">{t("avg_correct")}</div>
         </div>
         <div className="bg-card border-2 border-border rounded-3xl px-5 py-4 shadow">
-          <div className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">Your stars</div>
+          <div className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">{t("your_stars")}</div>
           <div className="mt-2">{wallet && <StarRow stars={wallet.stars} size={24} />}</div>
           <div className="mt-4 flex items-baseline justify-between">
             <span className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">LV</span>
@@ -159,7 +160,7 @@ function GameMap() {
             <div className="h-full bg-primary" style={{ width: `${lvProgressPct(exp)}%` }} />
           </div>
           <div className="mt-1 text-xs text-muted-foreground font-semibold">
-            {exp % EXP_PER_LV} / {EXP_PER_LV} EXP to next LV
+            {t("exp_to_next", { a: exp % EXP_PER_LV, b: EXP_PER_LV })}
           </div>
         </div>
       </div>
@@ -171,14 +172,15 @@ function GameMap() {
         >
           <img
             src={continentMap}
-            alt="Map of the Acelexia continent with three lands and a festival island"
+            alt={t("map_alt")}
             className="absolute inset-0 w-full h-full object-cover opacity-60"
           />
           <div className="absolute inset-0 bg-background/15 pointer-events-none" aria-hidden />
 
           {/* Countries of the continent */}
-          {COUNTRIES.map(({ id, name, Icon, x, y }) => {
+          {COUNTRIES.map(({ id, key, Icon, x, y }) => {
             const art = WORLD_ART[id];
+            const name = t(key);
             return (
               <Link
                 key={id}
@@ -208,31 +210,31 @@ function GameMap() {
           {/* Shop — top right of the map */}
           <Link
             to="/shop"
-            aria-label="Star shop"
-            title="Star shop"
+            aria-label={t("star_shop")}
+            title={t("star_shop")}
             className="group absolute right-[4%] top-[6%] flex flex-col items-center"
           >
             <span className="grid place-items-center w-24 h-24 rounded-[1.5rem] bg-white/90 border-4 border-white shadow-2xl hover:scale-105 transition overflow-hidden">
               <img src={shopIcon} alt="" loading="lazy" width={512} height={512} className="w-20 h-20 object-contain" />
             </span>
-            <span className="mt-1 rounded-full bg-black/60 text-white text-xs font-extrabold px-2 py-0.5">Shop</span>
+            <span className="mt-1 rounded-full bg-black/60 text-white text-xs font-extrabold px-2 py-0.5">{t("shop")}</span>
           </Link>
 
           {/* Event isle — bottom left, below Aquatic Bay */}
           <div className="absolute left-[3%] bottom-[4%] w-[26%] min-w-[150px]">
             <div className="rounded-[2rem] bg-[oklch(0.95_0.06_90)]/90 border-4 border-white/80 shadow-2xl p-3 text-center">
               <div className="flex items-center justify-center gap-1 text-xs font-extrabold uppercase tracking-wider">
-                <Sparkles size={14} aria-hidden /> Event Isle
+                <Sparkles size={14} aria-hidden /> {t("event_isle")}
               </div>
 
               {openEvents.length === 0 ? (
-                <div className="mt-3 flex flex-col items-center gap-1" title="No event is open right now">
+                <div className="mt-3 flex flex-col items-center gap-1" title={t("no_event")}>
                   <Lock size={28} className="text-foreground/70" aria-hidden />
-                  <span className="text-[11px] font-semibold text-foreground/70">Locked</span>
+                  <span className="text-[11px] font-semibold text-foreground/70">{t("locked")}</span>
                   {(() => {
-                    const next = EVENTS.map((id) => nextOpening(id)).filter(Boolean).sort((a, b) => a!.getTime() - b!.getTime())[0];
+                    const next = nextEventOpening();
                     return next ? (
-                      <span className="text-[11px] text-foreground/60">Opens {formatDate(next)}</span>
+                      <span className="text-[11px] text-foreground/60">{t("opens", { date: fmtDate(next) })}</span>
                     ) : null;
                   })()}
                 </div>
@@ -240,16 +242,17 @@ function GameMap() {
                 <div className="mt-2 space-y-2">
                   {openEvents.map((id) => {
                     const art = WORLD_ART[id];
+                    const name = festivalName(id, lang) ?? art.label;
                     return (
                       <Link
                         key={id}
                         to="/world/$world"
                         params={{ world: id }}
-                        title={art.label}
+                        title={name}
                         className="flex items-center gap-2 rounded-2xl bg-white/90 border-2 border-border px-2 py-1.5 hover:border-primary transition"
                       >
                         <img src={art.boss} alt="" loading="lazy" className="w-9 h-9 object-contain" />
-                        <span className="text-xs font-extrabold">{art.label}</span>
+                        <span className="text-xs font-extrabold">{name}</span>
                       </Link>
                     );
                   })}
@@ -263,10 +266,10 @@ function GameMap() {
       <Dialog open={reviewOpen} onOpenChange={(open) => !open && closeReview()}>
         <DialogContent className="max-w-md rounded-2xl border-2">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-extrabold">How is Acelexia?</DialogTitle>
-            <DialogDescription>What can we do to improve?</DialogDescription>
+            <DialogTitle className="text-2xl font-extrabold">{t("feedback_title")}</DialogTitle>
+            <DialogDescription>{t("feedback_desc")}</DialogDescription>
           </DialogHeader>
-          <div className="flex justify-center gap-2" role="radiogroup" aria-label="Rating out of five">
+          <div className="flex justify-center gap-2" role="radiogroup" aria-label={t("rating_label")}>
             {[1, 2, 3, 4, 5].map((value) => (
               <Button
                 key={value}
@@ -274,7 +277,7 @@ function GameMap() {
                 size="icon"
                 role="radio"
                 aria-checked={rating === value}
-                aria-label={`${value} out of 5 stars`}
+                aria-label={t("rating_stars", { n: value })}
                 onClick={() => setRating(value)}
                 className="h-12 w-12"
               >
@@ -282,18 +285,18 @@ function GameMap() {
               </Button>
             ))}
           </div>
-          <label htmlFor="ux-comment" className="font-bold">Comment <span className="text-muted-foreground font-normal">(optional)</span></label>
+          <label htmlFor="ux-comment" className="font-bold">{t("comment")} <span className="text-muted-foreground font-normal">{t("optional")}</span></label>
           <textarea
             id="ux-comment"
             value={comment}
             maxLength={500}
             onChange={(event) => setComment(event.target.value)}
-            placeholder="What can we do to improve?"
+            placeholder={t("feedback_desc")}
             className="min-h-28 w-full resize-y rounded-xl border-2 border-input bg-background px-4 py-3"
           />
           <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={closeReview}>Later</Button>
-            <Button onClick={sendReview} disabled={!rating}><Send aria-hidden /> Send</Button>
+            <Button variant="outline" onClick={closeReview}>{t("later")}</Button>
+            <Button onClick={sendReview} disabled={!rating}><Send aria-hidden /> {t("send")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
