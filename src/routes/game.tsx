@@ -132,9 +132,9 @@ function GameMap() {
       {/* Stars + LV */}
       <div className="max-w-6xl mx-auto mb-4 grid gap-3 sm:grid-cols-2">
         <div className="bg-card border-2 border-border rounded-3xl px-5 py-4 shadow">
-          <div className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">Profile</div>
-          <div className="mt-1 text-lg font-extrabold">{account ?? player?.name ?? "Explorer"}</div>
-          <div className="text-sm font-bold">Grade <strong>{player?.grade ?? "—"}</strong></div>
+          <div className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">{t("profile")}</div>
+          <div className="mt-1 text-lg font-extrabold">{account ?? player?.name ?? t("explorer")}</div>
+          <div className="text-sm font-bold">{t("grade")} <strong>{player?.grade ?? "—"}</strong></div>
           <ul className="mt-2 space-y-0.5 text-sm font-semibold">
             {SUBJECTS.map(({ key, label }) => {
               const s = stats[key];
