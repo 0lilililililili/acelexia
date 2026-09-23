@@ -147,10 +147,10 @@ function GameMap() {
               );
             })}
           </ul>
-          <div className="mt-1 text-[11px] text-muted-foreground font-semibold">Avg correct %</div>
+          <div className="mt-1 text-[11px] text-muted-foreground font-semibold">{t("avg_correct")}</div>
         </div>
         <div className="bg-card border-2 border-border rounded-3xl px-5 py-4 shadow">
-          <div className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">Your stars</div>
+          <div className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">{t("your_stars")}</div>
           <div className="mt-2">{wallet && <StarRow stars={wallet.stars} size={24} />}</div>
           <div className="mt-4 flex items-baseline justify-between">
             <span className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">LV</span>
@@ -160,7 +160,7 @@ function GameMap() {
             <div className="h-full bg-primary" style={{ width: `${lvProgressPct(exp)}%` }} />
           </div>
           <div className="mt-1 text-xs text-muted-foreground font-semibold">
-            {exp % EXP_PER_LV} / {EXP_PER_LV} EXP to next LV
+            {t("exp_to_next", { a: exp % EXP_PER_LV, b: EXP_PER_LV })}
           </div>
         </div>
       </div>
@@ -172,7 +172,7 @@ function GameMap() {
         >
           <img
             src={continentMap}
-            alt="Map of the Acelexia continent with three lands and a festival island"
+            alt={t("map_alt")}
             className="absolute inset-0 w-full h-full object-cover opacity-60"
           />
           <div className="absolute inset-0 bg-background/15 pointer-events-none" aria-hidden />
