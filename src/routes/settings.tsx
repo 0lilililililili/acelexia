@@ -15,11 +15,11 @@ export const Route = createFileRoute("/settings")({
   component: SettingsPage,
 });
 
-const FONT_CHOICES: { label: string; value: number }[] = [
-  { label: "Small", value: 0.9 },
-  { label: "Normal", value: 1 },
-  { label: "Large", value: 1.2 },
-  { label: "Extra large", value: 1.45 },
+const FONT_CHOICES: { key: string; value: number }[] = [
+  { key: "small", value: 0.9 },
+  { key: "normal", value: 1 },
+  { key: "large", value: 1.2 },
+  { key: "xlarge", value: 1.45 },
 ];
 
 const TIME_CHOICES = [15, 25, 35, 60, 90];
