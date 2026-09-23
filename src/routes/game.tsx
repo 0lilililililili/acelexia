@@ -210,14 +210,14 @@ function GameMap() {
           {/* Shop — top right of the map */}
           <Link
             to="/shop"
-            aria-label="Star shop"
-            title="Star shop"
+            aria-label={t("star_shop")}
+            title={t("star_shop")}
             className="group absolute right-[4%] top-[6%] flex flex-col items-center"
           >
             <span className="grid place-items-center w-24 h-24 rounded-[1.5rem] bg-white/90 border-4 border-white shadow-2xl hover:scale-105 transition overflow-hidden">
               <img src={shopIcon} alt="" loading="lazy" width={512} height={512} className="w-20 h-20 object-contain" />
             </span>
-            <span className="mt-1 rounded-full bg-black/60 text-white text-xs font-extrabold px-2 py-0.5">Shop</span>
+            <span className="mt-1 rounded-full bg-black/60 text-white text-xs font-extrabold px-2 py-0.5">{t("shop")}</span>
           </Link>
 
           {/* Event isle — bottom left, below Aquatic Bay */}
@@ -242,16 +242,17 @@ function GameMap() {
                 <div className="mt-2 space-y-2">
                   {openEvents.map((id) => {
                     const art = WORLD_ART[id];
+                    const name = festivalName(id, lang) ?? art.label;
                     return (
                       <Link
                         key={id}
                         to="/world/$world"
                         params={{ world: id }}
-                        title={art.label}
+                        title={name}
                         className="flex items-center gap-2 rounded-2xl bg-white/90 border-2 border-border px-2 py-1.5 hover:border-primary transition"
                       >
                         <img src={art.boss} alt="" loading="lazy" className="w-9 h-9 object-contain" />
-                        <span className="text-xs font-extrabold">{art.label}</span>
+                        <span className="text-xs font-extrabold">{name}</span>
                       </Link>
                     );
                   })}
