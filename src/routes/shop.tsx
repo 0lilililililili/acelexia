@@ -10,6 +10,7 @@ import potionImg from "@/assets/icon-potion.png";
 import torchImg from "@/assets/icon-torch.png";
 import shopImg from "@/assets/icon-shop.png";
 import stallImg from "@/assets/bg-shop-stall.jpg";
+import { useLang } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -49,6 +50,7 @@ const COLORS: StarColor[] = ["red", "blue", "green"];
 
 function ShopPage() {
   const [state, setLocal] = useState<State | null>(null);
+  const { t } = useLang();
   const [msg, setMsg] = useState<string | null>(null);
   const [convert, setConvert] = useState(1);
   const [convertTo, setConvertTo] = useState<StarColor>("red");
@@ -69,18 +71,18 @@ function ShopPage() {
 
   const buy = (p: Product) => {
     if (!spendStars(p.color, p.price)) {
-      flash(`Not enough ${p.color} stars for ${p.name}.`);
+      flash(t("not_enough_color", { color: t(p.color), name: p.name }));
       return;
     }
     grantItem(p.key);
-    flash(`${p.name} bought!`);
+    flash(t("bought", { name: p.name }));
   };
 
   const doConvert = (to: StarColor) => {
     const n = Math.max(1, Math.floor(convert));
     const s = getState();
     if ((s.wallet.stars.yellow ?? 0) < n) {
-      flash("Not enough yellow stars.");
+      flash(t("not_enough_yellow"));
       return;
     }
     setState({
@@ -90,7 +92,7 @@ function ShopPage() {
         stars: { ...s.wallet.stars, yellow: s.wallet.stars.yellow - n, [to]: (s.wallet.stars[to] ?? 0) + n },
       },
     });
-    flash(`Converted ${n} yellow → ${n} ${to}. This cannot be undone.`);
+    flash(t("converted", { n, color: t(to) }));
     setConfirm(null);
   };
 
@@ -110,13 +112,13 @@ function ShopPage() {
       <div className="absolute inset-0 bg-cover bg-center opacity-50" style={{ backgroundImage: `url(${stallImg})` }} aria-hidden />
       <div className="absolute inset-0 bg-background/35" aria-hidden />
       <div className="relative max-w-4xl mx-auto">
-        <Link to="/game" className="text-primary font-semibold">← Back to map</Link>
+        <Link to="/game" className="text-primary font-semibold">{t("back_map")}</Link>
 
         <header className="mt-3 flex items-center gap-4 flex-wrap">
           <img src={shopImg} alt="" loading="lazy" width={512} height={512} className="w-20 h-20 object-contain" />
           <div>
-            <h1 className="text-4xl font-extrabold">Star Shop</h1>
-            <p className="text-muted-foreground">Spend the stars you win in the towers.</p>
+            <h1 className="text-4xl font-extrabold">{t("star_shop")}</h1>
+            <p className="text-muted-foreground">{t("shop_sub")}</p>
           </div>
           <div className="ml-auto bg-card border-2 border-border rounded-2xl px-4 py-3 shadow">
             {wallet && <StarRow stars={wallet.stars} />}
@@ -132,21 +134,21 @@ function ShopPage() {
               <h2 className="mt-2 text-lg font-extrabold">{p.name}</h2>
               <p className="text-sm text-muted-foreground mt-1 min-h-[2.5rem]">{p.blurb}</p>
               <p className="mt-2 inline-flex items-center justify-center gap-2 text-xl font-extrabold">
-                {p.price}<Star size={25} style={{ color: STAR_HEX[p.color], fill: STAR_HEX[p.color] }} aria-label={`${p.color} stars`} />
+                {p.price}<Star size={25} style={{ color: STAR_HEX[p.color], fill: STAR_HEX[p.color] }} aria-label={t(p.color)} />
               </p>
-              <p className="text-xs text-muted-foreground">Own: {wallet?.items[p.key] ?? 0}</p>
+              <p className="text-xs text-muted-foreground">{t("own", { n: wallet?.items[p.key] ?? 0 })}</p>
               <Button
                 onClick={() => setConfirm({ kind: "buy", product: p })}
                 className="mt-3 rounded-2xl px-5 py-2 font-bold w-full"
               >
-                Buy
+                {t("buy")}
               </Button>
             </div>
           ))}
         </div>
 
         <section className="mt-8 bg-card border-2 border-border rounded-3xl p-6 shadow">
-          <h2 className="text-xl font-extrabold flex items-center gap-2" aria-label="Exchange yellow stars">
+          <h2 className="text-xl font-extrabold flex items-center gap-2" aria-label={t("exchange_yellow")}>
             <Star size={26} style={{ color: STAR_HEX.yellow, fill: STAR_HEX.yellow }} aria-hidden />
             <ArrowRight size={22} aria-hidden />
             <Star size={22} style={{ color: STAR_HEX[convertTo], fill: STAR_HEX[convertTo] }} aria-hidden />
@@ -159,7 +161,7 @@ function ShopPage() {
             <div className="flex items-center gap-3">
               <input
                 id="convert-amount"
-                aria-label="Yellow stars to exchange"
+                aria-label={t("yellow_to_exchange")}
                 type="range"
                 min={1}
                 max={Math.max(1, wallet?.stars.yellow ?? 1)}
@@ -172,13 +174,13 @@ function ShopPage() {
             <div className="flex items-center gap-2">
               {COLORS.map((c, i) => (
                 <span key={c} className="contents">
-                  {i > 0 && <span className="font-extrabold text-muted-foreground">or</span>}
+                  {i > 0 && <span className="font-extrabold text-muted-foreground">{t("or")}</span>}
                   <Button
                     variant={convertTo === c ? "default" : "outline"}
                     size="icon"
                     onClick={() => setConvertTo(c)}
-                    aria-label={`Choose ${c} stars`}
-                    title={c}
+                    aria-label={t("choose_color", { color: t(c) })}
+                    title={t(c)}
                     className="w-14 h-14 rounded-2xl border-2"
                   >
                     <Star size={30} style={{ color: STAR_HEX[c], fill: STAR_HEX[c] }} aria-hidden />
@@ -188,7 +190,7 @@ function ShopPage() {
             </div>
           </div>
           <Button className="mt-5 rounded-2xl px-6 font-bold" onClick={() => setConfirm({ kind: "convert" })} disabled={(wallet?.stars.yellow ?? 0) < 1}>
-            <Check aria-hidden /> Confirm
+            <Check aria-hidden /> {t("confirm")}
           </Button>
         </section>
 
@@ -197,18 +199,18 @@ function ShopPage() {
       <Dialog open={confirm !== null} onOpenChange={(open) => !open && setConfirm(null)}>
         <DialogContent className="max-w-sm rounded-2xl border-2">
           <DialogHeader>
-            <DialogTitle>Confirm</DialogTitle>
+            <DialogTitle>{t("confirm")}</DialogTitle>
             <DialogDescription>
               {confirm?.kind === "buy" ? (
-                <>Buy {confirm.product.name} for {confirm.product.price} {confirm.product.color} stars?</>
+                <>{t("confirm_buy", { name: confirm.product.name, price: confirm.product.price, color: t(confirm.product.color) })}</>
               ) : (
-                <>Exchange {convert} yellow stars for {convert} {convertTo} stars?</>
+                <>{t("confirm_convert", { n: convert, color: t(convertTo) })}</>
               )}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => setConfirm(null)}><X aria-hidden /> Cancel</Button>
-            <Button onClick={confirmAction}><Check aria-hidden /> Confirm</Button>
+            <Button variant="outline" onClick={() => setConfirm(null)}><X aria-hidden /> {t("cancel")}</Button>
+            <Button onClick={confirmAction}><Check aria-hidden /> {t("confirm")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -16,8 +16,11 @@ export const Route = createFileRoute("/revision")({
 });
 
 import { SUBJECT_LABEL } from "@/lib/subjects";
+import { useLang } from "@/lib/i18n";
 
 function RevisionPage() {
+  const { t } = useLang();
+  const tr = t;
   const [state, setLocal] = useState<State | null>(null);
   useEffect(() => {
     const sync = () => setLocal(getState());
@@ -43,22 +46,22 @@ function RevisionPage() {
   return (
     <main className="min-h-screen px-6 py-8">
       <div className="max-w-3xl mx-auto">
-        <Link to="/game" className="text-primary font-semibold">← Back to map</Link>
+        <Link to="/game" className="text-primary font-semibold">{t("back_map")}</Link>
         <div className="mt-3 flex items-center justify-between gap-4 flex-wrap">
           <div>
-            <h1 className="text-4xl font-extrabold">Revision bank</h1>
-            <p className="text-muted-foreground mt-1">Questions you missed, grouped by subject and topic.</p>
+            <h1 className="text-4xl font-extrabold">{t("revision_bank")}</h1>
+            <p className="text-muted-foreground mt-1">{t("revision_sub")}</p>
           </div>
         </div>
 
         {plan.focus.length > 0 && (
           <section className="mt-8 bg-card border-2 border-border rounded-3xl p-5 shadow">
-            <h2 className="text-2xl font-extrabold">Re-quiz plan</h2>
+            <h2 className="text-2xl font-extrabold">{t("requiz_plan")}</h2>
 
             <div className="mt-3 flex flex-wrap gap-2">
               {plan.bySubject.map((s) => (
                 <span key={s.subject} className="rounded-full bg-muted px-3 py-1 text-sm font-bold">
-                  {SUBJECT_LABEL[s.subject] ?? s.subject}: <strong>{s.share}%</strong> of your practice
+                  {SUBJECT_LABEL[s.subject] ?? s.subject}: {t("share_of_practice", { pct: s.share })}
                 </span>
               ))}
             </div>
@@ -82,14 +85,14 @@ function RevisionPage() {
                             : "bg-muted text-foreground"
                       }`}
                     >
-                      {t.band === "high" ? "Do first" : t.band === "medium" ? "Do next" : "Keep warm"}
+                      {t.band === "high" ? tr("do_first") : t.band === "medium" ? tr("do_next") : tr("keep_warm")}
                     </span>
                   </div>
                   <div className="mt-2 h-3 rounded-full bg-muted overflow-hidden" aria-hidden>
                     <div className="h-full bg-primary" style={{ width: `${t.priority}%` }} />
                   </div>
                   <p className="mt-2 text-sm font-semibold">
-                    Practise about <strong>{t.suggestedQuestions} Qs</strong> here.
+                    {tr("practise_about", { n: t.suggestedQuestions })}
                   </p>
                 </li>
               ))}
@@ -102,8 +105,8 @@ function RevisionPage() {
 
         {subjects.length === 0 ? (
           <div className="mt-10 bg-card border-2 border-border rounded-3xl p-10 text-center">
-            <p className="text-lg font-semibold">Nothing here yet — great work!</p>
-            <p className="text-muted-foreground mt-2">Missed questions will appear here automatically.</p>
+            <p className="text-lg font-semibold">{t("nothing_here")}</p>
+            <p className="text-muted-foreground mt-2">{t("nothing_here_sub")}</p>
           </div>
         ) : (
           <div className="mt-8 space-y-6">
@@ -123,14 +126,14 @@ function RevisionPage() {
                             onClick={() => clearTopic(subject, topic)}
                             className="text-xs font-bold text-muted-foreground hover:text-destructive"
                           >
-                            Clear
+                            {t("clear")}
                           </button>
                         </div>
                         <ul className="mt-3 grid gap-2 sm:grid-cols-2">
                           {list.map((item, i) => (
                             <li key={i} className="rounded-xl bg-background border border-border px-3 py-2">
                               <div className="font-bold">{item.prompt}</div>
-                              <div className="text-sm text-muted-foreground">Answer: {item.answer}</div>
+                              <div className="text-sm text-muted-foreground">{t("answer")}: {item.answer}</div>
                             </li>
                           ))}
                         </ul>
