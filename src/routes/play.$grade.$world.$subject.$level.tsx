@@ -1,3 +1,4 @@
+import { translate } from "@/lib/i18n";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Settings as Gear, Star, Check, X, Lock } from "lucide-react";
@@ -341,7 +342,7 @@ function PlayPage() {
       <main className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <img src={art.boss} alt="" className="w-24 h-24 mx-auto animate-bounce object-contain" />
-          <p className="mt-3 text-muted-foreground">Summoning bosses…</p>
+          <p className="mt-3 text-muted-foreground">{translate(settings.language, "summoning")}</p>
         </div>
       </main>
     );

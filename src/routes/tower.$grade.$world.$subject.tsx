@@ -5,6 +5,8 @@ import { getCleared } from "@/lib/progress";
 import { getState } from "@/lib/store";
 import { playerLv, requiredLv } from "@/lib/leveling";
 import { WORLD_ART, mutedBgStyle } from "@/lib/world-art";
+import { useLang } from "@/lib/i18n";
+import { festivalName } from "@/lib/festivals";
 import towerImg from "@/assets/tower.png";
 
 
@@ -42,18 +44,20 @@ function TowerPage() {
   }, [grade, world, subject]);
 
   const art = WORLD_ART[world] ?? WORLD_ART.forest;
+  const { lang, t } = useLang();
+  const wname = festivalName(world, lang) ?? (["aquatic", "forest", "fire"].includes(world) ? t(world) : art.label);
   return (
     <main className="min-h-screen relative" style={{ ...mutedBgStyle(art.bg), backgroundAttachment: "fixed" }}>
       <div className="absolute inset-0 bg-background/70 pointer-events-none" />
       <div className="relative px-6 py-8 max-w-5xl mx-auto">
-      <Link to="/world/$world" params={{ world }} className="text-primary font-semibold">← Back to {world}</Link>
+      <Link to="/world/$world" params={{ world }} className="text-primary font-semibold">← {wname}</Link>
 
       <header className="mt-4 mb-6 text-center">
         <img src={towerImg} alt="" width={768} height={1024} className="mx-auto w-32 h-40 object-contain drop-shadow-xl" />
         <h1 className="text-3xl font-extrabold">
-          {grade}{world.charAt(0).toUpperCase() + world.slice(1)}{subject.toUpperCase()}
+          {grade} {wname} {SUBJECT_LABEL[subject] ?? subject}
         </h1>
-        <p className="text-muted-foreground">{SUBJECT_LABEL[subject] ?? subject} tower • 500 LV • You are LV{lv}</p>
+        <p className="text-muted-foreground">{t("tower_meta", { subject: SUBJECT_LABEL[subject] ?? subject, lv })}</p>
       </header>
 
 
@@ -79,11 +83,11 @@ function TowerPage() {
           return locked || lvGated ? (
             <div
               key={lvNum}
-              title={lvGated ? `Not enough LV — needs LV${need}` : "Locked"}
+              title={lvGated ? t("not_enough_lv", { lv: need }) : t("locked")}
               className="aspect-square rounded-xl bg-muted text-muted-foreground flex flex-col items-center justify-center text-center p-1"
             >
               <Lock size={14} aria-hidden />
-              {lvGated && !locked && <span className="text-[9px] font-bold leading-tight mt-0.5">not enough LV</span>}
+              {lvGated && !locked && <span className="text-[9px] font-bold leading-tight mt-0.5">LV{need}</span>}
             </div>
 
           ) : (
