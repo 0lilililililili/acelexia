@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as CodeRouteImport } from './routes/code'
 import { Route as GameRouteImport } from './routes/game'
@@ -23,6 +24,7 @@ import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as TakeTestRouteImport } from './routes/take-test'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminAboutRouteImport } from './routes/admin.about'
 import { Route as AdminProgressRouteImport } from './routes/admin.progress'
 import { Route as AdminViewRouteImport } from './routes/admin.view'
 import { Route as WorldWorldRouteImport } from './routes/world.$world'
@@ -32,6 +34,11 @@ import { Route as PlayGradeWorldSubjectLevelRouteImport } from './routes/play.$g
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -99,6 +106,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAboutRoute = AdminAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminProgressRoute = AdminProgressRouteImport.update({
   id: '/progress',
   path: '/progress',
@@ -128,6 +140,7 @@ const PlayGradeWorldSubjectLevelRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/code': typeof CodeRoute
   '/game': typeof GameRoute
@@ -140,6 +153,7 @@ export interface FileRoutesByFullPath {
   '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
   '/take-test': typeof TakeTestRoute
+  '/admin/about': typeof AdminAboutRoute
   '/admin/progress': typeof AdminProgressRoute
   '/admin/view': typeof AdminViewRoute
   '/world/$world': typeof WorldWorldRoute
@@ -149,6 +163,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/code': typeof CodeRoute
   '/game': typeof GameRoute
   '/input-data': typeof InputDataRoute
@@ -160,6 +175,7 @@ export interface FileRoutesByTo {
   '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
   '/take-test': typeof TakeTestRoute
+  '/admin/about': typeof AdminAboutRoute
   '/admin/progress': typeof AdminProgressRoute
   '/admin/view': typeof AdminViewRoute
   '/world/$world': typeof WorldWorldRoute
@@ -170,6 +186,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/code': typeof CodeRoute
   '/game': typeof GameRoute
@@ -182,6 +199,7 @@ export interface FileRoutesById {
   '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
   '/take-test': typeof TakeTestRoute
+  '/admin/about': typeof AdminAboutRoute
   '/admin/progress': typeof AdminProgressRoute
   '/admin/view': typeof AdminViewRoute
   '/world/$world': typeof WorldWorldRoute
@@ -193,6 +211,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/admin'
     | '/code'
     | '/game'
@@ -205,6 +224,7 @@ export interface FileRouteTypes {
     | '/shop'
     | '/signup'
     | '/take-test'
+    | '/admin/about'
     | '/admin/progress'
     | '/admin/view'
     | '/world/$world'
@@ -214,6 +234,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/code'
     | '/game'
     | '/input-data'
@@ -225,6 +246,7 @@ export interface FileRouteTypes {
     | '/shop'
     | '/signup'
     | '/take-test'
+    | '/admin/about'
     | '/admin/progress'
     | '/admin/view'
     | '/world/$world'
@@ -234,6 +256,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/about'
     | '/admin'
     | '/code'
     | '/game'
@@ -246,6 +269,7 @@ export interface FileRouteTypes {
     | '/shop'
     | '/signup'
     | '/take-test'
+    | '/admin/about'
     | '/admin/progress'
     | '/admin/view'
     | '/world/$world'
@@ -256,6 +280,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRouteWithChildren
   CodeRoute: typeof CodeRoute
   GameRoute: typeof GameRoute
@@ -280,6 +305,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -373,6 +405,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/about': {
+      id: '/admin/about'
+      path: '/about'
+      fullPath: '/admin/about'
+      preLoaderRoute: typeof AdminAboutRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/progress': {
       id: '/admin/progress'
       path: '/progress'
@@ -412,12 +451,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminAboutRoute: typeof AdminAboutRoute
   AdminProgressRoute: typeof AdminProgressRoute
   AdminViewRoute: typeof AdminViewRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAboutRoute: AdminAboutRoute,
   AdminProgressRoute: AdminProgressRoute,
   AdminViewRoute: AdminViewRoute,
   AdminIndexRoute: AdminIndexRoute,
@@ -427,6 +468,7 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
   AdminRoute: AdminRouteWithChildren,
   CodeRoute: CodeRoute,
   GameRoute: GameRoute,
