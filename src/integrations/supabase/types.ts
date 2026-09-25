@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      about_blocks: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          image_url: string | null
+          kind: string
+          position: number
+          updated_at: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          kind?: string
+          position?: number
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          kind?: string
+          position?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       app_users: {
         Row: {
           created_at: string
@@ -46,12 +76,15 @@ export type Database = {
       }
       progress: {
         Row: {
+          avatar: Json
+          badges: Json
           created_at: string
           grade: string | null
           id: string
           onboarded: boolean
           revision_bank: Json
           settings: Json
+          streak: Json
           towers: Json
           updated_at: string
           user_id: string
@@ -59,12 +92,15 @@ export type Database = {
           wallet: Json
         }
         Insert: {
+          avatar?: Json
+          badges?: Json
           created_at?: string
           grade?: string | null
           id?: string
           onboarded?: boolean
           revision_bank?: Json
           settings?: Json
+          streak?: Json
           towers?: Json
           updated_at?: string
           user_id: string
@@ -72,12 +108,15 @@ export type Database = {
           wallet?: Json
         }
         Update: {
+          avatar?: Json
+          badges?: Json
           created_at?: string
           grade?: string | null
           id?: string
           onboarded?: boolean
           revision_bank?: Json
           settings?: Json
+          streak?: Json
           towers?: Json
           updated_at?: string
           user_id?: string
