@@ -77,7 +77,8 @@ export function tickStreak(): boolean {
 }
 
 export function daysToNextStreakBadge(best: number, current: number) {
-  const next = STREAK_MILESTONES.find((d) => d > Math.max(current, 0) && d > 0 && (d > best || d > current));
+  void best;
+  const next = STREAK_MILESTONES.find((d) => d > current);
   return next ? next - current : 0;
 }
 
