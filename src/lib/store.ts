@@ -10,6 +10,7 @@ export type Settings = {
   lastFeedbackAt?: number;
   feedbackRating?: number;
   feedbackComment?: string;
+  tutorialDone?: boolean;
 };
 
 export type Session = { userId: string; username: string; isAdmin: boolean };
@@ -48,7 +49,29 @@ export type State = {
   stats: Record<string, SubjectStat>; // subject -> answered/correct tally
   wallet: Wallet;
   settings: Settings;
+  avatar: AvatarState;
+  streak: StreakState;
+  badges: BadgeState;
 };
+
+export type Gender = "boy" | "girl";
+export type AvatarState = { gender: Gender; equipped: Record<string, string>; owned: string[] };
+export type DailyTask = { subject: string; world: string; done: boolean };
+export type StreakState = { current: number; best: number; lastDay: string; dailyDate: string; daily: DailyTask[] };
+export type BadgeState = { unlocked: string[]; run: Record<string, number>; bestRun: Record<string, number> };
+
+export const emptyAvatar = (gender: Gender = "boy"): AvatarState => ({ gender, equipped: {}, owned: [] });
+export const emptyStreak = (): StreakState => ({ current: 0, best: 0, lastDay: "", dailyDate: "", daily: [] });
+export const emptyBadges = (): BadgeState => ({ unlocked: [], run: {}, bestRun: {} });
+export function normalizeAvatar(a?: Partial<AvatarState> | null): AvatarState {
+  return { gender: a?.gender === "girl" ? "girl" : "boy", equipped: { ...(a?.equipped ?? {}) }, owned: [...(a?.owned ?? [])] };
+}
+export function normalizeStreak(a?: Partial<StreakState> | null): StreakState {
+  return { ...emptyStreak(), ...(a ?? {}), daily: Array.isArray(a?.daily) ? a!.daily : [] };
+}
+export function normalizeBadges(a?: Partial<BadgeState> | null): BadgeState {
+  return { unlocked: [...(a?.unlocked ?? [])], run: { ...(a?.run ?? {}) }, bestRun: { ...(a?.bestRun ?? {}) } };
+}
 
 export const DEFAULT_SETTINGS: Settings = { fontScale: 1, timeLimit: 35, language: "zh-TW" };
 
@@ -64,6 +87,9 @@ export const emptyState = (): State => ({
   stats: {},
   wallet: emptyWallet(),
   settings: { ...DEFAULT_SETTINGS },
+  avatar: emptyAvatar(),
+  streak: emptyStreak(),
+  badges: emptyBadges(),
 });
 
 
@@ -96,6 +122,9 @@ export function getState(): State {
       stats: parsed.stats ?? {},
       wallet: normalizeWallet(parsed.wallet),
       settings: { ...DEFAULT_SETTINGS, ...(parsed.settings ?? {}) },
+      avatar: normalizeAvatar(parsed.avatar),
+      streak: normalizeStreak(parsed.streak),
+      badges: normalizeBadges(parsed.badges),
     };
 
   } catch {
@@ -129,8 +158,14 @@ export function unflattenStats(settings: Record<string, unknown>): Record<string
 export function recordAnswer(subject: string, correct: boolean) {
   updateState((s) => {
     const cur = s.stats[subject] ?? { correct: 0, total: 0 };
+    const run = correct ? (s.badges.run[subject] ?? 0) + 1 : 0;
     return {
       ...s,
+      badges: {
+        ...s.badges,
+        run: { ...s.badges.run, [subject]: run },
+        bestRun: { ...s.badges.bestRun, [subject]: Math.max(s.badges.bestRun[subject] ?? 0, run) },
+      },
       stats: { ...s.stats, [subject]: { correct: cur.correct + (correct ? 1 : 0), total: cur.total + 1 } },
     };
   });
@@ -159,6 +194,9 @@ export function setState(next: State, { sync = true } = {}) {
             towers: next.towers,
             revision: next.revision,
             wallet: next.wallet,
+            avatar: next.avatar,
+            streak: next.streak,
+            badges: next.badges,
             settings: {
               fontScale: next.settings.fontScale,
               timeLimit: next.settings.timeLimit,
@@ -166,6 +204,7 @@ export function setState(next: State, { sync = true } = {}) {
               ...(next.settings.lastFeedbackAt ? { lastFeedbackAt: next.settings.lastFeedbackAt } : {}),
               ...(next.settings.feedbackRating ? { feedbackRating: next.settings.feedbackRating } : {}),
               ...(next.settings.feedbackComment ? { feedbackComment: next.settings.feedbackComment } : {}),
+              ...(next.settings.tutorialDone ? { tutorialDone: true } : {}),
               ...flattenStats(next.stats),
             },
           },

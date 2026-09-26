@@ -37,6 +37,9 @@ export type ProgressSnapshot = {
   revision: Record<string, Record<string, RevisionItem[]>>;
   wallet: WalletSnapshot;
   settings: Record<string, string | number | boolean>;
+  avatar?: Record<string, unknown>;
+  streak?: Record<string, unknown>;
+  badges?: Record<string, unknown>;
 };
 
 
@@ -60,7 +63,7 @@ function randomSalt() {
 }
 
 export const signUpUser = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => Credentials.parse(d))
+  .inputValidator((d: unknown) => Credentials.extend({ gender: z.enum(["boy", "girl"]).optional() }).parse(d))
   .handler(async ({ data }) => {
     const name = data.username.trim();
     if (RESERVED.includes(name.toLowerCase())) {
@@ -87,7 +90,11 @@ export const signUpUser = createServerFn({ method: "POST" })
       .single();
     if (error || !created) return { ok: false as const, error: "Could not create account." };
 
-    await supabaseAdmin.from("progress").insert({ user_id: created.id, username: created.username });
+    await supabaseAdmin.from("progress").insert({
+      user_id: created.id,
+      username: created.username,
+      avatar: { gender: data.gender ?? "boy", equipped: {}, owned: [] },
+    });
     return { ok: true as const, userId: created.id, username: created.username };
   });
 
@@ -112,7 +119,7 @@ export const logInUser = createServerFn({ method: "POST" })
 
     const { data: prog } = await supabaseAdmin
       .from("progress")
-      .select("grade, onboarded, towers, revision_bank, wallet, settings")
+      .select("grade, onboarded, towers, revision_bank, wallet, settings, avatar, streak, badges")
       .eq("user_id", user.id)
       .maybeSingle();
 
@@ -129,6 +136,9 @@ export const logInUser = createServerFn({ method: "POST" })
             revision: (prog.revision_bank ?? {}) as ProgressSnapshot["revision"],
             wallet: (prog.wallet ?? {}) as WalletSnapshot,
             settings: (prog.settings ?? {}) as Record<string, string | number | boolean>,
+            avatar: (prog.avatar ?? {}) as Record<string, unknown>,
+            streak: (prog.streak ?? {}) as Record<string, unknown>,
+            badges: (prog.badges ?? {}) as Record<string, unknown>,
           } satisfies ProgressSnapshot)
         : null,
     };
@@ -167,6 +177,9 @@ export const saveProgress = createServerFn({ method: "POST" })
           })
           .optional(),
         settings: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
+        avatar: z.record(z.string(), z.any()).optional(),
+        streak: z.record(z.string(), z.any()).optional(),
+        badges: z.record(z.string(), z.any()).optional(),
       })
       .parse(d),
   )
@@ -182,6 +195,9 @@ export const saveProgress = createServerFn({ method: "POST" })
         revision_bank: data.revision,
         wallet: (data.wallet ?? {}) as never,
         settings: data.settings,
+        ...(data.avatar ? { avatar: data.avatar as never } : {}),
+        ...(data.streak ? { streak: data.streak as never } : {}),
+        ...(data.badges ? { badges: data.badges as never } : {}),
         updated_at: new Date().toISOString(),
       },
       { onConflict: "user_id" },

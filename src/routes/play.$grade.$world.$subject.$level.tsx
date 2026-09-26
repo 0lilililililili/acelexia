@@ -8,6 +8,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { generateLevelItems } from "@/lib/qb.functions";
 import { useSpeech } from "@/hooks/use-speech";
 import { markCleared } from "@/lib/progress";
+import { evaluateBadges, markDailyDone } from "@/lib/badges";
 import {
   addExp,
   addRevisionItem,
@@ -27,6 +28,7 @@ import potionImg from "@/assets/icon-potion.png";
 import torchImg from "@/assets/icon-torch.png";
 
 export const Route = createFileRoute("/play/$grade/$world/$subject/$level")({
+  validateSearch: (s: Record<string, unknown>): { daily?: number } => (s.daily ? { daily: 1 } : {}),
   component: PlayPage,
 });
 
@@ -38,6 +40,7 @@ const QUESTIONS_PER_LEVEL = 8;
 
 function PlayPage() {
   const { grade, world, subject, level } = Route.useParams();
+  const isDaily = !!Route.useSearch().daily;
   const nav = useNavigate();
   const art = WORLD_ART[world] ?? WORLD_ART.forest;
   const levelNum = Math.min(500, Math.max(1, parseInt(level, 10) || 1));
@@ -315,9 +318,19 @@ function PlayPage() {
     if (starsEarned > 0) {
       markCleared(grade, world, subject, levelNum);
       recordLevelStars(grade, world, subject, levelNum, starsEarned);
-      addStars(starColor, starsEarned);
+      if (isDaily) {
+        // Daily practice: each star has a ~10% chance to turn yellow.
+        let yellow = 0;
+        for (let i = 0; i < starsEarned; i++) if (Math.random() < 0.1) yellow++;
+        if (starsEarned - yellow > 0) addStars(starColor, starsEarned - yellow);
+        if (yellow > 0) addStars("yellow", yellow);
+        markDailyDone(subject, world);
+      } else {
+        addStars(starColor, starsEarned);
+      }
     }
-  }, [finished, grade, world, subject, level, levelNum, starsEarned, starColor]);
+    evaluateBadges();
+  }, [finished, grade, world, subject, level, levelNum, starsEarned, starColor, isDaily]);
 
   const remaining = Math.max(0, timeLimit - tick);
   const pctLeft = Math.max(0, Math.min(100, (remaining / timeLimit) * 100));
