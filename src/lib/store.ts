@@ -158,8 +158,14 @@ export function unflattenStats(settings: Record<string, unknown>): Record<string
 export function recordAnswer(subject: string, correct: boolean) {
   updateState((s) => {
     const cur = s.stats[subject] ?? { correct: 0, total: 0 };
+    const run = correct ? (s.badges.run[subject] ?? 0) + 1 : 0;
     return {
       ...s,
+      badges: {
+        ...s.badges,
+        run: { ...s.badges.run, [subject]: run },
+        bestRun: { ...s.badges.bestRun, [subject]: Math.max(s.badges.bestRun[subject] ?? 0, run) },
+      },
       stats: { ...s.stats, [subject]: { correct: cur.correct + (correct ? 1 : 0), total: cur.total + 1 } },
     };
   });
