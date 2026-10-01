@@ -23,9 +23,9 @@ import { Route as RequizRouteImport } from './routes/requiz'
 import { Route as ResultRouteImport } from './routes/result'
 import { Route as RevisionRouteImport } from './routes/revision'
 import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as TakeTestRouteImport } from './routes/take-test'
+import { Route as ToolsRouteImport } from './routes/tools'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAboutRouteImport } from './routes/admin.about'
 import { Route as AdminProgressRouteImport } from './routes/admin.progress'
@@ -106,11 +106,6 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ShopRoute = ShopRouteImport.update({
-  id: '/shop',
-  path: '/shop',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -119,6 +114,11 @@ const SignupRoute = SignupRouteImport.update({
 const TakeTestRoute = TakeTestRouteImport.update({
   id: '/take-test',
   path: '/take-test',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ToolsRoute = ToolsRouteImport.update({
+  id: '/tools',
+  path: '/tools',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -183,9 +183,9 @@ export interface FileRoutesByFullPath {
   '/result': typeof ResultRoute
   '/revision': typeof RevisionRoute
   '/settings': typeof SettingsRoute
-  '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
   '/take-test': typeof TakeTestRoute
+  '/tools': typeof ToolsRoute
   '/admin/about': typeof AdminAboutRoute
   '/admin/progress': typeof AdminProgressRoute
   '/admin/view': typeof AdminViewRoute
@@ -209,9 +209,9 @@ export interface FileRoutesByTo {
   '/result': typeof ResultRoute
   '/revision': typeof RevisionRoute
   '/settings': typeof SettingsRoute
-  '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
   '/take-test': typeof TakeTestRoute
+  '/tools': typeof ToolsRoute
   '/admin/about': typeof AdminAboutRoute
   '/admin/progress': typeof AdminProgressRoute
   '/admin/view': typeof AdminViewRoute
@@ -238,9 +238,9 @@ export interface FileRoutesById {
   '/result': typeof ResultRoute
   '/revision': typeof RevisionRoute
   '/settings': typeof SettingsRoute
-  '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
   '/take-test': typeof TakeTestRoute
+  '/tools': typeof ToolsRoute
   '/admin/about': typeof AdminAboutRoute
   '/admin/progress': typeof AdminProgressRoute
   '/admin/view': typeof AdminViewRoute
@@ -268,9 +268,9 @@ export interface FileRouteTypes {
     | '/result'
     | '/revision'
     | '/settings'
-    | '/shop'
     | '/signup'
     | '/take-test'
+    | '/tools'
     | '/admin/about'
     | '/admin/progress'
     | '/admin/view'
@@ -294,9 +294,9 @@ export interface FileRouteTypes {
     | '/result'
     | '/revision'
     | '/settings'
-    | '/shop'
     | '/signup'
     | '/take-test'
+    | '/tools'
     | '/admin/about'
     | '/admin/progress'
     | '/admin/view'
@@ -322,9 +322,9 @@ export interface FileRouteTypes {
     | '/result'
     | '/revision'
     | '/settings'
-    | '/shop'
     | '/signup'
     | '/take-test'
+    | '/tools'
     | '/admin/about'
     | '/admin/progress'
     | '/admin/view'
@@ -351,9 +351,9 @@ export interface RootRouteChildren {
   ResultRoute: typeof ResultRoute
   RevisionRoute: typeof RevisionRoute
   SettingsRoute: typeof SettingsRoute
-  ShopRoute: typeof ShopRoute
   SignupRoute: typeof SignupRoute
   TakeTestRoute: typeof TakeTestRoute
+  ToolsRoute: typeof ToolsRoute
   WorldWorldRoute: typeof WorldWorldRoute
   TowerGradeWorldSubjectRoute: typeof TowerGradeWorldSubjectRoute
   PlayGradeWorldSubjectLevelRoute: typeof PlayGradeWorldSubjectLevelRoute
@@ -459,13 +459,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/shop': {
-      id: '/shop'
-      path: '/shop'
-      fullPath: '/shop'
-      preLoaderRoute: typeof ShopRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/signup': {
       id: '/signup'
       path: '/signup'
@@ -478,6 +471,13 @@ declare module '@tanstack/react-router' {
       path: '/take-test'
       fullPath: '/take-test'
       preLoaderRoute: typeof TakeTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tools': {
+      id: '/tools'
+      path: '/tools'
+      fullPath: '/tools'
+      preLoaderRoute: typeof ToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -591,9 +591,9 @@ const rootRouteChildren: RootRouteChildren = {
   ResultRoute: ResultRoute,
   RevisionRoute: RevisionRoute,
   SettingsRoute: SettingsRoute,
-  ShopRoute: ShopRoute,
   SignupRoute: SignupRoute,
   TakeTestRoute: TakeTestRoute,
+  ToolsRoute: ToolsRoute,
   WorldWorldRoute: WorldWorldRoute,
   TowerGradeWorldSubjectRoute: TowerGradeWorldSubjectRoute,
   PlayGradeWorldSubjectLevelRoute: PlayGradeWorldSubjectLevelRoute,
