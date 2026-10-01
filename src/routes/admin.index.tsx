@@ -51,6 +51,10 @@ function AdminPage() {
           <h2 className="text-xl font-extrabold">PROGRESS database</h2>
           <p className="text-sm text-muted-foreground mt-1">Players, towers, revision banks, settings.</p>
         </Link>
+        <Link to="/admin/about" className="rounded-3xl bg-card border-2 border-border p-6 shadow hover:border-primary transition">
+          <h2 className="text-xl font-extrabold">About page</h2>
+          <p className="text-sm text-muted-foreground">Edit the About Us page.</p>
+        </Link>
         <Link to="/code" className="rounded-3xl bg-card border-2 border-border p-6 shadow hover:border-primary transition">
           <h2 className="text-xl font-extrabold">{"</> Code"}</h2>
           <p className="text-sm text-muted-foreground mt-1">Browse the source of every page.</p>

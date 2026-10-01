@@ -14,12 +14,12 @@ import { useLang } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-export const Route = createFileRoute("/shop")({
+export const Route = createFileRoute("/tools")({
   head: () => ({
     meta: [
-      { title: "Star Shop — Acelexia" },
+      { title: "Tools Shop — Acelexia" },
       { name: "description", content: "Spend the coloured stars you win in battle on hour-glasses, potions and passes." },
-      { property: "og:title", content: "Star Shop — Acelexia" },
+      { property: "og:title", content: "Tools Shop — Acelexia" },
       { property: "og:description", content: "Buy HOUR-GLASS, POTION and PASS items with your stars." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -112,7 +112,7 @@ function ShopPage() {
       <div className="absolute inset-0 bg-cover bg-center opacity-50" style={{ backgroundImage: `url(${stallImg})` }} aria-hidden />
       <div className="absolute inset-0 bg-background/35" aria-hidden />
       <div className="relative max-w-4xl mx-auto">
-        <Link to="/game" className="text-primary font-semibold">{t("back_map")}</Link>
+        <Link to="/shop" className="text-primary font-semibold">← {t("shop")}</Link>
 
         <header className="mt-3 flex items-center gap-4 flex-wrap">
           <img src={shopImg} alt="" loading="lazy" width={512} height={512} className="w-20 h-20 object-contain" />

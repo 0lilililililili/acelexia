@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { HelpCircle } from "lucide-react";
 import pirateMap from "@/assets/pirate-map.jpg";
 import mascot from "@/assets/mascot-dragon.png";
 
@@ -9,6 +10,8 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "A friendly game that helps K3–P6 dyslexic kids in Hong Kong practice Chinese, English and Math through voice." },
       { property: "og:title", content: "Acelexia" },
       { property: "og:description", content: "Reading & math adventure for dyslexic kids." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
 
@@ -27,6 +30,9 @@ function Home1() {
     >
       {/* Warm parchment veil for readability */}
       <div className="absolute inset-0 bg-background/80" />
+      <Link to="/about" aria-label="About us" title="About us" className="absolute top-4 left-4 z-20 grid place-items-center w-12 h-12 rounded-full bg-card border-2 border-border shadow hover:border-primary">
+        <HelpCircle className="text-primary" size={28} aria-hidden />
+      </Link>
 
       <div className="relative z-10 text-center max-w-2xl">
         <img
