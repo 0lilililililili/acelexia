@@ -12,6 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AvatarRouteImport } from './routes/avatar'
+import { Route as AvatarshopRouteImport } from './routes/avatarshop'
+import { Route as BadgesRouteImport } from './routes/badges'
 import { Route as CodeRouteImport } from './routes/code'
 import { Route as GameRouteImport } from './routes/game'
 import { Route as InputDataRouteImport } from './routes/input-data'
@@ -27,6 +30,8 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAboutRouteImport } from './routes/admin.about'
 import { Route as AdminProgressRouteImport } from './routes/admin.progress'
 import { Route as AdminViewRouteImport } from './routes/admin.view'
+import { Route as AvatarshopIndexRouteImport } from './routes/avatarshop.index'
+import { Route as AvatarshopCategoryRouteImport } from './routes/avatarshop.$category'
 import { Route as WorldWorldRouteImport } from './routes/world.$world'
 import { Route as TowerGradeWorldSubjectRouteImport } from './routes/tower.$grade.$world.$subject'
 import { Route as PlayGradeWorldSubjectLevelRouteImport } from './routes/play.$grade.$world.$subject.$level'
@@ -44,6 +49,21 @@ const AboutRoute = AboutRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AvatarRoute = AvatarRouteImport.update({
+  id: '/avatar',
+  path: '/avatar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AvatarshopRoute = AvatarshopRouteImport.update({
+  id: '/avatarshop',
+  path: '/avatarshop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BadgesRoute = BadgesRouteImport.update({
+  id: '/badges',
+  path: '/badges',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CodeRoute = CodeRouteImport.update({
@@ -121,6 +141,16 @@ const AdminViewRoute = AdminViewRouteImport.update({
   path: '/view',
   getParentRoute: () => AdminRoute,
 } as any)
+const AvatarshopIndexRoute = AvatarshopIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AvatarshopRoute,
+} as any)
+const AvatarshopCategoryRoute = AvatarshopCategoryRouteImport.update({
+  id: '/$category',
+  path: '/$category',
+  getParentRoute: () => AvatarshopRoute,
+} as any)
 const WorldWorldRoute = WorldWorldRouteImport.update({
   id: '/world/$world',
   path: '/world/$world',
@@ -142,6 +172,9 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
+  '/avatar': typeof AvatarRoute
+  '/avatarshop': typeof AvatarshopRouteWithChildren
+  '/badges': typeof BadgesRoute
   '/code': typeof CodeRoute
   '/game': typeof GameRoute
   '/input-data': typeof InputDataRoute
@@ -156,14 +189,18 @@ export interface FileRoutesByFullPath {
   '/admin/about': typeof AdminAboutRoute
   '/admin/progress': typeof AdminProgressRoute
   '/admin/view': typeof AdminViewRoute
+  '/avatarshop/$category': typeof AvatarshopCategoryRoute
   '/world/$world': typeof WorldWorldRoute
   '/admin/': typeof AdminIndexRoute
+  '/avatarshop/': typeof AvatarshopIndexRoute
   '/tower/$grade/$world/$subject': typeof TowerGradeWorldSubjectRoute
   '/play/$grade/$world/$subject/$level': typeof PlayGradeWorldSubjectLevelRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/avatar': typeof AvatarRoute
+  '/badges': typeof BadgesRoute
   '/code': typeof CodeRoute
   '/game': typeof GameRoute
   '/input-data': typeof InputDataRoute
@@ -178,8 +215,10 @@ export interface FileRoutesByTo {
   '/admin/about': typeof AdminAboutRoute
   '/admin/progress': typeof AdminProgressRoute
   '/admin/view': typeof AdminViewRoute
+  '/avatarshop/$category': typeof AvatarshopCategoryRoute
   '/world/$world': typeof WorldWorldRoute
   '/admin': typeof AdminIndexRoute
+  '/avatarshop': typeof AvatarshopIndexRoute
   '/tower/$grade/$world/$subject': typeof TowerGradeWorldSubjectRoute
   '/play/$grade/$world/$subject/$level': typeof PlayGradeWorldSubjectLevelRoute
 }
@@ -188,6 +227,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
+  '/avatar': typeof AvatarRoute
+  '/avatarshop': typeof AvatarshopRouteWithChildren
+  '/badges': typeof BadgesRoute
   '/code': typeof CodeRoute
   '/game': typeof GameRoute
   '/input-data': typeof InputDataRoute
@@ -202,8 +244,10 @@ export interface FileRoutesById {
   '/admin/about': typeof AdminAboutRoute
   '/admin/progress': typeof AdminProgressRoute
   '/admin/view': typeof AdminViewRoute
+  '/avatarshop/$category': typeof AvatarshopCategoryRoute
   '/world/$world': typeof WorldWorldRoute
   '/admin/': typeof AdminIndexRoute
+  '/avatarshop/': typeof AvatarshopIndexRoute
   '/tower/$grade/$world/$subject': typeof TowerGradeWorldSubjectRoute
   '/play/$grade/$world/$subject/$level': typeof PlayGradeWorldSubjectLevelRoute
 }
@@ -213,6 +257,9 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/avatar'
+    | '/avatarshop'
+    | '/badges'
     | '/code'
     | '/game'
     | '/input-data'
@@ -227,14 +274,18 @@ export interface FileRouteTypes {
     | '/admin/about'
     | '/admin/progress'
     | '/admin/view'
+    | '/avatarshop/$category'
     | '/world/$world'
     | '/admin/'
+    | '/avatarshop/'
     | '/tower/$grade/$world/$subject'
     | '/play/$grade/$world/$subject/$level'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/avatar'
+    | '/badges'
     | '/code'
     | '/game'
     | '/input-data'
@@ -249,8 +300,10 @@ export interface FileRouteTypes {
     | '/admin/about'
     | '/admin/progress'
     | '/admin/view'
+    | '/avatarshop/$category'
     | '/world/$world'
     | '/admin'
+    | '/avatarshop'
     | '/tower/$grade/$world/$subject'
     | '/play/$grade/$world/$subject/$level'
   id:
@@ -258,6 +311,9 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/avatar'
+    | '/avatarshop'
+    | '/badges'
     | '/code'
     | '/game'
     | '/input-data'
@@ -272,8 +328,10 @@ export interface FileRouteTypes {
     | '/admin/about'
     | '/admin/progress'
     | '/admin/view'
+    | '/avatarshop/$category'
     | '/world/$world'
     | '/admin/'
+    | '/avatarshop/'
     | '/tower/$grade/$world/$subject'
     | '/play/$grade/$world/$subject/$level'
   fileRoutesById: FileRoutesById
@@ -282,6 +340,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRouteWithChildren
+  AvatarRoute: typeof AvatarRoute
+  AvatarshopRoute: typeof AvatarshopRouteWithChildren
+  BadgesRoute: typeof BadgesRoute
   CodeRoute: typeof CodeRoute
   GameRoute: typeof GameRoute
   InputDataRoute: typeof InputDataRoute
@@ -319,6 +380,27 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/avatar': {
+      id: '/avatar'
+      path: '/avatar'
+      fullPath: '/avatar'
+      preLoaderRoute: typeof AvatarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/avatarshop': {
+      id: '/avatarshop'
+      path: '/avatarshop'
+      fullPath: '/avatarshop'
+      preLoaderRoute: typeof AvatarshopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/badges': {
+      id: '/badges'
+      path: '/badges'
+      fullPath: '/badges'
+      preLoaderRoute: typeof BadgesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/code': {
@@ -426,6 +508,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminViewRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/avatarshop/': {
+      id: '/avatarshop/'
+      path: '/'
+      fullPath: '/avatarshop/'
+      preLoaderRoute: typeof AvatarshopIndexRouteImport
+      parentRoute: typeof AvatarshopRoute
+    }
+    '/avatarshop/$category': {
+      id: '/avatarshop/$category'
+      path: '/$category'
+      fullPath: '/avatarshop/$category'
+      preLoaderRoute: typeof AvatarshopCategoryRouteImport
+      parentRoute: typeof AvatarshopRoute
+    }
     '/world/$world': {
       id: '/world/$world'
       path: '/world/$world'
@@ -466,10 +562,27 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface AvatarshopRouteChildren {
+  AvatarshopCategoryRoute: typeof AvatarshopCategoryRoute
+  AvatarshopIndexRoute: typeof AvatarshopIndexRoute
+}
+
+const AvatarshopRouteChildren: AvatarshopRouteChildren = {
+  AvatarshopCategoryRoute: AvatarshopCategoryRoute,
+  AvatarshopIndexRoute: AvatarshopIndexRoute,
+}
+
+const AvatarshopRouteWithChildren = AvatarshopRoute._addFileChildren(
+  AvatarshopRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AdminRoute: AdminRouteWithChildren,
+  AvatarRoute: AvatarRoute,
+  AvatarshopRoute: AvatarshopRouteWithChildren,
+  BadgesRoute: BadgesRoute,
   CodeRoute: CodeRoute,
   GameRoute: GameRoute,
   InputDataRoute: InputDataRoute,

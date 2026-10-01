@@ -23,6 +23,7 @@ function SignupPage() {
   const [name, setName] = useState("");
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
+  const [gender, setGender] = useState<"boy" | "girl">("boy");
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -43,12 +44,13 @@ function SignupPage() {
     if (v) return;
     setBusy(true);
     try {
-      const res = await signUpUser({ data: { username: name.trim(), password: pw } });
+      const res = await signUpUser({ data: { username: name.trim(), password: pw, gender } });
       if (!res.ok) {
         setErr(res.error);
         return;
       }
-      setState({ ...emptyState() }, { sync: false });
+      const fresh = emptyState();
+      setState({ ...fresh, avatar: { ...fresh.avatar, gender } }, { sync: false });
       setSession({ userId: res.userId, username: res.username, isAdmin: false });
       nav({ to: "/take-test" });
     } catch {
@@ -100,6 +102,19 @@ function SignupPage() {
           autoComplete="new-password"
           className="mt-1 w-full rounded-xl border-2 border-input bg-background px-4 py-3 text-lg"
         />
+
+        <fieldset className="mt-4">
+          <legend className="font-semibold">Avatar body</legend>
+          <div className="mt-1 grid grid-cols-2 gap-2">
+            {(["boy", "girl"] as const).map((g) => (
+              <button key={g} type="button" aria-pressed={gender === g} onClick={() => setGender(g)}
+                className={`rounded-xl border-2 py-3 font-bold ${gender === g ? "border-primary bg-primary text-primary-foreground" : "border-input bg-background"}`}>
+                {g === "boy" ? "Boy" : "Girl"}
+              </button>
+            ))}
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">Only used to choose your avatar's body. Nothing else.</p>
+        </fieldset>
 
         {err && <p className="text-destructive text-sm mt-3 font-semibold">{err}</p>}
 
