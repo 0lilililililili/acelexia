@@ -11,6 +11,11 @@ import continentMap from "@/assets/continent-map.jpg";
 import shopIcon from "@/assets/icon-shop.png";
 import { SUBJECTS } from "@/lib/subjects";
 import { Button } from "@/components/ui/button";
+import { DailyPopup } from "@/components/daily-popup";
+import { Tutorial } from "@/components/tutorial";
+import { tickStreak } from "@/lib/badges";
+import { User, Award, HelpCircle } from "lucide-react";
+import { tr } from "@/lib/tr";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/game")({
@@ -58,6 +63,8 @@ function GameMap() {
   const [reviewOpen, setReviewOpen] = useState(false);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
+  const [dailyOpen, setDailyOpen] = useState(false);
+  const [tutOpen, setTutOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -71,6 +78,8 @@ function GameMap() {
       setStats(st.stats ?? {});
     };
     sync();
+    if (tickStreak()) setDailyOpen(true);
+    if (!getState().settings.tutorialDone) setTutOpen(true);
     const state = getState();
     const answers = Object.values(state.stats ?? {}).reduce((sum, stat) => sum + stat.total, 0);
     const lastShown = state.settings.lastFeedbackAt ?? 0;
@@ -122,6 +131,9 @@ function GameMap() {
         <div className="flex items-center gap-3">
           <IconAction to="/revision" label={t("revision_bank")}>
             <BookOpen className="text-primary" size={26} aria-hidden />
+          </IconAction>
+          <IconAction to="/badges" label={tr(lang, "Badges", "徽章", "徽章")}>
+            <Award className="text-primary" size={26} aria-hidden />
           </IconAction>
           <IconAction to="/settings" label={t("settings")}>
             <Gear className="text-primary" size={26} aria-hidden />
@@ -220,6 +232,18 @@ function GameMap() {
             <span className="mt-1 rounded-full bg-black/60 text-white text-xs font-extrabold px-2 py-0.5">{t("shop")}</span>
           </Link>
 
+          {/* Avatar + how to play — bottom right */}
+          <div className="absolute right-[3%] bottom-[4%] flex gap-2">
+            <button onClick={() => setTutOpen(true)} aria-label={tr(lang, "How to play", "玩法", "玩法")} title={tr(lang, "How to play", "玩法", "玩法")}
+              className="grid place-items-center w-16 h-16 rounded-2xl bg-card border-4 border-card shadow-2xl hover:scale-105 transition">
+              <HelpCircle className="text-primary" size={34} aria-hidden />
+            </button>
+            <Link to="/avatar" aria-label={tr(lang, "Avatar", "角色", "角色")} title={tr(lang, "Avatar", "角色", "角色")}
+              className="grid place-items-center w-16 h-16 rounded-2xl bg-card border-4 border-card shadow-2xl hover:scale-105 transition">
+              <User className="text-primary" size={34} aria-hidden />
+            </Link>
+          </div>
+
           {/* Event isle — bottom left, below Aquatic Bay */}
           <div className="absolute left-[3%] bottom-[4%] w-[26%] min-w-[150px]">
             <div className="rounded-[2rem] bg-[oklch(0.95_0.06_90)]/90 border-4 border-white/80 shadow-2xl p-3 text-center">
@@ -263,7 +287,9 @@ function GameMap() {
         </div>
       </div>
 
-      <Dialog open={reviewOpen} onOpenChange={(open) => !open && closeReview()}>
+      <Tutorial open={tutOpen} onClose={() => { setTutOpen(false); const st = getState(); if (!st.settings.tutorialDone) setState({ ...st, settings: { ...st.settings, tutorialDone: true } }); }} />
+      <DailyPopup open={dailyOpen && !tutOpen} onClose={() => setDailyOpen(false)} grade={player?.grade ?? getState().grade ?? "P3"} />
+      <Dialog open={reviewOpen && !dailyOpen && !tutOpen} onOpenChange={(open) => !open && closeReview()}>
         <DialogContent className="max-w-md rounded-2xl border-2">
           <DialogHeader>
             <DialogTitle className="text-2xl font-extrabold">{t("feedback_title")}</DialogTitle>

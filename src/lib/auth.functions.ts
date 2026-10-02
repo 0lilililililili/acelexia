@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
@@ -37,9 +38,9 @@ export type ProgressSnapshot = {
   revision: Record<string, Record<string, RevisionItem[]>>;
   wallet: WalletSnapshot;
   settings: Record<string, string | number | boolean>;
-  avatar?: Record<string, unknown>;
-  streak?: Record<string, unknown>;
-  badges?: Record<string, unknown>;
+  avatar?: Record<string, any>;
+  streak?: Record<string, any>;
+  badges?: Record<string, any>;
 };
 
 
@@ -136,9 +137,9 @@ export const logInUser = createServerFn({ method: "POST" })
             revision: (prog.revision_bank ?? {}) as ProgressSnapshot["revision"],
             wallet: (prog.wallet ?? {}) as WalletSnapshot,
             settings: (prog.settings ?? {}) as Record<string, string | number | boolean>,
-            avatar: (prog.avatar ?? {}) as Record<string, unknown>,
-            streak: (prog.streak ?? {}) as Record<string, unknown>,
-            badges: (prog.badges ?? {}) as Record<string, unknown>,
+            avatar: (prog.avatar ?? {}) as Record<string, any>,
+            streak: (prog.streak ?? {}) as Record<string, any>,
+            badges: (prog.badges ?? {}) as Record<string, any>,
           } satisfies ProgressSnapshot)
         : null,
     };
