@@ -3,6 +3,10 @@ import { useState } from "react";
 import { signUpUser } from "@/lib/auth.functions";
 import { emptyState, setSession, setState } from "@/lib/store";
 import pirateMap from "@/assets/pirate-map.jpg";
+import { AvatarFigure } from "@/components/avatar-figure";
+import { resolveLook } from "@/lib/avatar";
+import { emptyAvatar } from "@/lib/store";
+import { BackButton } from "@/components/back-button";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({
@@ -105,13 +109,16 @@ function SignupPage() {
 
         <fieldset className="mt-4">
           <legend className="font-semibold">Avatar body</legend>
-          <div className="mt-1 grid grid-cols-2 gap-2">
-            {(["boy", "girl"] as const).map((g) => (
-              <button key={g} type="button" aria-pressed={gender === g} onClick={() => setGender(g)}
-                className={`rounded-xl border-2 py-3 font-bold ${gender === g ? "border-primary bg-primary text-primary-foreground" : "border-input bg-background"}`}>
-                {g === "boy" ? "Boy" : "Girl"}
-              </button>
-            ))}
+          <div className="mt-2 flex items-center gap-4">
+            <div className="flex-1 grid grid-cols-2 gap-2">
+              {(["boy", "girl"] as const).map((g) => (
+                <button key={g} type="button" aria-pressed={gender === g} onClick={() => setGender(g)}
+                  className={`rounded-xl border-2 py-3 font-bold ${gender === g ? "border-primary bg-primary text-primary-foreground" : "border-input bg-background"}`}>
+                  {g === "boy" ? "Boy" : "Girl"}
+                </button>
+              ))}
+            </div>
+            <div className="shrink-0" aria-live="polite" aria-label={`${gender === "boy" ? "Boy" : "Girl"} avatar preview`}><AvatarFigure look={resolveLook(emptyAvatar(gender))} gender={gender} size={70} /></div>
           </div>
           <p className="text-xs text-muted-foreground mt-1">Only used to choose your avatar's body. Nothing else.</p>
         </fieldset>
@@ -129,7 +136,7 @@ function SignupPage() {
         <Link to="/login" className="block mt-4 text-center text-sm text-primary font-semibold">
           I already have an account
         </Link>
-        <Link to="/" className="block mt-2 text-center text-sm text-muted-foreground">← Back home</Link>
+        <div className="mt-2 text-center text-sm"><BackButton className="text-muted-foreground" /></div>
       </form>
     </main>
   );

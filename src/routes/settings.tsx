@@ -1,7 +1,6 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { LogOut } from "lucide-react";
-import { DEFAULT_SETTINGS, emptyState, getSession, getState, setSession, setState, type Settings } from "@/lib/store";
+import { DEFAULT_SETTINGS, getState, setState, type Settings } from "@/lib/store";
 import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/settings")({
@@ -33,27 +32,12 @@ const LANGUAGE_CHOICES: { label: string; value: Settings["language"] }[] = [
 
 function SettingsPage() {
   const { t } = useLang();
-  const nav = useNavigate();
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [saved, setSaved] = useState(false);
-  const [username, setUsername] = useState<string | null>(null);
 
   useEffect(() => {
     setSettings(getState().settings);
-    setUsername(getSession()?.username ?? null);
   }, []);
-
-  const logOut = () => {
-    if (!window.confirm(t("log_out_confirm"))) return;
-    setSession(null);
-    setState(emptyState(), { sync: false });
-    try {
-      window.localStorage.removeItem("player");
-      window.sessionStorage.removeItem("wq_admin");
-      window.sessionStorage.removeItem("wq_admin_pw");
-    } catch {}
-    nav({ to: "/" });
-  };
 
   const update = (patch: Partial<Settings>) => {
     const next = { ...settings, ...patch };
@@ -136,19 +120,6 @@ function SettingsPage() {
             className="mt-4 rounded-2xl bg-primary text-primary-foreground px-6 py-3 font-bold"
           >
             {t("reset_btn")}
-          </button>
-        </section>
-
-        <section className="mt-6 bg-card border-2 border-border rounded-3xl p-6 shadow">
-          <h2 className="text-xl font-extrabold">{t("account")}</h2>
-          <p className="text-sm mt-1">
-            {username ? <><strong>{username}</strong> — </> : null}{t("stay_logged_in")}
-          </p>
-          <button
-            onClick={logOut}
-            className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-card border-2 border-border px-6 py-3 font-extrabold hover:border-destructive"
-          >
-            <LogOut size={20} aria-hidden /> {t("log_out")}
           </button>
         </section>
 

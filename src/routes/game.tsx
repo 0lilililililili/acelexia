@@ -1,9 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Settings as Gear, BookOpen, Waves, Trees, Flame, Lock, Sparkles, Star, Send } from "lucide-react";
 import { isFestivalOpen, nextEventOpening, festivalName, EVENT_WORLDS } from "@/lib/festivals";
 import { WORLD_ART } from "@/lib/world-art";
-import { getSession, getState, setState, type SubjectStat, type Wallet } from "@/lib/store";
+import { emptyState, getSession, getState, setSession, setState, type SubjectStat, type Wallet, type StreakState } from "@/lib/store";
 import { useLang } from "@/lib/i18n";
 import { playerLv, lvProgressPct, EXP_PER_LV } from "@/lib/leveling";
 import { StarRow } from "@/components/stars";
@@ -13,8 +13,8 @@ import { SUBJECTS } from "@/lib/subjects";
 import { Button } from "@/components/ui/button";
 import { DailyPopup } from "@/components/daily-popup";
 import { Tutorial } from "@/components/tutorial";
-import { tickStreak } from "@/lib/badges";
-import { User, Award, HelpCircle } from "lucide-react";
+import { tickStreak, STREAK_MILESTONES } from "@/lib/badges";
+import { User, Award, HelpCircle, LogOut, ClipboardList } from "lucide-react";
 import { tr } from "@/lib/tr";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -56,9 +56,11 @@ function IconAction({ to, label, children }: { to: string; label: string; childr
 
 function GameMap() {
   const { lang, t, fmtDate } = useLang();
+  const navigate = useNavigate();
   const [player, setPlayer] = useState<{ name: string; grade: string } | null>(null);
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [stats, setStats] = useState<Record<string, SubjectStat>>({});
+  const [streak, setStreak] = useState<StreakState>(() => getState().streak);
   const [account, setAccount] = useState<string | null>(null);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [rating, setRating] = useState(0);
@@ -76,6 +78,7 @@ function GameMap() {
       const st = getState();
       setWallet(st.wallet);
       setStats(st.stats ?? {});
+      setStreak(st.streak);
     };
     sync();
     if (tickStreak()) setDailyOpen(true);
@@ -117,6 +120,16 @@ function GameMap() {
 
   const openEvents = EVENT_WORLDS.filter((id) => isFestivalOpen(id));
   const exp = wallet?.exp ?? 0;
+  const nextStreak = STREAK_MILESTONES.find((days) => days > streak.current);
+  const logOut = () => {
+    if (!window.confirm(t("log_out_confirm"))) return;
+    setSession(null);
+    setState(emptyState(), { sync: false });
+    window.localStorage.removeItem("player");
+    window.sessionStorage.removeItem("wq_admin");
+    window.sessionStorage.removeItem("wq_admin_pw");
+    navigate({ to: "/" });
+  };
 
   return (
     <main className="min-h-screen px-4 py-6">
@@ -132,6 +145,11 @@ function GameMap() {
           <IconAction to="/revision" label={t("revision_bank")}>
             <BookOpen className="text-primary" size={26} aria-hidden />
           </IconAction>
+          <Button size="icon" onClick={logOut} aria-label={t("log_out")} title={t("log_out")}
+            className="group relative w-14 h-14 rounded-full border-4 border-primary bg-primary text-primary-foreground shadow-lg hover:bg-primary/80 hover:scale-105 transition">
+            <LogOut size={26} aria-hidden />
+            <span className="pointer-events-none absolute top-full mt-2 whitespace-nowrap rounded-lg bg-foreground text-background text-xs font-bold px-2 py-1 opacity-0 group-hover:opacity-100">{t("log_out")}</span>
+          </Button>
           <IconAction to="/badges" label={tr(lang, "Badges", "徽章", "徽章")}>
             <Award className="text-primary" size={26} aria-hidden />
           </IconAction>
@@ -160,6 +178,16 @@ function GameMap() {
             })}
           </ul>
           <div className="mt-1 text-[11px] text-muted-foreground font-semibold">{t("avg_correct")}</div>
+          <div className="mt-3 border-t border-border pt-2 text-sm font-extrabold flex items-center gap-2">
+            <Flame size={18} className="text-destructive" aria-hidden />
+            {tr(lang, `Day ${streak.current}!`, `第 ${streak.current} 日！`, `第 ${streak.current} 天！`)}
+          </div>
+          <p className="text-xs font-semibold text-muted-foreground">
+            {nextStreak
+              ? tr(lang, `${nextStreak - streak.current} days away from ${nextStreak}-day streak`, `距離 ${nextStreak} 日連續紀錄還有 ${nextStreak - streak.current} 日`, `距离 ${nextStreak} 天连续纪录还有 ${nextStreak - streak.current} 天`)
+              : tr(lang, "All streak milestones reached!", "已達成所有連續紀錄！", "已达成所有连续纪录！")}
+          </p>
+          {nextStreak && <div role="progressbar" aria-label={tr(lang, "Daily streak progress", "每日連續進度", "每日连续进度")} aria-valuemin={0} aria-valuemax={nextStreak} aria-valuenow={streak.current} className="mt-2 h-2 rounded-full bg-muted overflow-hidden"><div className="h-full bg-primary" style={{ width: `${Math.min(100, streak.current / nextStreak * 100)}%` }} /></div>}
         </div>
         <div className="bg-card border-2 border-border rounded-3xl px-5 py-4 shadow">
           <div className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">{t("your_stars")}</div>
@@ -178,6 +206,12 @@ function GameMap() {
       </div>
 
       <div className="max-w-6xl mx-auto">
+        <div className="mb-3">
+          <Button onClick={() => setDailyOpen(true)} variant="outline" className="gap-2 border-2 font-extrabold">
+            <ClipboardList size={20} aria-hidden /> {tr(lang, "Daily quest", "每日任務", "每日任务")}
+            <span className="text-muted-foreground text-xs">{streak.daily.filter((task) => task.done).length}/{streak.daily.length}</span>
+          </Button>
+        </div>
         <div
           className="relative rounded-[2rem] overflow-hidden border-4 border-border shadow-2xl"
           style={{ aspectRatio: "3 / 2" }}
