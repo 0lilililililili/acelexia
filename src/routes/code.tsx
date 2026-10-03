@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import { BackButton } from "@/components/back-button";
 
 export const Route = createFileRoute("/code")({
   head: () => ({ meta: [{ title: "Code — Acalexia" }, { name: "robots", content: "noindex" }] }),
@@ -47,7 +48,7 @@ function CodePage() {
     <main className="min-h-screen bg-background p-6">
       <header className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-extrabold">{"</> App source code"}</h1>
-        <Link to="/" className="text-sm text-primary font-semibold">← Home</Link>
+        <BackButton className="text-sm text-primary" />
       </header>
 
       <div className="grid gap-4 lg:grid-cols-[320px_1fr]">

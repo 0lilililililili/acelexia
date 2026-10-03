@@ -3,6 +3,7 @@ import { useState } from "react";
 import { logInUser } from "@/lib/auth.functions";
 import { DEFAULT_SETTINGS, emptyState, normalizeAvatar, normalizeBadges, normalizeStreak, normalizeWallet, setSession, setState, unflattenStats, type State, type Wallet } from "@/lib/store";
 import pirateMap from "@/assets/pirate-map.jpg";
+import { BackButton } from "@/components/back-button";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -128,7 +129,7 @@ function LoginPage() {
         <Link to="/signup" className="block mt-4 text-center text-sm text-primary font-semibold">
           Create a new account
         </Link>
-        <Link to="/" className="block mt-2 text-center text-sm text-muted-foreground">← Back home</Link>
+        <div className="mt-2 text-center text-sm"><BackButton className="text-muted-foreground" /></div>
       </form>
     </main>
   );

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Flame, Check } from "lucide-react";
+import { Flame, Check, Lock } from "lucide-react";
 import { getState, towerKey } from "@/lib/store";
 import { daysToNextStreakBadge } from "@/lib/badges";
 import { WORLD_ART } from "@/lib/world-art";
@@ -39,7 +39,11 @@ export function DailyPopup({ open, onClose, grade }: { open: boolean; onClose: (
             const level = (s.towers[towerKey(grade, d.world, d.subject)] ?? 0) + 1;
             return (
               <li key={d.subject}>
-                <Link
+                {d.done ? <div aria-label={`${SUBJECT_LABEL[d.subject as keyof typeof SUBJECT_LABEL] ?? d.subject} — ${tr(lang, "Quest done", "任務完成", "任务完成")}`} className="flex items-center gap-3 rounded-2xl border-2 border-border bg-muted px-3 py-2 text-muted-foreground">
+                  <img src={WORLD_ART[d.world]?.boss} alt="" className="w-10 h-10 object-contain grayscale" />
+                  <span className="font-extrabold">{SUBJECT_LABEL[d.subject as keyof typeof SUBJECT_LABEL] ?? d.subject}</span>
+                  <span className="ml-auto inline-flex items-center gap-1 text-xs font-extrabold"><Lock size={16} aria-hidden />{tr(lang, "Quest done", "任務完成", "任务完成")}</span>
+                </div> : <Link
                   to="/play/$grade/$world/$subject/$level"
                   params={{ grade, world: d.world, subject: d.subject, level: String(level) }}
                   search={{ daily: 1 }}
@@ -49,8 +53,8 @@ export function DailyPopup({ open, onClose, grade }: { open: boolean; onClose: (
                   <img src={WORLD_ART[d.world]?.boss} alt="" className="w-10 h-10 object-contain" />
                   <span className="font-extrabold">{SUBJECT_LABEL[d.subject as keyof typeof SUBJECT_LABEL] ?? d.subject}</span>
                   <span className="text-sm">{tr(lang, ...(LAND[d.world] ?? [d.world, d.world, d.world]))} · LV{level}</span>
-                  {d.done && <Check className="ml-auto text-primary" aria-label="done" />}
                 </Link>
+                }
               </li>
             );
           })}

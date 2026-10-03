@@ -4,6 +4,7 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { GRADES, loadSubmissions, type Grade, type Submission } from "@/lib/input-questions";
+import { BackButton } from "@/components/back-button";
 
 export const Route = createFileRoute("/admin/view")({ component: AdminViewPage });
 
@@ -72,7 +73,7 @@ function AdminViewPage() {
           <Link to="/admin" className="rounded-xl bg-card border-2 border-border px-3 py-2 text-sm font-bold">
             ← Stats
           </Link>
-          <Link to="/" className="text-sm text-primary font-semibold">Home</Link>
+          <BackButton className="text-sm text-primary" />
         </div>
       </header>
 

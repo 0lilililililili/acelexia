@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { BackButton } from "@/components/back-button";
 
 export const Route = createFileRoute("/admin/")({
   head: () => ({
@@ -34,7 +35,7 @@ function AdminPage() {
           <p className="text-sm text-muted-foreground">Data and source code tools.</p>
         </div>
         <div className="flex items-center gap-2">
-          <Link to="/" className="text-sm text-primary font-semibold">← Home</Link>
+          <BackButton className="text-sm text-primary" />
           <button
             onClick={() => { window.sessionStorage.removeItem("wq_admin"); nav({ to: "/login" }); }}
             className="rounded-xl bg-card border-2 border-border px-3 py-2 text-sm font-bold"

@@ -1,0 +1,5 @@
+- [ ] Change home links to previous-page Back controls; send missing pages to the game map.
+- [ ] Show an answer format for every non-multiple-choice question.
+- [ ] Move logout to the game map and label the About Us link.
+- [ ] Show streak progress, reopenable daily quests, and lock completed quests.
+- [ ] Preview the chosen starter avatar on sign-up and verify the flows.

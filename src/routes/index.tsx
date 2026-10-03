@@ -30,8 +30,9 @@ function Home1() {
     >
       {/* Warm parchment veil for readability */}
       <div className="absolute inset-0 bg-background/80" />
-      <Link to="/about" aria-label="About us" title="About us" className="absolute top-4 left-4 z-20 grid place-items-center w-12 h-12 rounded-full bg-card border-2 border-border shadow hover:border-primary">
+      <Link to="/about" aria-label="About us" title="About us" className="absolute top-4 left-4 z-20 flex items-center gap-2 rounded-full bg-card border-2 border-border shadow hover:border-primary px-3 py-2 font-extrabold">
         <HelpCircle className="text-primary" size={28} aria-hidden />
+        <span>About us</span>
       </Link>
 
       <div className="relative z-10 text-center max-w-2xl">
