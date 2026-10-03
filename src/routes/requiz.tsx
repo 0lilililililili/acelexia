@@ -4,6 +4,7 @@ import { Star } from "lucide-react";
 import { addExp, getState, type State } from "@/lib/store";
 import { useSpeech } from "@/hooks/use-speech";
 import { LETTERS, choiceFromSpeech, matches } from "@/lib/answer-match";
+import { answerFormat } from "@/lib/answer-format";
 
 export const Route = createFileRoute("/requiz")({
   head: () => ({
@@ -148,6 +149,7 @@ function RequizPage() {
               <div className="mt-2 text-base font-extrabold">Read out loud:</div>
             )}
             <div className="text-4xl font-extrabold mt-1">{current.prompt}</div>
+             {!current.choices?.length && <p className="mt-2 text-sm font-bold text-muted-foreground">Answer format: {answerFormat(current.subject, current.prompt, current.answer)}</p>}
             {current.choices && current.choices.length > 0 && (
               <>
                 <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-left">

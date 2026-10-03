@@ -5,6 +5,7 @@ import {
 } from "@/lib/input-questions";
 import pirateMap from "@/assets/pirate-map.jpg";
 import { getState, setState } from "@/lib/store";
+import { BackButton } from "@/components/back-button";
 
 const pageBg: React.CSSProperties = {
   backgroundImage: `url(${pirateMap})`,
@@ -96,7 +97,7 @@ function TestPage() {
             Start test →
           </button>
 
-          <Link to="/" className="block mt-4 text-center text-sm text-muted-foreground">← Back</Link>
+          <div className="mt-4 text-center text-sm"><BackButton className="text-muted-foreground" /></div>
         </div>
       </main>
     );

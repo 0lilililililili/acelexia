@@ -8,6 +8,7 @@ import {
   type Grade,
   type QResult,
 } from "@/lib/input-questions";
+import { BackButton } from "@/components/back-button";
 
 export const Route = createFileRoute("/input-data")({ component: InputDataPage });
 
@@ -74,7 +75,7 @@ function InputDataPage() {
         >
           Next →
         </button>
-        <Link to="/" className="block mt-4 text-center text-sm text-muted-foreground">← Home</Link>
+        <div className="mt-4 text-center text-sm"><BackButton className="text-muted-foreground" /></div>
       </Shell>
     );
   }
@@ -156,7 +157,7 @@ function InputDataPage() {
         Your Data ID: <span className="font-mono font-bold text-primary">{dataIdRef.current}</span>
       </p>
       <div className="mt-8 flex gap-3">
-        <Link to="/" className="flex-1 rounded-2xl bg-card border-2 border-border py-4 text-center font-bold">Home</Link>
+        <div className="flex-1 rounded-2xl bg-card border-2 border-border py-4 text-center font-bold"><BackButton /></div>
         <button
           onClick={() => nav({ to: "/admin" })}
           className="flex-1 rounded-2xl bg-primary text-primary-foreground py-4 font-bold"

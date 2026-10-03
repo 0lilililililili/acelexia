@@ -22,6 +22,7 @@ import {
 } from "@/lib/store";
 import { WORLD_ART, mutedBgStyle } from "@/lib/world-art";
 import { LETTERS, choiceFromSpeech, matches, parseCommand } from "@/lib/answer-match";
+import { answerFormat } from "@/lib/answer-format";
 import { playerLv, requiredLv, starsForWrong, worldStarColor, STAR_HEX } from "@/lib/leveling";
 import hourglassImg from "@/assets/icon-hourglass.png";
 import potionImg from "@/assets/icon-potion.png";
@@ -499,6 +500,7 @@ function PlayPage() {
                 <div className="text-3xl sm:text-4xl font-extrabold tracking-wide text-center">
                   {current.prompt}
                 </div>
+                 {!current.choices?.length && <p className="mt-2 text-center text-sm font-bold text-muted-foreground">Answer format: {answerFormat(subject, current.prompt, current.answer)}</p>}
                 {current.choices && current.choices.length > 0 && (
                   <>
                     <div className="mt-3 grid grid-cols-2 gap-2">
