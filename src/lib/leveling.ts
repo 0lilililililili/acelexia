@@ -1,15 +1,33 @@
 // Player level (Lv), star rewards and the Lv gate that stops item-reliant players.
 
-export const EXP_PER_LV = 200;
+/** EXP needed to go from Lv n to Lv n+1: small at first, growing by 10 each LV (50, 60, 70 …). */
+export function expForLv(lv: number) {
+  return 50 + 10 * (Math.max(1, lv) - 1);
+}
 
-/** Lv starts at 1 and goes up every 200 exp. */
+/** Total EXP needed to reach Lv n from Lv 1. */
+export function totalExpForLv(lv: number) {
+  const n = Math.max(1, lv) - 1;
+  return 50 * n + 5 * n * (n - 1);
+}
+
+/** Lv starts at 1; each next LV needs a little more EXP than the last. */
 export function playerLv(exp: number) {
-  return Math.floor(Math.max(0, exp) / EXP_PER_LV) + 1;
+  let lv = 1;
+  while (totalExpForLv(lv + 1) <= Math.max(0, exp)) lv++;
+  return lv;
+}
+
+/** EXP earned inside the current Lv and EXP needed for the next one. */
+export function lvProgress(exp: number) {
+  const lv = playerLv(exp);
+  return { into: Math.max(0, exp) - totalExpForLv(lv), need: expForLv(lv) };
 }
 
 /** Exp progress inside the current Lv, as a 0–100 percentage. */
 export function lvProgressPct(exp: number) {
-  return ((Math.max(0, exp) % EXP_PER_LV) / EXP_PER_LV) * 100;
+  const { into, need } = lvProgress(exp);
+  return (into / need) * 100;
 }
 
 /**
