@@ -145,14 +145,14 @@ function GameMap() {
         </div>
 
         <div className="flex items-center gap-3">
-          <IconAction to="/revision" label={t("revision_bank")}>
-            <BookOpen className="text-primary" size={26} aria-hidden />
-          </IconAction>
           <Button size="icon" onClick={logOut} aria-label={t("log_out")} title={t("log_out")}
             className="group relative w-14 h-14 rounded-full border-4 border-primary bg-primary text-primary-foreground shadow-lg hover:bg-primary/80 hover:scale-105 transition">
             <LogOut size={26} aria-hidden />
             <span className="pointer-events-none absolute top-full mt-2 whitespace-nowrap rounded-lg bg-foreground text-background text-xs font-bold px-2 py-1 opacity-0 group-hover:opacity-100">{t("log_out")}</span>
           </Button>
+          <IconAction to="/revision" label={t("revision_bank")}>
+            <BookOpen className="text-primary" size={26} aria-hidden />
+          </IconAction>
           <IconAction to="/badges" label={tr(lang, "Badges", "徽章", "徽章")}>
             <Award className="text-primary" size={26} aria-hidden />
           </IconAction>
