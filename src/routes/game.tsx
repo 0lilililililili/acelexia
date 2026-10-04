@@ -5,7 +5,10 @@ import { isFestivalOpen, nextEventOpening, festivalName, EVENT_WORLDS } from "@/
 import { WORLD_ART } from "@/lib/world-art";
 import { emptyState, getSession, getState, setSession, setState, type SubjectStat, type Wallet, type StreakState } from "@/lib/store";
 import { useLang } from "@/lib/i18n";
-import { playerLv, lvProgressPct, EXP_PER_LV } from "@/lib/leveling";
+import { playerLv, lvProgressPct, lvProgress } from "@/lib/leveling";
+import hourglassIcon from "@/assets/icon-hourglass.png";
+import potionIcon from "@/assets/icon-potion.png";
+import torchIcon from "@/assets/icon-torch.png";
 import { StarRow } from "@/components/stars";
 import continentMap from "@/assets/continent-map.jpg";
 import shopIcon from "@/assets/icon-shop.png";
@@ -192,6 +195,23 @@ function GameMap() {
         <div className="bg-card border-2 border-border rounded-3xl px-5 py-4 shadow">
           <div className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">{t("your_stars")}</div>
           <div className="mt-2">{wallet && <StarRow stars={wallet.stars} size={24} />}</div>
+          {wallet && (
+            <div className="mt-4">
+              <div className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">{tr(lang, "Your tools", "你的道具", "你的道具")}</div>
+              <ul className="mt-2 flex flex-wrap gap-4">
+                {[
+                  { icon: hourglassIcon, label: tr(lang, "Hour-glass", "沙漏", "沙漏"), n: wallet.items.glassA + wallet.items.glassB + wallet.items.glassC },
+                  { icon: potionIcon, label: tr(lang, "Potion", "藥水", "药水"), n: wallet.items.potionA + wallet.items.potionB },
+                  { icon: torchIcon, label: tr(lang, "Torch", "火炬", "火炬"), n: wallet.items.torch },
+                ].map((it) => (
+                  <li key={it.label} title={it.label} aria-label={`${it.label}: ${it.n}`} className="flex items-center gap-1">
+                    <img src={it.icon} alt="" width={32} height={32} className="w-8 h-8 object-contain" />
+                    <span className="font-extrabold">{it.n}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div className="mt-4 flex items-baseline justify-between">
             <span className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">LV</span>
             <span className="text-xl font-extrabold">Lv{playerLv(exp)}</span>
@@ -200,7 +220,7 @@ function GameMap() {
             <div className="h-full bg-primary" style={{ width: `${lvProgressPct(exp)}%` }} />
           </div>
           <div className="mt-1 text-xs text-muted-foreground font-semibold">
-            {t("exp_to_next", { a: exp % EXP_PER_LV, b: EXP_PER_LV })}
+            {t("exp_to_next", { a: lvProgress(exp).into, b: lvProgress(exp).need })}
           </div>
         </div>
       </div>
