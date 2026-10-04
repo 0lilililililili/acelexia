@@ -475,12 +475,11 @@ function PlayPage() {
       </div>
 
       {/* Boss enters from the left and waits in the middle */}
-      <div className="relative flex-1">
+      <div className="relative flex-1 min-h-0 flex flex-col items-center justify-center overflow-y-auto py-3">
         {current && (
           <div
             key={itemKeyRef.current}
-            className={`absolute left-1/2 top-1/2 flex flex-col items-center ${bossAnim}`}
-            style={phase === "active" || phase === "offer" ? { transform: "translate(-50%, -50%)" } : undefined}
+            className={`flex flex-col items-center ${bossAnim}`}
           >
             <img
               src={art.boss}
@@ -567,7 +566,7 @@ function PlayPage() {
       {note && <div className="text-center pb-1 font-extrabold text-primary">{note}</div>}
 
       {transcript && (
-        <div className="pointer-events-none fixed inset-x-0 bottom-40 z-[100] flex justify-center px-4">
+        <div className="flex justify-center px-4 pt-2">
           <div
             className={`speech-readout font-extrabold text-center rounded-2xl px-4 py-2 bg-black/45 ${feedback === "wrong" ? "animate-pulse" : ""}`}
           >
