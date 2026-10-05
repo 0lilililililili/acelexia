@@ -26,12 +26,12 @@ function ProgressAdmin() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const pw = window.sessionStorage.getItem("wq_admin_pw");
+    const pw = window.sessionStorage.getItem("wq_admin_token");
     if (window.sessionStorage.getItem("wq_admin") !== "1" || !pw) {
       nav({ to: "/login" });
       return;
     }
-    listProgress({ data: { adminPassword: pw } })
+    listProgress({ data: { adminToken: pw } })
       .then((r) => setRows(r.rows as unknown as Row[]))
       .catch(() => setErr("Could not load the PROGRESS database."));
   }, [nav]);

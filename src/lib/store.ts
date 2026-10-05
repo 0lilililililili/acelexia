@@ -13,7 +13,7 @@ export type Settings = {
   tutorialDone?: boolean;
 };
 
-export type Session = { userId: string; username: string; isAdmin: boolean };
+export type Session = { userId: string; username: string; isAdmin: boolean; token?: string };
 
 export type ItemKey = "glassA" | "glassB" | "glassC" | "potionA" | "potionB" | "torch";
 
@@ -179,7 +179,7 @@ export function setState(next: State, { sync = true } = {}) {
   window.dispatchEvent(new CustomEvent("wq-updated"));
   if (!sync) return;
   const session = getSession();
-  if (!session || session.isAdmin) return;
+  if (!session || session.isAdmin || !session.token) return;
   if (syncTimer) clearTimeout(syncTimer);
   syncTimer = setTimeout(() => {
     void (async () => {
@@ -187,7 +187,7 @@ export function setState(next: State, { sync = true } = {}) {
         const { saveProgress } = await import("./auth.functions");
         await saveProgress({
           data: {
-            userId: session.userId,
+            token: session.token!,
             username: session.username,
             grade: next.grade,
             onboarded: next.onboarded,

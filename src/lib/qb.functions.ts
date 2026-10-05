@@ -3,8 +3,8 @@ import { z } from "zod";
 
 const Input = z.object({
   subject: z.enum(["chi", "eng", "math"]),
-  grade: z.string(),
-  theme: z.string(),
+  grade: z.enum(["K3", "P1", "P2", "P3", "P4", "P5", "P6"]),
+  theme: z.string().max(40).regex(/^[\p{L}\p{N} &'-]+$/u),
   level: z.number().int().min(1).max(500),
   count: z.number().int().min(3).max(20).default(8),
   language: z.enum(["zh-TW", "zh-CN", "en"]).default("zh-TW"),
