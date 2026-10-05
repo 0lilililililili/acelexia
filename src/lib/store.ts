@@ -57,7 +57,7 @@ export type State = {
 export type Gender = "boy" | "girl";
 export type AvatarState = { gender: Gender; equipped: Record<string, string>; owned: string[] };
 export type DailyTask = { subject: string; world: string; done: boolean };
-export type StreakState = { current: number; best: number; lastDay: string; dailyDate: string; daily: DailyTask[] };
+export type StreakState = { current: number; best: number; lastDay: string; dailyDate: string; daily: DailyTask[]; lotteryDay?: string };
 export type BadgeState = { unlocked: string[]; run: Record<string, number>; bestRun: Record<string, number> };
 
 export const emptyAvatar = (gender: Gender = "boy"): AvatarState => ({ gender, equipped: {}, owned: [] });

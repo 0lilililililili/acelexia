@@ -457,7 +457,7 @@ function PlayPage() {
     >
       <div className="absolute inset-0 bg-background/40 pointer-events-none" />
       {/* HUD */}
-      <header className="relative flex items-center justify-between px-5 py-3 bg-black/40 backdrop-blur text-white">
+      <header className="relative flex items-center justify-between px-5 py-3 [@media(max-height:500px)]:py-1 bg-black/40 backdrop-blur text-white">
         <Link to="/tower/$grade/$world/$subject" params={{ grade, world, subject }} className="font-bold">← Exit</Link>
         <div className="text-center">
           <div className="text-xs opacity-90 uppercase tracking-wider">{art.label} • {subject.toUpperCase()} • {grade}</div>
@@ -467,7 +467,7 @@ function PlayPage() {
       </header>
 
       {/* Item bag */}
-      <div className="relative flex items-center justify-center gap-4 py-2 bg-black/25 text-white text-xs font-bold">
+      <div className="relative flex items-center justify-center gap-4 py-2 [@media(max-height:500px)]:py-0.5 bg-black/25 text-white text-xs font-bold">
         <span className="inline-flex items-center gap-1"><img src={hourglassImg} alt="Hour-glass" width={512} height={512} loading="lazy" className="w-6 h-6 object-contain" />{(wallet.items.glassA ?? 0) + (wallet.items.glassB ?? 0) + (wallet.items.glassC ?? 0)}</span>
         <span className="inline-flex items-center gap-1"><img src={potionImg} alt="Potion" width={512} height={512} loading="lazy" className="w-6 h-6 object-contain" />{(wallet.items.potionA ?? 0) + (wallet.items.potionB ?? 0)}</span>
         <span className="inline-flex items-center gap-1"><img src={torchImg} alt="Pass torch" width={512} height={512} loading="lazy" className="w-6 h-6 object-contain" />{wallet.items.torch ?? 0}</span>
@@ -586,7 +586,7 @@ function PlayPage() {
             <button
               onClick={start}
               disabled={listening || (phase !== "active" && phase !== "offer")}
-              className={`rounded-full w-24 h-24 bg-primary text-primary-foreground text-4xl font-extrabold shadow-2xl flex items-center justify-center ${listening ? "mic-pulse" : "hover:scale-105"}`}
+              className={`rounded-full w-24 h-24 [@media(max-height:500px)]:w-16 [@media(max-height:500px)]:h-16 bg-primary text-primary-foreground text-4xl font-extrabold shadow-2xl flex items-center justify-center ${listening ? "mic-pulse" : "hover:scale-105"}`}
               aria-label="Speak your answer"
             >
               <MicIcon />
