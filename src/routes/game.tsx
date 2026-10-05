@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { DailyPopup } from "@/components/daily-popup";
 import { Tutorial } from "@/components/tutorial";
 import { tickStreak, STREAK_MILESTONES } from "@/lib/badges";
-import { User, Award, HelpCircle, LogOut, ClipboardList } from "lucide-react";
+import { User, Award, HelpCircle, LogOut, ClipboardList, MessageSquare } from "lucide-react";
 import { tr } from "@/lib/tr";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -90,7 +90,7 @@ function GameMap() {
     const answers = Object.values(state.stats ?? {}).reduce((sum, stat) => sum + stat.total, 0);
     const lastShown = state.settings.lastFeedbackAt ?? 0;
     let timer: number | undefined;
-    if (answers >= 8 && Date.now() - lastShown > 7 * 24 * 60 * 60 * 1000 && Math.random() < 0.35) {
+    if (answers >= 3 && Date.now() - lastShown > 2 * 24 * 60 * 60 * 1000 && Math.random() < 0.6) {
       timer = window.setTimeout(() => setReviewOpen(true), 1200);
     }
     window.addEventListener("wq-updated", sync);
@@ -135,13 +135,18 @@ function GameMap() {
   };
 
   return (
-    <main className="min-h-screen px-4 py-6">
+    <main className="min-h-screen px-3 py-3 sm:px-4 sm:py-6">
       <header className="flex items-center justify-between max-w-6xl mx-auto mb-4 gap-4 flex-wrap">
         <div>
           <div className="text-sm text-muted-foreground">
             {player?.name ? `${player.name} • ` : `${t("player")} • `}{t("grade")} {player?.grade ?? "—"}
           </div>
-          <h1 className="text-4xl font-extrabold brand-outline">Acelexia</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-4xl font-extrabold brand-outline">Acelexia</h1>
+            <Button variant="outline" size="sm" onClick={() => setReviewOpen(true)} className="gap-1 border-2 font-extrabold" aria-label={tr(lang, "Feedback", "意見", "意见")}>
+              <MessageSquare size={18} aria-hidden /> {tr(lang, "Feedback", "意見", "意见")}
+            </Button>
+          </div>
         </div>
 
         <div className="flex items-center gap-3">
@@ -163,7 +168,7 @@ function GameMap() {
       </header>
 
       {/* Stars + LV */}
-      <div className="max-w-6xl mx-auto mb-4 grid gap-3 sm:grid-cols-2">
+      <div className="max-w-6xl mx-auto mb-4 grid gap-3 grid-cols-1 [@media(orientation:landscape)]:grid-cols-2 sm:grid-cols-2">
         <div className="bg-card border-2 border-border rounded-3xl px-5 py-4 shadow">
           <div className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">{t("profile")}</div>
           <div className="mt-1 text-lg font-extrabold">{account ?? player?.name ?? t("explorer")}</div>
@@ -234,7 +239,7 @@ function GameMap() {
         </div>
         <div
           className="relative rounded-[2rem] overflow-hidden border-4 border-border shadow-2xl"
-          style={{ aspectRatio: "3 / 2" }}
+          style={{ aspectRatio: "3 / 2", maxHeight: "calc(100svh - 2rem)", marginInline: "auto" }}
         >
           <img
             src={continentMap}
@@ -258,10 +263,10 @@ function GameMap() {
                 style={{ left: `${x}%`, top: `${y}%` }}
               >
                 <span
-                  className="grid place-items-center w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-white/90 shadow-2xl hover:scale-110 transition overflow-hidden"
+                  className="grid place-items-center w-12 h-12 sm:w-24 sm:h-24 rounded-full border-4 border-white/90 shadow-2xl hover:scale-110 transition overflow-hidden"
                   style={{ background: art.color }}
                 >
-                  <img src={art.boss} alt="" loading="lazy" className="w-16 h-16 object-contain drop-shadow" />
+                  <img src={art.boss} alt="" loading="lazy" className="w-10 h-10 sm:w-16 sm:h-16 object-contain drop-shadow" />
                 </span>
                 <span className="mt-1 grid place-items-center w-8 h-8 rounded-full bg-white/90 shadow">
                   <Icon size={18} className="text-foreground" aria-hidden />
@@ -280,8 +285,8 @@ function GameMap() {
             title={t("star_shop")}
             className="group absolute right-[4%] top-[6%] flex flex-col items-center"
           >
-            <span className="grid place-items-center w-24 h-24 rounded-[1.5rem] bg-white/90 border-4 border-white shadow-2xl hover:scale-105 transition overflow-hidden">
-              <img src={shopIcon} alt="" loading="lazy" width={512} height={512} className="w-20 h-20 object-contain" />
+            <span className="grid place-items-center w-14 h-14 sm:w-24 sm:h-24 rounded-[1.5rem] bg-white/90 border-4 border-white shadow-2xl hover:scale-105 transition overflow-hidden">
+              <img src={shopIcon} alt="" loading="lazy" width={512} height={512} className="w-12 h-12 sm:w-20 sm:h-20 object-contain" />
             </span>
             <span className="mt-1 rounded-full bg-black/60 text-white text-xs font-extrabold px-2 py-0.5">{t("shop")}</span>
           </Link>
@@ -289,11 +294,11 @@ function GameMap() {
           {/* Avatar + how to play — bottom right */}
           <div className="absolute right-[3%] bottom-[4%] flex gap-2">
             <button onClick={() => setTutOpen(true)} aria-label={tr(lang, "How to play", "玩法", "玩法")} title={tr(lang, "How to play", "玩法", "玩法")}
-              className="grid place-items-center w-16 h-16 rounded-2xl bg-card border-4 border-card shadow-2xl hover:scale-105 transition">
+              className="grid place-items-center w-11 h-11 sm:w-16 sm:h-16 rounded-2xl bg-card border-4 border-card shadow-2xl hover:scale-105 transition">
               <HelpCircle className="text-primary" size={34} aria-hidden />
             </button>
             <Link to="/avatar" aria-label={tr(lang, "Avatar", "角色", "角色")} title={tr(lang, "Avatar", "角色", "角色")}
-              className="grid place-items-center w-16 h-16 rounded-2xl bg-card border-4 border-card shadow-2xl hover:scale-105 transition">
+              className="grid place-items-center w-11 h-11 sm:w-16 sm:h-16 rounded-2xl bg-card border-4 border-card shadow-2xl hover:scale-105 transition">
               <User className="text-primary" size={34} aria-hidden />
             </Link>
           </div>

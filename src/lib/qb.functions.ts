@@ -101,5 +101,13 @@ export const generateLevelItems = createServerFn({ method: "POST" })
         })),
       };
     }
+    // Shuffle MC options so the correct answer is not always the first one.
+    for (const it of parsed.data.items) {
+      if (it.choices && it.choices.length > 1) {
+        const c = [...it.choices];
+        for (let i = c.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [c[i], c[j]] = [c[j], c[i]]; }
+        it.choices = c;
+      }
+    }
     return parsed.data;
   });

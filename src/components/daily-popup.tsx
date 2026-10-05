@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { Flame, Check, Lock } from "lucide-react";
+import { Flame, Check, Lock, Gift } from "lucide-react";
+import { useState } from "react";
+import { canSpin, spunToday, spin, type Prize } from "@/lib/lottery";
 import { getState, towerKey } from "@/lib/store";
 import { daysToNextStreakBadge } from "@/lib/badges";
 import { WORLD_ART } from "@/lib/world-art";
@@ -18,6 +20,17 @@ export function DailyPopup({ open, onClose, grade }: { open: boolean; onClose: (
   const s = getState();
   const st = s.streak;
   const left = daysToNextStreakBadge(st.best, st.current);
+  const [prize, setPrize] = useState<Prize | null>(null);
+  const [spinning, setSpinning] = useState(false);
+  const allDone = st.daily.length > 0 && st.daily.every((d) => d.done);
+  const doSpin = () => { setSpinning(true); setTimeout(() => { setPrize(spin()); setSpinning(false); }, 1200); };
+  const toolName: Record<string, [string, string, string]> = { glassA: ["Hour-glass", "沙漏", "沙漏"], potionA: ["Potion", "藥水", "药水"], torch: ["Torch", "火炬", "火炬"] };
+  const prizeText = (p: Prize) =>
+    p.kind === "nothing" ? tr(lang, "No prize this time", "這次沒有獎品", "这次没有奖品")
+    : p.kind === "exp" ? `+${p.n} EXP`
+    : p.kind === "stars" ? tr(lang, `+${p.n} ${p.color} stars`, `+${p.n} 星星`, `+${p.n} 星星`)
+    : p.kind === "tool" ? `+1 ${tr(lang, ...toolName[p.item])}`
+    : `${tr(lang, "New clothes", "新服飾", "新服饰")}: ${lang === "en" ? p.name.en : p.name.zh}`;
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-md rounded-2xl border-2">
@@ -59,6 +72,15 @@ export function DailyPopup({ open, onClose, grade }: { open: boolean; onClose: (
             );
           })}
         </ul>
+        <div className="rounded-2xl border-2 border-border p-3 text-center">
+          <div className="font-extrabold flex items-center justify-center gap-2"><Gift size={20} className="text-primary" aria-hidden /> {tr(lang, "Lottery", "抽獎", "抽奖")}</div>
+          {prize ? <p className="mt-2 text-lg font-extrabold">{prizeText(prize)}</p>
+            : spunToday() ? <p className="mt-2 text-sm font-bold text-muted-foreground">{tr(lang, "Come back tomorrow", "明天再來", "明天再来")}</p>
+            : <Button className="mt-2 gap-2" disabled={!canSpin() || spinning} onClick={doSpin}>
+                <Gift size={18} className={spinning ? "animate-spin" : ""} aria-hidden />
+                {spinning ? "..." : allDone ? tr(lang, "Spin!", "抽獎！", "抽奖！") : tr(lang, "Finish 3 quests to spin", "完成 3 個任務即可抽獎", "完成 3 个任务即可抽奖")}
+              </Button>}
+        </div>
         <DialogFooter><Button onClick={onClose}>OK</Button></DialogFooter>
       </DialogContent>
     </Dialog>

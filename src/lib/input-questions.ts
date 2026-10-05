@@ -15,10 +15,19 @@ export type Grade = "K3" | "P1" | "P2" | "P3" | "P4" | "P5" | "P6";
 export const GRADES: Grade[] = ["K3", "P1", "P2", "P3", "P4", "P5", "P6"];
 
 // Helpers -------------------------------------------------------------------
-const mk = (grade: Grade, subject: Subject, i: number, attr: string, q: string, choices: string[], answer: number): MCQ => ({
-  id: `${grade}-${subject}-${String(i + 1).padStart(2, "0")}`,
-  subject, attr, q, choices, answer,
-});
+/** Stable per-question shuffle (same order on server and browser) so the answer isn't always first. */
+function seededOrder(id: string, n: number): number[] {
+  let h = 2166136261;
+  for (const ch of id) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
+  const order = Array.from({ length: n }, (_, i) => i);
+  for (let i = n - 1; i > 0; i--) { h = Math.imul(h ^ (h >>> 15), 2246822507) >>> 0; const j = h % (i + 1); [order[i], order[j]] = [order[j], order[i]]; }
+  return order;
+}
+const mk = (grade: Grade, subject: Subject, i: number, attr: string, q: string, choices: string[], answer: number): MCQ => {
+  const id = `${grade}-${subject}-${String(i + 1).padStart(2, "0")}`;
+  const order = seededOrder(id, choices.length);
+  return { id, subject, attr, q, choices: order.map((k) => choices[k]), answer: order.indexOf(answer) };
+};
 
 // 8 questions per subject × 3 subjects × 7 grades. Terse but syllabus-aligned.
 const CHI: Record<Grade, [string, string[], number, string][]> = {

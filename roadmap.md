@@ -3,3 +3,9 @@
 - [x] Move logout to the game map and label the About Us link.
 - [x] Show streak progress, reopenable daily quests, and lock completed quests.
 - [x] Preview the chosen starter avatar on sign-up and verify the flows.
+- [x] Feedback button on map + more frequent feedback popup.
+- [x] Shuffle multiple-choice options.
+- [x] Phone (landscape) + computer layouts.
+- [x] Tower levels show 1–3 stars earned.
+- [x] Daily lottery after all 3 quests.
+- [x] Admin Back returns to /admin.
