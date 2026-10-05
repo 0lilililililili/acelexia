@@ -325,9 +325,9 @@ export async function loadSubmissions(adminPassword?: string): Promise<Submissio
   try {
     const pw =
       adminPassword ??
-      (typeof window !== "undefined" ? window.sessionStorage.getItem("wq_admin_pw") ?? "" : "");
+      (typeof window !== "undefined" ? window.sessionStorage.getItem("wq_admin_token") ?? "" : "");
     const { listSubmissions } = await import("@/lib/submissions.functions");
-    const { rows } = await listSubmissions({ data: { adminPassword: pw } });
+    const { rows } = await listSubmissions({ data: { adminToken: pw } });
     const subs = (rows as unknown as Row[]).map(rowToSub);
     writeLocal(subs);
     return subs;

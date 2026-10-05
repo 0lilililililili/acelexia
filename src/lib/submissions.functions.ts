@@ -1,7 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-const ADMIN_PW = "12345678";
 
 const ResultSchema = z.object({
   qid: z.string().min(1).max(64),
@@ -43,9 +42,10 @@ export const insertSubmissions = createServerFn({ method: "POST" })
 
 /** Reading the research dataset requires the admin password. */
 export const listSubmissions = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => z.object({ adminPassword: z.string() }).parse(d))
+  .inputValidator((d: unknown) => z.object({ adminToken: z.string().max(2000) }).parse(d))
   .handler(async ({ data }) => {
-    if (data.adminPassword !== ADMIN_PW) throw new Error("Forbidden");
+    const { requireAdmin } = await import("./session.server");
+    await requireAdmin(data.adminToken);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: rows, error } = await supabaseAdmin
       .from("submissions")

@@ -96,7 +96,9 @@ export const signUpUser = createServerFn({ method: "POST" })
       username: created.username,
       avatar: { gender: data.gender ?? "boy", equipped: {}, owned: [] },
     });
-    return { ok: true as const, userId: created.id, username: created.username };
+    const { signSession } = await import("./session.server");
+    const token = await signSession(created.id, "user", 60 * 60 * 24 * 180);
+    return { ok: true as const, userId: created.id, username: created.username, token };
   });
 
 export const logInUser = createServerFn({ method: "POST" })
@@ -106,7 +108,9 @@ export const logInUser = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const name = data.username.trim();
     if (name.toLowerCase() === ADMIN_ID && data.password === ADMIN_PW) {
-      return { ok: true as const, isAdmin: true, userId: "admin", username: "admin", progress: null };
+      const { signSession } = await import("./session.server");
+      const token = await signSession("admin", "admin", 60 * 60 * 8);
+      return { ok: true as const, isAdmin: true, userId: "admin", username: "admin", progress: null, token };
     }
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: user } = await supabaseAdmin
@@ -124,9 +128,12 @@ export const logInUser = createServerFn({ method: "POST" })
       .eq("user_id", user.id)
       .maybeSingle();
 
+    const { signSession } = await import("./session.server");
+    const token = await signSession(user.id, "user", 60 * 60 * 24 * 180);
     return {
       ok: true as const,
       isAdmin: false,
+      token,
       userId: user.id,
       username: user.username,
       progress: prog
@@ -149,8 +156,8 @@ export const saveProgress = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z
       .object({
-        userId: z.string().uuid(),
-        username: z.string(),
+        token: z.string().min(10).max(2000),
+        username: z.string().max(40),
         grade: z.string().nullable().optional(),
         onboarded: z.boolean().optional(),
         towers: z.record(z.string(), z.number()),
@@ -185,11 +192,16 @@ export const saveProgress = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data }) => {
+    const { verifySession } = await import("./session.server");
+    const sess = await verifySession(data.token);
+    if (!sess || sess.role !== "user") throw new Error("Unauthorized");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: owner } = await supabaseAdmin.from("app_users").select("username").eq("id", sess.sub).maybeSingle();
+    if (!owner) throw new Error("Unauthorized");
     const { error } = await supabaseAdmin.from("progress").upsert(
       {
-        user_id: data.userId,
-        username: data.username,
+        user_id: sess.sub,
+        username: owner.username,
         grade: data.grade ?? null,
         onboarded: data.onboarded ?? false,
         towers: data.towers,
@@ -208,9 +220,10 @@ export const saveProgress = createServerFn({ method: "POST" })
   });
 
 export const listProgress = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => z.object({ adminPassword: z.string() }).parse(d))
+  .inputValidator((d: unknown) => z.object({ adminToken: z.string().max(2000) }).parse(d))
   .handler(async ({ data }) => {
-    if (data.adminPassword !== ADMIN_PW) throw new Error("Forbidden");
+    const { requireAdmin } = await import("./session.server");
+    await requireAdmin(data.adminToken);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: rows, error } = await supabaseAdmin
       .from("progress")

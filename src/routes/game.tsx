@@ -130,7 +130,7 @@ function GameMap() {
     setState(emptyState(), { sync: false });
     window.localStorage.removeItem("player");
     window.sessionStorage.removeItem("wq_admin");
-    window.sessionStorage.removeItem("wq_admin_pw");
+    window.sessionStorage.removeItem("wq_admin_token");
     navigate({ to: "/" });
   };
 

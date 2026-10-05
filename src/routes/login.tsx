@@ -41,7 +41,7 @@ function LoginPage() {
       if (res.isAdmin) {
         try {
           window.sessionStorage.setItem("wq_admin", "1");
-          window.sessionStorage.setItem("wq_admin_pw", pw);
+          window.sessionStorage.setItem("wq_admin_token", res.token);
         } catch {}
         setSession({ userId: "admin", username: "admin", isAdmin: true });
         nav({ to: "/admin" });
@@ -66,7 +66,7 @@ function LoginPage() {
           }
         : emptyState();
       setState(restored, { sync: false });
-      setSession({ userId: res.userId, username: res.username, isAdmin: false });
+      setSession({ userId: res.userId, username: res.username, isAdmin: false, token: res.token });
       try {
         window.localStorage.setItem(
           "player",

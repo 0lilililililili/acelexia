@@ -1,7 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-const ADMIN_PW = "12345678";
 
 export type AboutBlock = { kind: "heading" | "text" | "image"; content: string; image_url?: string | null };
 
@@ -27,10 +26,11 @@ export const getAboutBlocks = createServerFn({ method: "GET" }).handler(async ()
 
 export const saveAboutBlocks = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
-    z.object({ adminPassword: z.string(), blocks: z.array(Block).max(100) }).parse(d),
+    z.object({ adminToken: z.string().max(2000), blocks: z.array(Block).max(100) }).parse(d),
   )
   .handler(async ({ data }) => {
-    if (data.adminPassword !== ADMIN_PW) throw new Error("Forbidden");
+    const { requireAdmin } = await import("./session.server");
+    await requireAdmin(data.adminToken);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const del = await supabaseAdmin.from("about_blocks").delete().gte("position", -1);
     if (del.error) throw del.error;

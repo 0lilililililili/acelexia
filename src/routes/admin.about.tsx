@@ -50,7 +50,7 @@ function AdminAbout() {
   const save = async () => {
     setMsg("Saving…");
     try {
-      await saveAboutBlocks({ data: { adminPassword: window.sessionStorage.getItem("wq_admin_pw") ?? "", blocks } });
+      await saveAboutBlocks({ data: { adminToken: window.sessionStorage.getItem("wq_admin_token") ?? "", blocks } });
       setMsg("Saved.");
     } catch {
       setMsg("Save failed — log in again as admin.");

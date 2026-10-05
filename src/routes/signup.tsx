@@ -55,7 +55,7 @@ function SignupPage() {
       }
       const fresh = emptyState();
       setState({ ...fresh, avatar: { ...fresh.avatar, gender } }, { sync: false });
-      setSession({ userId: res.userId, username: res.username, isAdmin: false });
+      setSession({ userId: res.userId, username: res.username, isAdmin: false, token: res.token });
       nav({ to: "/take-test" });
     } catch {
       setErr("Something went wrong. Please try again.");
