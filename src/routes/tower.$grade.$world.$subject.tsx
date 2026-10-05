@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Lock, Star } from "lucide-react";
 import { getCleared } from "@/lib/progress";
-import { getState } from "@/lib/store";
+import { getState, getLevelStars } from "@/lib/store";
 import { playerLv, requiredLv } from "@/lib/leveling";
 import { WORLD_ART, mutedBgStyle } from "@/lib/world-art";
 import { useLang } from "@/lib/i18n";
@@ -49,7 +49,7 @@ function TowerPage() {
   return (
     <main className="min-h-screen relative" style={{ ...mutedBgStyle(art.bg), backgroundAttachment: "fixed" }}>
       <div className="absolute inset-0 bg-background/70 pointer-events-none" />
-      <div className="relative px-6 py-8 max-w-5xl mx-auto">
+      <div className="relative px-3 py-4 sm:px-6 sm:py-8 max-w-5xl mx-auto">
       <Link to="/world/$world" params={{ world }} className="text-primary font-semibold">← {wname}</Link>
 
       <header className="mt-4 mb-6 text-center">
@@ -73,7 +73,7 @@ function TowerPage() {
         ))}
       </div>
 
-      <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
+      <div className="grid grid-cols-5 [@media(orientation:landscape)]:grid-cols-10 sm:grid-cols-10 gap-2">
         {Array.from({ length: end - start + 1 }, (_, i) => {
           const lvNum = start + i;
           const need = requiredLv(lvNum);
@@ -100,7 +100,9 @@ function TowerPage() {
               }`}
             >
               <span className="text-base">{lvNum}</span>
-              {cleared && <Star size={12} className="fill-current" aria-hidden />}
+              {cleared && (() => { const n = Math.max(1, getLevelStars(grade, world, subject, lvNum)); return (
+                <span className="flex" aria-label={`${n}/3`}>{[1, 2, 3].map((k) => <Star key={k} size={10} className={k <= n ? "fill-current" : "opacity-30"} aria-hidden />)}</span>
+              ); })()}
             </Link>
           );
         })}

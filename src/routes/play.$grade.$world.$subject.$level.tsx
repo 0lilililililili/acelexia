@@ -452,7 +452,7 @@ function PlayPage() {
 
   return (
     <main
-      className="min-h-screen relative overflow-hidden flex flex-col"
+      className="h-[100svh] min-h-[320px] relative overflow-hidden flex flex-col"
       style={{ ...mutedBgStyle(art.bg), backgroundAttachment: "fixed", fontSize: `${settings.fontScale}rem` }}
     >
       <div className="absolute inset-0 bg-background/40 pointer-events-none" />
@@ -576,7 +576,7 @@ function PlayPage() {
       )}
 
       {/* Mic */}
-      <footer className="px-6 pb-8 pt-4 bg-background/80 backdrop-blur flex items-center justify-center gap-6">
+      <footer className="px-4 pb-3 pt-2 sm:px-6 sm:pb-8 sm:pt-4 bg-background/80 backdrop-blur flex items-center justify-center gap-6">
         {!supported ? (
           <div className="text-destructive font-semibold text-center">
             Voice input isn't supported in this browser. Try Chrome.
