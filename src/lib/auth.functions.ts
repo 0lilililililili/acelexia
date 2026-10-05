@@ -198,19 +198,26 @@ export const saveProgress = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: owner } = await supabaseAdmin.from("app_users").select("username").eq("id", sess.sub).maybeSingle();
     if (!owner) throw new Error("Unauthorized");
+    const { data: prev } = await supabaseAdmin
+      .from("progress")
+      .select("wallet, avatar, streak, badges, towers, updated_at")
+      .eq("user_id", sess.sub)
+      .maybeSingle();
+    const { guardProgress } = await import("./progress-guard.server");
+    const g = guardProgress(prev as never, data);
     const { error } = await supabaseAdmin.from("progress").upsert(
       {
         user_id: sess.sub,
         username: owner.username,
         grade: data.grade ?? null,
         onboarded: data.onboarded ?? false,
-        towers: data.towers,
+        towers: g.towers,
         revision_bank: data.revision,
-        wallet: (data.wallet ?? {}) as never,
+        wallet: g.wallet as never,
         settings: data.settings,
-        ...(data.avatar ? { avatar: data.avatar as never } : {}),
-        ...(data.streak ? { streak: data.streak as never } : {}),
-        ...(data.badges ? { badges: data.badges as never } : {}),
+        avatar: g.avatar as never,
+        streak: g.streak as never,
+        badges: g.badges as never,
         updated_at: new Date().toISOString(),
       },
       { onConflict: "user_id" },
