@@ -11,3 +11,4 @@
 - [x] Admin Back returns to /admin.
 - [x] Fighting avatar on level screen.
 - [x] Verify continuous fighting movement and moving arms on the level screen.
+- [x] Count the first wrong multiple-choice attempt as wrong; preserve non-MC retries and test both rules.

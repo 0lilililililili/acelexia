@@ -21,7 +21,8 @@ import {
   type ItemKey,
 } from "@/lib/store";
 import { WORLD_ART, mutedBgStyle } from "@/lib/world-art";
-import { LETTERS, choiceFromSpeech, matches, parseCommand } from "@/lib/answer-match";
+import { LETTERS, parseCommand } from "@/lib/answer-match";
+import { answerOutcome } from "@/lib/answer-outcome";
 import { answerFormat } from "@/lib/answer-format";
 import { playerLv, requiredLv, starsForWrong, worldStarColor, STAR_HEX } from "@/lib/leveling";
 import hourglassImg from "@/assets/icon-hourglass.png";
@@ -110,6 +111,7 @@ function PlayPage() {
   const [note, setNote] = useState<string | null>(null);
   const itemKeyRef = useRef(0);
   const awardedRef = useRef<string | null>(null);
+  const answeredRef = useRef(false);
 
   const current = queue[idx];
   const timeLimit = settings.timeLimit + bonus;
@@ -136,9 +138,11 @@ function PlayPage() {
     setBuffetUntil(0);
     awardedRef.current = null;
     itemKeyRef.current++;
+    answeredRef.current = false;
   }, [data, level, subject, world, grade]);
 
   const advance = useCallback(() => {
+    answeredRef.current = false;
     itemKeyRef.current++;
     setTranscript("");
     setTick(0);
@@ -251,20 +255,23 @@ function PlayPage() {
 
   const submit = useCallback(
     (text: string, spoken: boolean) => {
-      if (!current || phase !== "active") return;
-      const choices = current.choices;
-      const value = spoken && choices ? (choiceFromSpeech(text, choices) ?? text) : text;
-      if (matches(value, current.answer)) {
+      if (!current || phase !== "active" || answeredRef.current) return;
+      const outcome = answerOutcome(text, current.answer, current.choices, spoken);
+      if (outcome === "correct") {
+        answeredRef.current = true;
         setPhase("defeat");
         setCorrect((c) => c + 1);
         recordAnswer(subject, true);
         if (!usedItem) addExp(1);
+      } else if (outcome === "wrong") {
+        answeredRef.current = true;
+        failQuestion();
       } else {
         setFeedback("wrong");
         setTimeout(() => setFeedback("none"), 400);
       }
     },
-    [current, phase, usedItem, subject],
+    [current, phase, usedItem, subject, failQuestion],
   );
 
   const ownedGlasses = (["A", "B", "C"] as const).filter((w) => (wallet.items[GLASS_KEY[w]] ?? 0) > 0);
