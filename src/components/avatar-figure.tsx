@@ -5,14 +5,14 @@ import type { Gender } from "@/lib/store";
 type Look = Partial<Record<Slot, AvatarItem>>;
 const OUT = "#2b2118";
 
-export function AvatarFigure({ look, gender, size = 220 }: { look: Look; gender: Gender; size?: number }) {
+export function AvatarFigure({ look, gender, size = 220, fighting = false }: { look: Look; gender: Gender; size?: number; fighting?: boolean }) {
   const skin = look.skin?.color ?? "#f6d3b3";
   const shirt = look.shirt;
   const bottom = look.bottom;
   const shoes = look.shoes;
   const hair = look.hair;
   return (
-    <svg viewBox="0 0 200 300" width={size} height={size * 1.5} role="img" aria-label="Avatar">
+    <svg viewBox="0 0 200 300" width={size} height={size * 1.5} role="img" aria-label="Avatar" className={fighting ? "avatar-combat" : undefined}>
       <ellipse cx="100" cy="290" rx="55" ry="7" fill="#000" opacity="0.15" />
       {/* long hair behind */}
       {hair && (hair.variant === "long" || hair.variant === "ponytail") && (
@@ -38,8 +38,8 @@ export function AvatarFigure({ look, gender, size = 220 }: { look: Look; gender:
         </g>
       )}
       {/* arms */}
-      <rect x="48" y="112" width="18" height="70" rx="9" fill={skin} stroke={OUT} strokeWidth="3" transform="rotate(10 57 112)" />
-      <rect x="134" y="112" width="18" height="70" rx="9" fill={skin} stroke={OUT} strokeWidth="3" transform="rotate(-10 143 112)" />
+      <g className="avatar-guard-arm"><rect x="48" y="112" width="18" height="70" rx="9" fill={skin} stroke={OUT} strokeWidth="3" transform="rotate(10 57 112)" /></g>
+      <g className="avatar-striking-arm"><rect x="134" y="112" width="18" height="70" rx="9" fill={skin} stroke={OUT} strokeWidth="3" transform="rotate(-10 143 112)" /></g>
       {/* torso */}
       <path
         d={shirt?.variant === "robe" ? "M68 108 H132 L140 230 H60 Z" : "M68 108 H132 L130 190 H70 Z"}
@@ -69,7 +69,7 @@ export function AvatarFigure({ look, gender, size = 220 }: { look: Look; gender:
       {/* hat */}
       <Hat item={look.hat} />
       {/* weapon */}
-      <Weapon item={look.weapon} />
+      <g className="avatar-combat-weapon"><Weapon item={look.weapon} /></g>
     </svg>
   );
 }

@@ -30,6 +30,16 @@ import torchImg from "@/assets/icon-torch.png";
 import { FightingAvatar } from "@/components/fighting-avatar";
 
 export const Route = createFileRoute("/play/$grade/$world/$subject/$level")({
+  head: ({ params }) => ({
+    meta: [
+      { title: `Acelexia — ${params.grade} ${params.subject.toUpperCase()} Level ${params.level}` },
+      { name: "description", content: "Practise reading and maths with your own fighting avatar in Acelexia." },
+      { property: "og:title", content: `Acelexia — ${params.grade} ${params.subject.toUpperCase()} Level ${params.level}` },
+      { property: "og:description", content: "Practise reading and maths with your own fighting avatar in Acelexia." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   validateSearch: (s: Record<string, unknown>): { daily?: number } => (s.daily ? { daily: 1 } : {}),
   component: PlayPage,
 });

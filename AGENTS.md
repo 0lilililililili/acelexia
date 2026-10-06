@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep combat animation opt-in on the shared avatar artwork and use uninterrupted CSS cycles so idle wardrobe previews stay still and attacks complete.
