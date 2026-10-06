@@ -206,8 +206,8 @@
 }
 
 /* Fighting avatar moves */
-@keyframes fight-slash { 0%,60%,100% { transform: rotate(0) translateX(0); } 70% { transform: rotate(-8deg) translateX(-6px); } 80% { transform: rotate(10deg) translateX(18px); } }
-@keyframes fight-shoot { 0%,60%,100% { transform: translateX(0); } 70% { transform: translateX(-10px) scaleX(.95); } 80% { transform: translateX(6px); } }
+@keyframes fight-slash { 0%,100% { transform: translateX(0) rotate(-6deg); } 35% { transform: translateX(-8px) rotate(-12deg); } 65% { transform: translateX(24px) rotate(10deg); } }
+@keyframes fight-shoot { 0%,100% { transform: translateX(-6px) rotate(-3deg); } 50% { transform: translateX(12px) rotate(3deg); } }
 @keyframes fight-cast { 0%,100% { transform: translateY(0); filter: none; } 50% { transform: translateY(-10px); filter: drop-shadow(0 0 12px var(--color-primary)); } }
 @keyframes fight-punch { 0%,50%,100% { transform: translateX(0); } 65% { transform: translateX(22px) rotate(4deg); } 80% { transform: translateX(0); } }
 @keyframes fight-kick { 0%,50%,100% { transform: rotate(0); } 65% { transform: rotate(-14deg) translateY(-8px); } 80% { transform: rotate(0); } }
@@ -220,4 +220,22 @@
 .fight-kick { animation: fight-kick 1.6s ease-in-out infinite; }
 .fight-spin { animation: fight-spin 1.6s ease-in-out infinite; }
 .fight-strike { animation: fight-strike .6s ease-out infinite; }
-@media (prefers-reduced-motion: reduce) { [class*="fight-"] { animation-duration: 3s; } }
+/* A single uninterrupted cycle avoids restarting before a punch or kick lands. */
+@keyframes fight-unarmed {
+  0%,100% { transform: translateX(0) rotate(-4deg); }
+  15% { transform: translateX(25px) rotate(8deg); }
+  30% { transform: translateX(0) rotate(-4deg); }
+  50% { transform: translateX(18px) translateY(-9px) rotate(-15deg); }
+  65% { transform: translateX(0) rotate(4deg); }
+  82% { transform: translateY(-12px) rotateY(180deg); }
+}
+@keyframes combat-arm { 0%,100% { transform: rotate(-30deg); } 45%,60% { transform: rotate(-100deg); } }
+@keyframes combat-guard { 0%,100% { transform: rotate(25deg); } 50% { transform: rotate(65deg); } }
+@keyframes combat-weapon { 0%,100% { transform: rotate(-18deg); } 50% { transform: rotate(35deg); } }
+.fight-unarmed { animation: fight-unarmed 3s ease-in-out infinite; }
+.avatar-combat .avatar-striking-arm { transform-origin: 143px 112px; animation: combat-arm .9s ease-in-out infinite; }
+.avatar-combat .avatar-guard-arm { transform-origin: 57px 112px; animation: combat-guard .9s ease-in-out infinite; }
+.avatar-combat .avatar-combat-weapon { transform-origin: 166px 164px; animation: combat-weapon 1.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  [class*="fight-"], .avatar-combat g { animation: none; }
+}
