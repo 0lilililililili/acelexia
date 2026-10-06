@@ -9,3 +9,4 @@
 - [x] Tower levels show 1–3 stars earned.
 - [x] Daily lottery after all 3 quests.
 - [x] Admin Back returns to /admin.
+- [x] Fighting avatar on level screen.
