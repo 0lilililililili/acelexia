@@ -27,6 +27,7 @@ import { playerLv, requiredLv, starsForWrong, worldStarColor, STAR_HEX } from "@
 import hourglassImg from "@/assets/icon-hourglass.png";
 import potionImg from "@/assets/icon-potion.png";
 import torchImg from "@/assets/icon-torch.png";
+import { FightingAvatar } from "@/components/fighting-avatar";
 
 export const Route = createFileRoute("/play/$grade/$world/$subject/$level")({
   validateSearch: (s: Record<string, unknown>): { daily?: number } => (s.daily ? { daily: 1 } : {}),
@@ -476,6 +477,7 @@ function PlayPage() {
 
       {/* Boss enters from the left and waits in the middle */}
       <div className="relative flex-1 min-h-0 flex flex-col items-center justify-center overflow-y-auto py-3">
+        <FightingAvatar striking={phase === "defeat"} />
         {current && (
           <div
             key={itemKeyRef.current}
