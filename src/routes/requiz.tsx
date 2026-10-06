@@ -3,7 +3,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Star } from "lucide-react";
 import { addExp, getState, type State } from "@/lib/store";
 import { useSpeech } from "@/hooks/use-speech";
-import { LETTERS, choiceFromSpeech, matches } from "@/lib/answer-match";
+import { LETTERS } from "@/lib/answer-match";
+import { answerOutcome } from "@/lib/answer-outcome";
 import { answerFormat } from "@/lib/answer-format";
 
 export const Route = createFileRoute("/requiz")({
@@ -71,8 +72,8 @@ function RequizPage() {
   const check = useCallback(
     (text: string, spoken = false) => {
       if (!current || answeredRef.current) return;
-      const value = spoken && current.choices ? (choiceFromSpeech(text, current.choices) ?? text) : text;
-      if (matches(value, current.answer)) {
+      const outcome = answerOutcome(text, current.answer, current.choices, spoken);
+      if (outcome === "correct") {
         answeredRef.current = true;
         setScore((s) => s + 1);
         addExp(1);
@@ -80,6 +81,10 @@ function RequizPage() {
       } else {
         setWrongFlash(true);
         setTimeout(() => setWrongFlash(false), 400);
+        if (outcome === "wrong") {
+          answeredRef.current = true;
+          setTimeout(next, 600);
+        }
       }
     },
     [current, next],

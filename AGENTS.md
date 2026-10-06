@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Keep combat animation opt-in on the shared avatar artwork and use uninterrupted CSS cycles so idle wardrobe previews stay still and attacks complete.
+- Use the shared answer-outcome evaluator for gameplay and revision attempts so multiple-choice finality and open-answer retries stay consistent.
