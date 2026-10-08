@@ -74,6 +74,33 @@ export type Database = {
         }
         Relationships: []
       }
+      feedbacks: {
+        Row: {
+          comment: string
+          created_at: string
+          id: string
+          rating: number
+          user_id: string | null
+          username: string
+        }
+        Insert: {
+          comment?: string
+          created_at?: string
+          id?: string
+          rating: number
+          user_id?: string | null
+          username?: string
+        }
+        Update: {
+          comment?: string
+          created_at?: string
+          id?: string
+          rating?: number
+          user_id?: string | null
+          username?: string
+        }
+        Relationships: []
+      }
       progress: {
         Row: {
           avatar: Json
