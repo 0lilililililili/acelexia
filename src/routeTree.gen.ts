@@ -29,6 +29,7 @@ import { Route as TakeTestRouteImport } from './routes/take-test'
 import { Route as ToolsRouteImport } from './routes/tools'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAboutRouteImport } from './routes/admin.about'
+import { Route as AdminFeedbackRouteImport } from './routes/admin.feedback'
 import { Route as AdminProgressRouteImport } from './routes/admin.progress'
 import { Route as AdminViewRouteImport } from './routes/admin.view'
 import { Route as AvatarshopIndexRouteImport } from './routes/avatarshop.index'
@@ -137,6 +138,11 @@ const AdminAboutRoute = AdminAboutRouteImport.update({
   path: '/about',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminFeedbackRoute = AdminFeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminProgressRoute = AdminProgressRouteImport.update({
   id: '/progress',
   path: '/progress',
@@ -194,6 +200,7 @@ export interface FileRoutesByFullPath {
   '/take-test': typeof TakeTestRoute
   '/tools': typeof ToolsRoute
   '/admin/about': typeof AdminAboutRoute
+  '/admin/feedback': typeof AdminFeedbackRoute
   '/admin/progress': typeof AdminProgressRoute
   '/admin/view': typeof AdminViewRoute
   '/avatarshop/$category': typeof AvatarshopCategoryRoute
@@ -221,6 +228,7 @@ export interface FileRoutesByTo {
   '/take-test': typeof TakeTestRoute
   '/tools': typeof ToolsRoute
   '/admin/about': typeof AdminAboutRoute
+  '/admin/feedback': typeof AdminFeedbackRoute
   '/admin/progress': typeof AdminProgressRoute
   '/admin/view': typeof AdminViewRoute
   '/avatarshop/$category': typeof AvatarshopCategoryRoute
@@ -251,6 +259,7 @@ export interface FileRoutesById {
   '/take-test': typeof TakeTestRoute
   '/tools': typeof ToolsRoute
   '/admin/about': typeof AdminAboutRoute
+  '/admin/feedback': typeof AdminFeedbackRoute
   '/admin/progress': typeof AdminProgressRoute
   '/admin/view': typeof AdminViewRoute
   '/avatarshop/$category': typeof AvatarshopCategoryRoute
@@ -282,6 +291,7 @@ export interface FileRouteTypes {
     | '/take-test'
     | '/tools'
     | '/admin/about'
+    | '/admin/feedback'
     | '/admin/progress'
     | '/admin/view'
     | '/avatarshop/$category'
@@ -309,6 +319,7 @@ export interface FileRouteTypes {
     | '/take-test'
     | '/tools'
     | '/admin/about'
+    | '/admin/feedback'
     | '/admin/progress'
     | '/admin/view'
     | '/avatarshop/$category'
@@ -338,6 +349,7 @@ export interface FileRouteTypes {
     | '/take-test'
     | '/tools'
     | '/admin/about'
+    | '/admin/feedback'
     | '/admin/progress'
     | '/admin/view'
     | '/avatarshop/$category'
@@ -514,6 +526,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAboutRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/feedback': {
+      id: '/admin/feedback'
+      path: '/feedback'
+      fullPath: '/admin/feedback'
+      preLoaderRoute: typeof AdminFeedbackRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/progress': {
       id: '/admin/progress'
       path: '/progress'
@@ -568,6 +587,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAboutRoute: typeof AdminAboutRoute
+  AdminFeedbackRoute: typeof AdminFeedbackRoute
   AdminProgressRoute: typeof AdminProgressRoute
   AdminViewRoute: typeof AdminViewRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -575,6 +595,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAboutRoute: AdminAboutRoute,
+  AdminFeedbackRoute: AdminFeedbackRoute,
   AdminProgressRoute: AdminProgressRoute,
   AdminViewRoute: AdminViewRoute,
   AdminIndexRoute: AdminIndexRoute,
