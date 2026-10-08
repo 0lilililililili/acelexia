@@ -118,6 +118,11 @@ function GameMap() {
         feedbackComment: comment.trim().slice(0, 500),
       },
     });
+    import("@/lib/feedback.functions")
+      .then(({ sendFeedback }) =>
+        sendFeedback({ data: { token: getSession()?.token, rating, comment: comment.trim().slice(0, 500) } }),
+      )
+      .catch((e) => console.error(e));
     setReviewOpen(false);
   };
 
