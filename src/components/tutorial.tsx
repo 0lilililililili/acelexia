@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Map, Castle, Mic, Star, Store, User, BookOpen, Award, Flame, Settings } from "lucide-react";
+import { Map, Castle, Mic, Star, Store, User, BookOpen, Award, Flame, Settings, Volume2, ListChecks, RotateCcw } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { tr } from "@/lib/tr";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,9 @@ const STEPS: { icon: typeof Map; t: [string, string, string]; d: [string, string
   { icon: Map, t: ["The map", "地圖", "地图"], d: ["Tap a land on the map to visit it.", "按地圖上的國家進入。", "按地图上的国家进入。"] },
   { icon: Castle, t: ["Towers", "塔", "塔"], d: ["Each land has 3 towers: 中, ENG and MATH. Climb level by level.", "每個國家有3座塔：中、ENG、MATH。一級一級往上爬。", "每个国家有3座塔：中、ENG、MATH。一级一级往上爬。"] },
   { icon: Mic, t: ["Speak", "說出答案", "说出答案"], d: ["Press the big mic button and read the answer out loud.", "按大咪高峰按鈕，大聲讀出答案。", "按大麦克风按钮，大声读出答案。"] },
+  { icon: Volume2, t: ["Listen", "聽題目", "听题目"], d: ["Press the speaker button next to a question to hear it read out loud.", "按題目旁的喇叭按鈕，就會讀出題目。", "按题目旁的喇叭按钮，就会读出题目。"] },
+  { icon: ListChecks, t: ["Choice questions", "選擇題", "选择题"], d: ["Tap an answer or say “letter A”. Only your first choice counts, so think first!", "按答案或說「letter A」。只計第一次選擇，先想清楚！", "按答案或说「letter A」。只计第一次选择，先想清楚！"] },
+  { icon: RotateCcw, t: ["Re-quiz plan", "重溫計劃", "重温计划"], d: ["Open the Revision bank and tap Re-quiz plan to practise the topics you find hardest.", "打開溫習庫，按「重溫計劃」練習最難的題目。", "打开复习库，按「重温计划」练习最难的题目。"] },
   { icon: Star, t: ["Stars", "星星", "星星"], d: ["Win 1–3 stars each level. Stars are money.", "每關贏1–3粒星。星星就是金錢。", "每关赢1–3颗星。星星就是金钱。"] },
   { icon: Store, t: ["Shop", "商店", "商店"], d: ["Buy tools (hour-glass, potion, torch) or avatar gear.", "買道具（沙漏、藥水、火炬）或角色裝備。", "买道具（沙漏、药水、火炬）或角色装备。"] },
   { icon: User, t: ["Avatar", "角色", "角色"], d: ["Dress up your explorer with items you unlock.", "用解鎖的物品打扮你的角色。", "用解锁的物品打扮你的角色。"] },
