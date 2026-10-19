@@ -17,4 +17,7 @@
 - [x] Phase 1 — About Us, tutorial, read-aloud, 3:2 battle layout
 - [x] Phase 2 — Revision bank trend charts, red re-quiz buttons
 - [x] Phase 3 — China Town / English Village / Math Market areas, Boss Towers, 40% yellow stars
-- [ ] Phase 4 — 9 mini-games in the town areas (currently "Coming soon")
+- [ ] Correct tower subject isolation and verify question validation.
+- [ ] Rebuild revision charts: six overall lines and separate subtopic accuracy/latency timelines.
+- [ ] Reduce speech start delay and verify audible audio delivery.
+- [ ] Phase 4 — Implement the seven specified freely replayable arcade mini-games.
