@@ -34,6 +34,7 @@ import { Route as AdminFeedbackRouteImport } from './routes/admin.feedback'
 import { Route as AdminProgressRouteImport } from './routes/admin.progress'
 import { Route as AdminViewRouteImport } from './routes/admin.view'
 import { Route as ApiSpeechRouteImport } from './routes/api/speech'
+import { Route as ArcadeGameRouteImport } from './routes/arcade.$game'
 import { Route as AvatarshopIndexRouteImport } from './routes/avatarshop.index'
 import { Route as AvatarshopCategoryRouteImport } from './routes/avatarshop.$category'
 import { Route as WorldWorldRouteImport } from './routes/world.$world'
@@ -165,6 +166,11 @@ const ApiSpeechRoute = ApiSpeechRouteImport.update({
   path: '/api/speech',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ArcadeGameRoute = ArcadeGameRouteImport.update({
+  id: '/arcade/$game',
+  path: '/arcade/$game',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AvatarshopIndexRoute = AvatarshopIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -217,6 +223,7 @@ export interface FileRoutesByFullPath {
   '/admin/progress': typeof AdminProgressRoute
   '/admin/view': typeof AdminViewRoute
   '/api/speech': typeof ApiSpeechRoute
+  '/arcade/$game': typeof ArcadeGameRoute
   '/avatarshop/$category': typeof AvatarshopCategoryRoute
   '/world/$world': typeof WorldWorldRoute
   '/admin/': typeof AdminIndexRoute
@@ -247,6 +254,7 @@ export interface FileRoutesByTo {
   '/admin/progress': typeof AdminProgressRoute
   '/admin/view': typeof AdminViewRoute
   '/api/speech': typeof ApiSpeechRoute
+  '/arcade/$game': typeof ArcadeGameRoute
   '/avatarshop/$category': typeof AvatarshopCategoryRoute
   '/world/$world': typeof WorldWorldRoute
   '/admin': typeof AdminIndexRoute
@@ -280,6 +288,7 @@ export interface FileRoutesById {
   '/admin/progress': typeof AdminProgressRoute
   '/admin/view': typeof AdminViewRoute
   '/api/speech': typeof ApiSpeechRoute
+  '/arcade/$game': typeof ArcadeGameRoute
   '/avatarshop/$category': typeof AvatarshopCategoryRoute
   '/world/$world': typeof WorldWorldRoute
   '/admin/': typeof AdminIndexRoute
@@ -314,6 +323,7 @@ export interface FileRouteTypes {
     | '/admin/progress'
     | '/admin/view'
     | '/api/speech'
+    | '/arcade/$game'
     | '/avatarshop/$category'
     | '/world/$world'
     | '/admin/'
@@ -344,6 +354,7 @@ export interface FileRouteTypes {
     | '/admin/progress'
     | '/admin/view'
     | '/api/speech'
+    | '/arcade/$game'
     | '/avatarshop/$category'
     | '/world/$world'
     | '/admin'
@@ -376,6 +387,7 @@ export interface FileRouteTypes {
     | '/admin/progress'
     | '/admin/view'
     | '/api/speech'
+    | '/arcade/$game'
     | '/avatarshop/$category'
     | '/world/$world'
     | '/admin/'
@@ -405,6 +417,7 @@ export interface RootRouteChildren {
   TakeTestRoute: typeof TakeTestRoute
   ToolsRoute: typeof ToolsRoute
   ApiSpeechRoute: typeof ApiSpeechRoute
+  ArcadeGameRoute: typeof ArcadeGameRoute
   WorldWorldRoute: typeof WorldWorldRoute
   TowerGradeWorldSubjectRoute: typeof TowerGradeWorldSubjectRoute
   PlayGradeWorldSubjectLevelRoute: typeof PlayGradeWorldSubjectLevelRoute
@@ -587,6 +600,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSpeechRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/arcade/$game': {
+      id: '/arcade/$game'
+      path: '/arcade/$game'
+      fullPath: '/arcade/$game'
+      preLoaderRoute: typeof ArcadeGameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/avatarshop/': {
       id: '/avatarshop/'
       path: '/'
@@ -678,6 +698,7 @@ const rootRouteChildren: RootRouteChildren = {
   TakeTestRoute: TakeTestRoute,
   ToolsRoute: ToolsRoute,
   ApiSpeechRoute: ApiSpeechRoute,
+  ArcadeGameRoute: ArcadeGameRoute,
   WorldWorldRoute: WorldWorldRoute,
   TowerGradeWorldSubjectRoute: TowerGradeWorldSubjectRoute,
   PlayGradeWorldSubjectLevelRoute: PlayGradeWorldSubjectLevelRoute,

@@ -2,7 +2,7 @@
 export type AppLang = "zh-TW" | "zh-CN" | "en";
 
 /** Chinese & MATH follow settings (繁體 → Cantonese, 簡體 → Mandarin); ENG always English. */
-export function voiceLangFor(subject: string, lang: AppLang): string {
+export function voiceLangFor(subject: string, lang: AppLang): "zh-HK" | "zh-CN" | "en-US" {
   if (subject.toLowerCase() === "eng") return "en-US";
   if (lang === "zh-TW") return "zh-HK";
   if (lang === "zh-CN") return "zh-CN";

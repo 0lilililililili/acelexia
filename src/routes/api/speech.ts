@@ -9,6 +9,8 @@ export const Route = createFileRoute("/api/speech")({server:{handlers:{POST:asyn
  if(!await verifySession(input.data.token)) return Response.json({message:"Please log in to read questions aloud."},{status:401});
  const apiKey = process.env.LOVABLE_API_KEY;
  if(!apiKey) return Response.json({message:"Voice is not set up."},{status:401});
- const upstream = await requestSpeech({baseURL:"https://ai.gateway.lovable.dev",apiKey,model:"google/gemini-3.1-flash-tts-preview",format:"gemini",voice:"Kore"},`Read clearly in ${LANG[input.data.lang]}: ${input.data.text}`);
+ let upstream: Response;
+ try { upstream = await requestSpeech({baseURL:"https://ai.gateway.lovable.dev",apiKey,model:"google/gemini-3.1-flash-tts-preview",format:"gemini",voice:"Kore"},`Read clearly in ${LANG[input.data.lang]}: ${input.data.text}`, false, request.signal); }
+ catch(error) { if(request.signal.aborted) return new Response(null,{status:499}); throw error; }
  return new Response(upstream.body,{status:upstream.status,headers:{"Content-Type":upstream.headers.get("content-type") ?? "text/event-stream","Cache-Control":"no-cache"}});
 }}}});
