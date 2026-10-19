@@ -228,6 +228,14 @@ export function recordAnswer(subject: string, correct: boolean, ms = 0, topic = 
 }
 
 let syncTimer: ReturnType<typeof setTimeout> | null = null;
+let pendingSync: (() => Promise<void>) | null = null;
+export async function flushProgress() {
+  if(syncTimer) clearTimeout(syncTimer);
+  syncTimer = null;
+  const job = pendingSync;
+  pendingSync = null;
+  if(job) await job();
+}
 
 export function setState(next: State, { sync = true } = {}) {
   if (typeof window === "undefined") return;
@@ -237,13 +245,12 @@ export function setState(next: State, { sync = true } = {}) {
   const session = getSession();
   if (!session || session.isAdmin || !session.token) return;
   if (syncTimer) clearTimeout(syncTimer);
-  syncTimer = setTimeout(() => {
-    void (async () => {
+  pendingSync = async () => {
       try {
         const { saveProgress } = await import("./auth.functions");
         await saveProgress({
           data: {
-            token: session.token!,
+            token: session.token,
             username: session.username,
             grade: next.grade,
             onboarded: next.onboarded,
@@ -270,9 +277,10 @@ export function setState(next: State, { sync = true } = {}) {
 
       } catch (e) {
         console.error("progress sync failed", e);
+        throw e;
       }
-    })();
-  }, 600);
+  };
+  syncTimer = setTimeout(() => { void flushProgress().catch(() => {}); }, 600);
 }
 
 export function updateState(fn: (s: State) => State) {
