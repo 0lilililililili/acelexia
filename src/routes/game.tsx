@@ -1,3 +1,4 @@
+import towerImg from "@/assets/tower.png";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Settings as Gear, BookOpen, Waves, Trees, Flame, Lock, Sparkles, Star, Send } from "lucide-react";
@@ -282,6 +283,20 @@ function GameMap() {
               </Link>
             );
           })}
+
+          {/* Boss Towers — one tower per subject */}
+          <Link
+            to="/boss"
+            aria-label="Boss Towers"
+            title="Boss Towers"
+            className="group absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
+            style={{ left: "45%", top: "75%" }}
+          >
+            <span className="grid place-items-center w-12 h-12 sm:w-24 sm:h-24 rounded-full border-4 border-white/90 shadow-2xl hover:scale-110 transition overflow-hidden bg-card">
+              <img src={towerImg} alt="" loading="lazy" className="w-10 h-10 sm:w-16 sm:h-16 object-contain drop-shadow" />
+            </span>
+            <span className="mt-1 rounded-full bg-black/70 text-white text-xs sm:text-sm font-extrabold px-2 py-0.5">Boss Towers</span>
+          </Link>
 
           {/* Shop — top right of the map */}
           <Link

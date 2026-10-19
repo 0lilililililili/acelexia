@@ -50,7 +50,9 @@ function TowerPage() {
     <main className="min-h-screen relative" style={{ ...mutedBgStyle(art.bg), backgroundAttachment: "fixed" }}>
       <div className="absolute inset-0 bg-background/70 pointer-events-none" />
       <div className="relative px-3 py-4 sm:px-6 sm:py-8 max-w-5xl mx-auto">
-      <Link to="/world/$world" params={{ world }} className="text-primary font-semibold">← {wname}</Link>
+      {["aquatic", "forest", "fire"].includes(world)
+        ? <Link to="/boss" className="text-primary font-semibold">← Boss Towers</Link>
+        : <Link to="/world/$world" params={{ world }} className="text-primary font-semibold">← {wname}</Link>}
 
       <header className="mt-4 mb-6 text-center">
         <img src={towerImg} alt="" width={768} height={1024} className="mx-auto w-32 h-40 object-contain drop-shadow-xl" />

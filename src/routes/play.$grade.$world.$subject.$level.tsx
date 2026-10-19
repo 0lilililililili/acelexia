@@ -341,16 +341,12 @@ function PlayPage() {
     if (starsEarned > 0) {
       markCleared(grade, world, subject, levelNum);
       recordLevelStars(grade, world, subject, levelNum, starsEarned);
-      if (isDaily) {
-        // Daily practice: each star has a ~10% chance to turn yellow.
-        let yellow = 0;
-        for (let i = 0; i < starsEarned; i++) if (Math.random() < 0.1) yellow++;
-        if (starsEarned - yellow > 0) addStars(starColor, starsEarned - yellow);
-        if (yellow > 0) addStars("yellow", yellow);
-        markDailyDone(subject, world);
-      } else {
-        addStars(starColor, starsEarned);
-      }
+      // Tower rewards: each star has a 40% chance to be yellow, otherwise the world's theme colour.
+      let yellow = 0;
+      for (let i = 0; i < starsEarned; i++) if (Math.random() < 0.4) yellow++;
+      if (starsEarned - yellow > 0) addStars(starColor, starsEarned - yellow);
+      if (yellow > 0) addStars("yellow", yellow);
+      if (isDaily) markDailyDone(subject, world);
     }
     evaluateBadges();
   }, [finished, grade, world, subject, level, levelNum, starsEarned, starColor, isDaily]);
