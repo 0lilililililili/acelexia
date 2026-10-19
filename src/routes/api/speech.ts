@@ -11,4 +11,4 @@ export const Route = createFileRoute("/api/speech")({server:{handlers:{POST:asyn
  if(!apiKey) return Response.json({message:"Voice is not set up."},{status:401});
  const upstream = await requestSpeech({baseURL:"https://ai.gateway.lovable.dev",apiKey,model:"google/gemini-3.1-flash-tts-preview",format:"gemini",voice:"Kore"},`Read clearly in ${LANG[input.data.lang]}: ${input.data.text}`);
  return new Response(upstream.body,{status:upstream.status,headers:{"Content-Type":upstream.headers.get("content-type") ?? "text/event-stream","Cache-Control":"no-cache"}});
-}}});
+}}}});
