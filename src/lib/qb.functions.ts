@@ -108,6 +108,9 @@ export const generateLevelItems = createServerFn({ method: "POST" })
         for (let i = c.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [c[i], c[j]] = [c[j], c[i]]; }
         it.choices = c;
       }
+      // Read-aloud items must show the word itself, not just an instruction like "Read the word".
+      const isReadItem = !it.choices?.length && data.subject !== "math" && it.answer.trim().length > 0 && it.answer.trim().length <= 20 && !/\s/.test(it.answer.trim());
+      if (isReadItem && !it.prompt.toLowerCase().includes(it.answer.trim().toLowerCase())) it.prompt = it.answer.trim();
     }
     return parsed.data;
   });
