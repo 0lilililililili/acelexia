@@ -94,10 +94,7 @@ export const generateLevelItems = createServerFn({ method: "POST" })
     const content = json.choices?.[0]?.message?.content ?? "{}";
     const parsed = Schema.safeParse(JSON.parse(content));
     if (!parsed.success) {
-      // Fallback so the game never blocks
-      return {
-        items: fallbackItems(data.subject, data.count),
-      };
+      throw new Error("The generated question set was invalid. Please start a fresh level.");
     }
     // Shuffle MC options so the correct answer is not always the first one.
     for (const it of parsed.data.items) {
