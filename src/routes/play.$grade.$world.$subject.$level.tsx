@@ -29,6 +29,7 @@ import hourglassImg from "@/assets/icon-hourglass.png";
 import potionImg from "@/assets/icon-potion.png";
 import torchImg from "@/assets/icon-torch.png";
 import { FightingAvatar } from "@/components/fighting-avatar";
+import { SpeakButton } from "@/components/speak-button";
 
 export const Route = createFileRoute("/play/$grade/$world/$subject/$level")({
   head: ({ params }) => ({
@@ -492,33 +493,39 @@ function PlayPage() {
         <span className="opacity-80">Say “item potion A/B” or “item torch”</span>
       </div>
 
-      {/* Boss enters from the left and waits in the middle */}
-      <div className="relative flex-1 min-h-0 flex flex-col items-center justify-center overflow-y-auto py-3">
-        <FightingAvatar striking={phase === "defeat"} />
-        {current && (
-          <div
-            key={itemKeyRef.current}
-            className={`flex flex-col items-center ${bossAnim}`}
-          >
-            <img
-              src={art.boss}
-              alt="boss"
-              className={`w-40 h-40 sm:w-48 sm:h-48 object-contain drop-shadow-2xl ${phase === "defeat" ? "grayscale opacity-70" : ""}`}
-            />
-            <div className="relative mt-2">
+      {/* 3:2 split — combat arena (3) | question console (2) */}
+      <div className="relative flex-1 min-h-0 grid grid-rows-[3fr_2fr] sm:grid-rows-1 sm:grid-cols-[3fr_2fr] gap-2 p-2">
+        <section aria-label="Battle" className="relative min-h-0 rounded-3xl bg-black/20 overflow-hidden flex items-center justify-center">
+          <FightingAvatar striking={phase === "defeat"} />
+          {current && (
+            <div key={itemKeyRef.current} className={`flex flex-col items-center ${bossAnim}`}>
+              <img
+                src={art.boss}
+                alt="boss"
+                className={`monster-enter w-32 h-32 sm:w-48 sm:h-48 [@media(max-height:500px)]:w-24 [@media(max-height:500px)]:h-24 object-contain drop-shadow-2xl ${phase === "defeat" ? "grayscale opacity-70" : ""}`}
+              />
+            </div>
+          )}
+        </section>
+        <section aria-label="Question" className="relative min-h-0 overflow-y-auto flex items-center justify-center">
+          {current && (
+            <div className="relative w-full" key={itemKeyRef.current}>
               <div
                 className="absolute -inset-1 rounded-3xl"
                 style={{ background: `conic-gradient(var(--color-primary) ${pctLeft}%, transparent ${pctLeft}%)` }}
                 aria-hidden
               />
-              <div className="relative bg-card border-4 border-foreground/80 rounded-2xl px-6 py-3 shadow-2xl max-w-[92vw]">
+              <div className="relative bg-card border-4 border-foreground/80 rounded-2xl px-4 py-3 shadow-2xl">
                 {readAloud && (
                   <div className="text-base font-extrabold text-foreground text-center">Read out loud:</div>
                 )}
-                <div className="text-3xl sm:text-4xl font-extrabold tracking-wide text-center">
-                  {current.prompt}
+                <div className="flex items-start gap-2 justify-center">
+                  <div className="text-2xl sm:text-3xl font-extrabold tracking-wide text-center flex-1">
+                    {current.prompt}
+                  </div>
+                  <SpeakButton text={current.prompt} subject={subject} lang={settings.language} />
                 </div>
-                 {!current.choices?.length && <p className="mt-2 text-center text-sm font-bold text-muted-foreground">Answer format: {answerFormat(subject, current.prompt, current.answer)}</p>}
+                {!current.choices?.length && <p className="mt-2 text-center text-sm font-bold text-muted-foreground">Answer format: {answerFormat(subject, current.prompt, current.answer)}</p>}
                 {current.choices && current.choices.length > 0 && (
                   <>
                     <div className="mt-3 grid grid-cols-2 gap-2">
@@ -546,8 +553,8 @@ function PlayPage() {
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </section>
 
         {/* HOUR-GLASS offer once the timer runs out */}
         {phase === "offer" && (
