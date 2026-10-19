@@ -51,9 +51,8 @@ function pickVoice(voiceLang: string): SpeechSynthesisVoice | undefined {
   );
 }
 
-export function readAloud(text: string, voiceLang: string, pauseMs = 1500) {
+function browserReadAloud(text: string, voiceLang: string, pauseMs = 1500) {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) return false;
-  stopReading();
   const id = runId;
   const synth = window.speechSynthesis;
   const parts = splitAtBlanks(text);
@@ -72,12 +71,53 @@ export function readAloud(text: string, voiceLang: string, pauseMs = 1500) {
     if (synth.paused) synth.resume();
     synth.speak(u);
   };
-  const begin = () => timers.push(setTimeout(() => speakFrom(0), 80)); // cancel() then immediate speak() is dropped in Chrome
-  if (synth.getVoices().length === 0) {
-    let started = false;
-    const go = () => { if (!started) { started = true; begin(); } };
-    synth.addEventListener("voiceschanged", go, { once: true });
-    timers.push(setTimeout(go, 400));
-  } else begin();
+  timers.push(setTimeout(() => speakFrom(0), 80));
   return true;
+}
+
+const clipCache = new Map<string, Promise<string | null>>();
+let currentAudio: HTMLAudioElement | null = null;
+
+function fetchClip(text: string, lang: string): Promise<string | null> {
+  const k = `${lang}|${text}`;
+  if (!clipCache.has(k)) {
+    clipCache.set(k, import("./tts.functions").then(({ speakText }) =>
+      speakText({ data: { text, lang: lang as "zh-HK" | "zh-CN" | "en-US" } }),
+    ).then((r) => (r.ok ? `data:audio/wav;base64,${r.audio}` : null)).catch(() => null));
+  }
+  return clipCache.get(k)!.then((v) => { if (!v) clipCache.delete(k); return v; });
+}
+
+function playClip(src: string, id: number): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (id !== runId) return resolve();
+    const a = new Audio(src);
+    currentAudio = a;
+    a.onended = () => resolve();
+    a.onerror = () => reject(new Error("play"));
+    a.play().catch(reject);
+  });
+}
+
+/** Speaks the text with a natural AI voice; falls back to the device voice if that fails. */
+export async function readAloud(text: string, voiceLang: string, pauseMs = 1500) {
+  if (typeof window === "undefined") return false;
+  stopReading();
+  const id = runId;
+  const parts = splitAtBlanks(text);
+  const clips = parts.map((p) => (p === null ? null : fetchClip(p, voiceLang)));
+  try {
+    for (let i = 0; i < parts.length; i++) {
+      if (id !== runId) return true;
+      const c = clips[i];
+      if (c === null) { await new Promise((r) => timers.push(setTimeout(r, pauseMs))); continue; }
+      const src = await c;
+      if (!src) throw new Error("clip");
+      await playClip(src, id);
+    }
+    return true;
+  } catch {
+    if (id !== runId) return true;
+    return browserReadAloud(text, voiceLang, pauseMs);
+  }
 }
