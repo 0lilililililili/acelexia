@@ -1,0 +1,16 @@
+import {useState,useRef} from "react";
+import {Button} from "@/components/ui/button";
+import {AvatarFigure} from "@/components/avatar-figure";
+import {CakeSlice,Cloud,Flame,Waves,Utensils,Bug,Circle} from "lucide-react";
+import {arcadeAnswer} from "@/lib/arcade-record";
+import type {ArcadeProps} from "@/lib/arcade";
+const LINES=[{words:["Mike","is","a","ball"],bad:"ball",good:"boy",choices:["boy","buy","bay"]},{words:["He","likes","to","eat","lice"],bad:"lice",good:"rice",choices:["rice","rise","race"]},{words:["His","cream","is","to"],bad:"cream",good:"dream",choices:["dream","drame","drem"]},{words:["oven","his","own","bakery"],bad:"oven",good:"open",choices:["open","opne","opin"]},{words:["and","make","delicious","lake"],bad:"lake",good:"cake",choices:["cake","cack","cak"]}];
+export function TypoDetective({onComplete}:ArcadeProps){const [fixed,setFixed]=useState<number[]>([]);const [active,setActive]=useState<number|null>(null);const [missed,setMissed]=useState<number[]>([]);const [notice,setNotice]=useState("");const start=useRef(Date.now());
+ const correct=(word:string)=>{if(active===null)return;const q=LINES[active];const ok=word===q.good;arcadeAnswer("eng","spelling",q.words.join(" "),q.good,ok,Date.now()-start.current);if(ok){setFixed([...fixed,active]);setActive(null);setNotice("Scene restored!")}else{setMissed([...new Set([...missed,active])]);setNotice("That spelling does not fit.")}start.current=Date.now()};
+ return <div><h2 className="text-2xl font-bold">Typo Scene Detective · {fixed.length}/5</h2><div className="relative bg-secondary/40 rounded-md min-h-56 mt-6 flex flex-wrap justify-center items-center gap-7 p-6" aria-label="Story scene">
+  <div aria-label={fixed.includes(0)?"Boy":"Ball"}>{fixed.includes(0)?<AvatarFigure look={{}} gender="boy" size={75}/>:<Circle className="size-20 text-primary"/>}</div>
+  <div aria-label={fixed.includes(1)?"Rice":"Lice"}>{fixed.includes(1)?<Utensils className="size-16 text-forest"/>:<Bug className="size-16 text-destructive"/>}</div>
+  <div className={`flex gap-4 items-center p-5 transition duration-700 ${fixed.includes(2)?"rounded-full border-2 border-primary bg-card":"bg-secondary"}`} aria-label={fixed.includes(2)?"Dream bubble":"Cream"}><Cloud className="size-12 text-primary"/>{fixed.includes(3)?<span className="text-xl font-bold">Bakery</span>:<Flame className="size-14 text-fire"/>}{fixed.includes(4)?<CakeSlice className="size-14 text-fire"/>:<Waves className="size-14 text-primary"/>}</div>
+ </div><div className="mt-6 space-y-3">{LINES.map((q,i)=><div key={i} className="flex flex-wrap gap-2 items-center"><span className="text-muted-foreground">{i+1}.</span>{q.words.map((w,j)=><Button key={j} variant={fixed.includes(i)&&w===q.bad?"secondary":"ghost"} disabled={fixed.includes(i)} onClick={()=>{if(w===q.bad){setActive(i);setNotice("")}else setNotice("Look for a word that does not fit.")}} className="text-xl px-2">{fixed.includes(i)&&w===q.bad?q.good:w}</Button>)}</div>)}</div>
+ {active!==null&&<div className="flex flex-wrap gap-3 mt-5">{LINES[active].choices.map(c=><Button key={c} variant="outline" onClick={()=>correct(c)}>{c}</Button>)}</div>}<p role="status" className="mt-4 font-bold text-primary">{notice}</p>{fixed.length===5&&<Button className="mt-5" onClick={()=>onComplete(5-missed.length,5)}>Finish story</Button>}</div>
+}
