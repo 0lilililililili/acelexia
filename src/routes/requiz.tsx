@@ -18,6 +18,10 @@ export const Route = createFileRoute("/requiz")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    subject: typeof s.subject === "string" ? s.subject : undefined,
+    topic: typeof s.topic === "string" ? s.topic : undefined,
+  }),
   component: RequizPage,
 });
 
@@ -55,7 +59,8 @@ function RequizPage() {
   const [typed, setTyped] = useState("");
   const answeredRef = useRef(false);
 
-  useEffect(() => setPool(poolFrom(getState())), []);
+  const { subject: onlySubject, topic: onlyTopic } = Route.useSearch();
+  useEffect(() => setPool(poolFrom(getState()).filter((q) => (!onlySubject || q.subject === onlySubject) && (!onlyTopic || q.topic === onlyTopic))), [onlySubject, onlyTopic]);
 
   const quiz = useMemo(() => (pool ? shuffle(pool).slice(0, QUIZ_SIZE) : []), [pool, round]);
   const current = quiz[idx];
