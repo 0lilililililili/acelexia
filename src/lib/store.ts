@@ -154,6 +154,26 @@ export function unflattenStats(settings: Record<string, unknown>): Record<string
   return out;
 }
 
+/** Per-level star ratings (1-3) are stored as `ls_<grade:world:subject:level>` keys in the settings blob. */
+export function flattenLevelStars(stars: Record<string, number>): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const [k, v] of Object.entries(stars ?? {})) {
+    const n = Math.round(Number(v));
+    if (n >= 1 && n <= 3) out[`ls_${k}`] = n;
+  }
+  return out;
+}
+
+export function unflattenLevelStars(settings: Record<string, unknown>): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const [k, v] of Object.entries(settings ?? {})) {
+    if (!k.startsWith("ls_")) continue;
+    const n = Math.round(Number(v));
+    if (n >= 1 && n <= 3) out[k.slice(3)] = n;
+  }
+  return out;
+}
+
 /** Records one answered question for the /game profile card. */
 export function recordAnswer(subject: string, correct: boolean) {
   updateState((s) => {
@@ -206,6 +226,7 @@ export function setState(next: State, { sync = true } = {}) {
               ...(next.settings.feedbackComment ? { feedbackComment: next.settings.feedbackComment } : {}),
               ...(next.settings.tutorialDone ? { tutorialDone: true } : {}),
               ...flattenStats(next.stats),
+              ...flattenLevelStars(next.stars),
             },
           },
         });

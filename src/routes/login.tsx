@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { logInUser } from "@/lib/auth.functions";
-import { DEFAULT_SETTINGS, emptyState, normalizeAvatar, normalizeBadges, normalizeStreak, normalizeWallet, setSession, setState, unflattenStats, type State, type Wallet } from "@/lib/store";
+import { DEFAULT_SETTINGS, emptyState, normalizeAvatar, normalizeBadges, normalizeStreak, normalizeWallet, setSession, setState, unflattenStats, unflattenLevelStars, type State, type Wallet } from "@/lib/store";
 import pirateMap from "@/assets/pirate-map.jpg";
 import { BackButton } from "@/components/back-button";
 
@@ -55,7 +55,7 @@ function LoginPage() {
             grade: p.grade,
             onboarded: p.onboarded,
             towers: p.towers ?? {},
-            stars: {},
+            stars: unflattenLevelStars(p.settings ?? {}),
             revision: p.revision ?? {},
             stats: unflattenStats(p.settings ?? {}),
             wallet: normalizeWallet(p.wallet as Partial<Wallet>),
