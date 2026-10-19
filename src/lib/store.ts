@@ -52,7 +52,10 @@ export type State = {
   avatar: AvatarState;
   streak: StreakState;
   badges: BadgeState;
+  /** "subject|YYYY-MM-DD" -> daily answer tally with total answer time (ms). */
+  daily: Record<string, DailyStat>;
 };
+export type DailyStat = { c: number; t: number; ms: number };
 
 export type Gender = "boy" | "girl";
 export type AvatarState = { gender: Gender; equipped: Record<string, string>; owned: string[] };
@@ -90,6 +93,7 @@ export const emptyState = (): State => ({
   avatar: emptyAvatar(),
   streak: emptyStreak(),
   badges: emptyBadges(),
+  daily: {},
 });
 
 
@@ -125,6 +129,7 @@ export function getState(): State {
       avatar: normalizeAvatar(parsed.avatar),
       streak: normalizeStreak(parsed.streak),
       badges: normalizeBadges(parsed.badges),
+      daily: parsed.daily ?? {},
     };
 
   } catch {
@@ -154,9 +159,57 @@ export function unflattenStats(settings: Record<string, unknown>): Record<string
   return out;
 }
 
-/** Records one answered question for the /game profile card. */
-export function recordAnswer(subject: string, correct: boolean) {
+/** Per-level star ratings (1-3) are stored as `ls_<grade:world:subject:level>` keys in the settings blob. */
+export function flattenLevelStars(stars: Record<string, number>): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const [k, v] of Object.entries(stars ?? {})) {
+    const n = Math.round(Number(v));
+    if (n >= 1 && n <= 3) out[`ls_${k}`] = n;
+  }
+  return out;
+}
+
+export function unflattenLevelStars(settings: Record<string, unknown>): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const [k, v] of Object.entries(settings ?? {})) {
+    if (!k.startsWith("ls_")) continue;
+    const n = Math.round(Number(v));
+    if (n >= 1 && n <= 3) out[k.slice(3)] = n;
+  }
+  return out;
+}
+
+/** Daily trend stats are stored as `da_<subject|day>` = "correct,total,ms" keys (last 60 days kept). */
+export function flattenDaily(daily: Record<string, DailyStat>): Record<string, string> {
+  const cutoff = new Date(Date.now() - 60 * 86400000).toISOString().slice(0, 10);
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(daily ?? {})) {
+    if ((k.split("|")[1] ?? "") < cutoff) continue;
+    out[`da_${k}`] = `${v.c},${v.t},${Math.round(v.ms)}`;
+  }
+  return out;
+}
+
+export function unflattenDaily(settings: Record<string, unknown>): Record<string, DailyStat> {
+  const out: Record<string, DailyStat> = {};
+  for (const [k, v] of Object.entries(settings ?? {})) {
+    if (!k.startsWith("da_") || typeof v !== "string") continue;
+    const [c, t, ms] = v.split(",").map(Number);
+    if ([c, t, ms].every(Number.isFinite)) out[k.slice(3)] = { c, t, ms };
+  }
+  return out;
+}
+
+export function localDay(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+/** Records one answered question for the /game profile card and the daily trend charts. */
+export function recordAnswer(subject: string, correct: boolean, ms = 0) {
   updateState((s) => {
+    const dk = `${subject}|${localDay()}`;
+    const d = s.daily?.[dk] ?? { c: 0, t: 0, ms: 0 };
+    s = { ...s, daily: { ...(s.daily ?? {}), [dk]: { c: d.c + (correct ? 1 : 0), t: d.t + 1, ms: d.ms + Math.max(0, Math.min(ms, 600000)) } } };
     const cur = s.stats[subject] ?? { correct: 0, total: 0 };
     const run = correct ? (s.badges.run[subject] ?? 0) + 1 : 0;
     return {
@@ -206,6 +259,8 @@ export function setState(next: State, { sync = true } = {}) {
               ...(next.settings.feedbackComment ? { feedbackComment: next.settings.feedbackComment } : {}),
               ...(next.settings.tutorialDone ? { tutorialDone: true } : {}),
               ...flattenStats(next.stats),
+              ...flattenLevelStars(next.stars),
+              ...flattenDaily(next.daily),
             },
           },
         });

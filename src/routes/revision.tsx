@@ -16,6 +16,7 @@ export const Route = createFileRoute("/revision")({
 });
 
 import { SUBJECT_LABEL } from "@/lib/subjects";
+import { TrendCharts } from "@/components/trend-charts";
 import { useLang } from "@/lib/i18n";
 
 function RevisionPage() {
@@ -53,6 +54,8 @@ function RevisionPage() {
             <p className="text-muted-foreground mt-1">{t("revision_sub")}</p>
           </div>
         </div>
+
+        <TrendCharts daily={state?.daily ?? {}} />
 
         {plan.focus.length > 0 && (
           <section className="mt-8 bg-card border-2 border-border rounded-3xl p-5 shadow">
