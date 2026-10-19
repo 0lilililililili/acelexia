@@ -16,7 +16,7 @@ export const BUILD_CHARACTERS = [
  {word:"想",parts:["木","目","心"],distractors:["日","必"],hint:"想法的想",difficulty:6},
  {word:"意",parts:["立","日","心"],distractors:["目","必"],hint:"意思的意",difficulty:6},
  {word:"福",parts:["礻","一","口","田"],distractors:["衤","日"],hint:"幸福的福",difficulty:7},
- {word:"褔",parts:["衤","一","口","田"],distractors:["礻","日"],hint:"古字褔，不是幸福的福",difficulty:7},
+ {word:"富",parts:["宀","一","口","田"],distractors:["冖","日"],hint:"豐富的富",difficulty:7},
  {word:"橋",parts:["木","喬"],distractors:["禾","高"],hint:"橋樑的橋",difficulty:8},
  {word:"機",parts:["木","幾"],distractors:["禾","戈"],hint:"飛機的機",difficulty:8},
  {word:"憶",parts:["忄","意"],distractors:["氵","音"],hint:"記憶的憶",difficulty:9},

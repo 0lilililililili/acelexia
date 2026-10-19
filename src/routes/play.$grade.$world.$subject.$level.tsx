@@ -30,6 +30,7 @@ import potionImg from "@/assets/icon-potion.png";
 import torchImg from "@/assets/icon-torch.png";
 import { FightingAvatar } from "@/components/fighting-avatar";
 import { SpeakButton } from "@/components/speak-button";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/play/$grade/$world/$subject/$level")({
   head: ({ params }) => ({
@@ -114,6 +115,7 @@ function PlayPage() {
   const itemKeyRef = useRef(0);
   const awardedRef = useRef<string | null>(null);
   const answeredRef = useRef(false);
+  const [reward, setReward] = useState({ yellow: 0, themed: 0 });
 
   const current = queue[idx];
   const timeLimit = settings.timeLimit + bonus;
@@ -138,6 +140,7 @@ function PlayPage() {
     setUsedItem(false);
     setOffered(false);
     setBuffetUntil(0);
+    setReward({ yellow: 0, themed: 0 });
     awardedRef.current = null;
     itemKeyRef.current++;
     answeredRef.current = false;
@@ -345,6 +348,7 @@ function PlayPage() {
       // Tower rewards: each star has a 40% chance to be yellow, otherwise the world's theme colour.
       let yellow = 0;
       for (let i = 0; i < starsEarned; i++) if (Math.random() < 0.4) yellow++;
+      setReward({ yellow, themed: starsEarned - yellow });
       if (starsEarned - yellow > 0) addStars(starColor, starsEarned - yellow);
       if (yellow > 0) addStars("yellow", yellow);
       if (isDaily) markDailyDone(subject, world);
@@ -419,7 +423,7 @@ function PlayPage() {
         </p>
         <p className="mt-1 font-bold">
           {passed
-            ? `You earned ${starsEarned} ${starColor} star${starsEarned > 1 ? "s" : ""}!`
+            ? `You earned ${reward.yellow} yellow + ${reward.themed} ${starColor} stars!`
             : "4 or more wrong — try this level again to move on."}
         </p>
 
@@ -442,11 +446,12 @@ function PlayPage() {
             </button>
           )}
         </div>
-        <div className="mt-6 flex gap-4">
+        <div className="mt-6 flex gap-4 flex-wrap justify-center items-center">
           <Link to="/tower/$grade/$world/$subject" params={{ grade, world, subject }} className="text-primary font-semibold">
             ← Back to tower
           </Link>
           <Link to="/revision" className="text-primary font-semibold">Revision bank →</Link>
+          <Button asChild variant="outline"><Link to="/game">Back to home</Link></Button>
         </div>
       </main>
     );
