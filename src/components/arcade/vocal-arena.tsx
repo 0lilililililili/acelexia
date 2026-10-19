@@ -7,7 +7,7 @@ import {VOCAL_WORDS} from "@/lib/arcade-data";
 import {arcadeAnswer} from "@/lib/arcade-record";
 import {useSpeech} from "@/hooks/use-speech";
 import {voiceLangFor} from "@/lib/read-aloud";
-import {matchesAnswer} from "@/lib/answer-match";
+import {matches as matchesAnswer} from "@/lib/answer-match";
 import {WORLD_ART} from "@/lib/world-art";
 import type {ArcadeProps} from "@/lib/arcade";
 export function VocalArena({lang,grade,onComplete}:ArcadeProps){const [theme,setTheme]=useState<string|null>(null);const [turn,setTurn]=useState(0);const [hp,setHp]=useState(100);const [enemy,setEnemy]=useState(100);const [mode,setMode]=useState<"attack"|"defense"|"critical">("attack");const [result,setResult]=useState<string|null>(null);const [score,setScore]=useState(0);const [typed,setTyped]=useState("");const [seconds,setSeconds]=useState(15);const [striking,setStriking]=useState(false);const [guard,setGuard]=useState(false);const startAt=useRef(Date.now());const answered=useRef(false);const finished=theme!==null&&(turn>=10||hp<=0||enemy<=0);const words=VOCAL_WORDS[theme??"食物"];const base=words[turn%words.length];const word=mode==="defense"?"防守":mode==="critical"?(grade==="K3"||grade==="P1"?base:"一心一意"):base;

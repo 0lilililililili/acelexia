@@ -5,9 +5,12 @@ import { WORLD_ART } from "@/lib/world-art";
 import { useLang } from "@/lib/i18n";
 import { SUBJECT_LABEL } from "@/lib/subjects";
 import towerImg from "@/assets/tower.png";
+import {ARCADE_GAMES} from "@/lib/arcade";
+import {Button} from "@/components/ui/button";
 
 
 export const Route = createFileRoute("/world/$world")({
+  head: ({params}) => ({meta:[{title:`${params.world === "fire" ? "China Town" : params.world === "aquatic" ? "English Village" : params.world === "forest" ? "Math Market" : "Festival world"} — Acelexia`},{name:"description",content:"Choose a freely replayable learning game or continue to Boss Towers in Acelexia."},{property:"og:title",content:`${params.world} learning games — Acelexia`},{property:"og:description",content:"Explore subject practice games and Boss Towers."},{property:"og:type",content:"website"},{name:"twitter:card",content:"summary"}]}),
   component: WorldPage,
 });
 
@@ -49,11 +52,11 @@ function WorldPage() {
           <p className="opacity-95 text-lg">{SUBJECT_LABEL[area.subject]} mini-games — finish a round to win stars.</p>
         </header>
         <div className="grid gap-5 sm:grid-cols-3 max-w-5xl mx-auto relative z-10">
-          {area.games.map((g) => (
-            <div key={g} className="bg-card border-4 border-white/70 rounded-3xl p-6 text-center shadow-2xl">
+          {ARCADE_GAMES.filter(g=>g.world===world).map((g) => (
+            <div key={g.id} className="bg-card border-2 border-border rounded-md p-6 text-center shadow-2xl">
               <img src={art.boss} alt="" loading="lazy" className="mx-auto w-24 h-24 object-contain opacity-80" />
-              <h2 className="text-xl font-extrabold mt-2">{g}</h2>
-              <div className="mt-4 inline-block bg-muted text-muted-foreground rounded-full px-4 py-2 font-bold">Coming soon</div>
+              <h2 className="text-xl font-extrabold mt-2">{g.name}</h2>
+              <Button asChild className="mt-5"><Link to="/arcade/$game" params={{game:g.id}}>Play →</Link></Button>
             </div>
           ))}
         </div>
