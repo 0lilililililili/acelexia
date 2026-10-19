@@ -11,7 +11,7 @@ export function decodePCM(pending: Uint8Array, incoming: Uint8Array) {
   return { samples, pending: bytes.slice(usable) };
 }
 
-export async function streamSpeech(endpoint: string, text: string, signal?: AbortSignal): Promise<void> {
+export async function streamSpeech(endpoint: string, text: string, lang: string, token?: string, signal?: AbortSignal): Promise<void> {
   signal?.throwIfAborted();
   const context = new AudioContext({ sampleRate: 24000 });
   const sources = new Set<AudioBufferSourceNode>();
@@ -31,10 +31,15 @@ export async function streamSpeech(endpoint: string, text: string, signal?: Abor
     const response = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text }),
+      body: JSON.stringify({ text, lang, token }),
       signal: controller.signal,
     });
-    if (!response.ok || !response.body) throw new Error(`TTS failed: ${response.status} ${await response.text()}`);
+    if (!response.ok || !response.body) {
+      const raw = await response.text();
+      let message = raw;
+      try { const value = JSON.parse(raw); message = value.message ?? value.error?.message ?? raw; } catch { /* plain safe error */ }
+      throw new Error(message || `Voice request failed (${response.status}).`);
+    }
     const parser = createParser({
       onEvent(event) {
         const payload = JSON.parse(event.data) as { type: string; audio?: string; error?: unknown };
