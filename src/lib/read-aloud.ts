@@ -30,12 +30,14 @@ let timers: ReturnType<typeof setTimeout>[] = [];
 // Keep utterances referenced: Chrome garbage-collects them and silently drops playback/onend.
 let live: SpeechSynthesisUtterance[] = [];
 let runId = 0;
+let currentAudio: HTMLAudioElement | null = null;
 
 export function stopReading() {
   runId++;
   timers.forEach(clearTimeout);
   timers = [];
   live = [];
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
   if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.cancel();
 }
 
@@ -76,7 +78,6 @@ function browserReadAloud(text: string, voiceLang: string, pauseMs = 1500) {
 }
 
 const clipCache = new Map<string, Promise<string | null>>();
-let currentAudio: HTMLAudioElement | null = null;
 
 function fetchClip(text: string, lang: string): Promise<string | null> {
   const k = `${lang}|${text}`;
