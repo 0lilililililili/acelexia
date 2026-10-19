@@ -34,6 +34,36 @@ function WorldPage() {
     { key: "math" },
   ];
 
+  const AREA: Record<string, { subject: string; games: string[] }> = {
+    fire: { subject: "chi", games: ["Restaurant Character Builder", "1v1 Vocal Arena", "Counterfeit Goods Appraiser (形近字)"] },
+    aquatic: { subject: "eng", games: ["Typo Scene Detective", "Word Family Linker", "Spelling Challenge"] },
+    forest: { subject: "math", games: ["Basket Collector", "Bakery Problem Solver", "Market Maths"] },
+  };
+  const area = AREA[world];
+  if (area) {
+    return (
+      <main className="min-h-screen px-6 py-8 relative" style={{ backgroundImage: `linear-gradient(180deg, oklch(0 0 0 / 0.15), oklch(0 0 0 / 0.35)), url(${art.bg})`, backgroundSize: "cover", backgroundPosition: "center", backgroundAttachment: "fixed" }}>
+        <Link to="/game" className="text-white font-semibold drop-shadow relative z-10">{t("back_world")}</Link>
+        <header className="text-center mt-4 mb-8 text-white drop-shadow relative z-10">
+          <h1 className="text-4xl font-extrabold">{label}</h1>
+          <p className="opacity-95 text-lg">{SUBJECT_LABEL[area.subject]} mini-games — finish a round to win stars.</p>
+        </header>
+        <div className="grid gap-5 sm:grid-cols-3 max-w-5xl mx-auto relative z-10">
+          {area.games.map((g) => (
+            <div key={g} className="bg-card border-4 border-white/70 rounded-3xl p-6 text-center shadow-2xl">
+              <img src={art.boss} alt="" loading="lazy" className="mx-auto w-24 h-24 object-contain opacity-80" />
+              <h2 className="text-xl font-extrabold mt-2">{g}</h2>
+              <div className="mt-4 inline-block bg-muted text-muted-foreground rounded-full px-4 py-2 font-bold">Coming soon</div>
+            </div>
+          ))}
+        </div>
+        <div className="text-center mt-8 relative z-10">
+          <Link to="/boss" className="inline-block bg-primary text-primary-foreground rounded-full px-6 py-3 font-extrabold shadow-lg">Go to Boss Towers</Link>
+        </div>
+      </main>
+    );
+  }
+
   if (!isFestivalOpen(world)) {
     const next = nextOpening(world);
     return (
