@@ -108,6 +108,6 @@ export const generateLevelItems = createServerFn({ method: "POST" })
       if (isReadItem && !it.prompt.toLowerCase().includes(it.answer.trim().toLowerCase())) it.prompt = it.answer.trim();
     }
     const valid = parsed.data.items.filter(it => matchesSubject(it, data.subject)).slice(0, data.count);
-    if (!valid.length) throw new Error("The question set did not match this subject. Please start a fresh level.");
+    if (valid.length < 8) throw new Error("The question set did not match this subject. Please start a fresh level.");
     return { items: valid };
   });

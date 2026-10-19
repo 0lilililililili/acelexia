@@ -28,6 +28,7 @@ export async function streamSpeech(endpoint: string, text: string, lang: string,
   let playback: Promise<void> = Promise.resolve();
   try {
     if (context.state === "suspended") await context.resume();
+    if(context.state !== "running") throw new Error("Your device could not start audio. Tap the speaker again.");
     const response = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -43,7 +44,7 @@ export async function streamSpeech(endpoint: string, text: string, lang: string,
     const parser = createParser({
       onEvent(event) {
         const payload = JSON.parse(event.data) as { type: string; audio?: string; error?: unknown };
-        if (payload.type === "error" || payload.error) throw new Error(`Speech failed: ${event.data}`);
+        if (payload.type === "error" || payload.error) { const value = payload.error as {message?:string}|undefined; throw new Error(value?.message ?? "Voice playback was interrupted."); }
         if (payload.type === "speech.audio.done") {
           completed = true;
           return;

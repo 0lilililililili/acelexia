@@ -234,7 +234,7 @@ export async function flushProgress() {
   syncTimer = null;
   const job = pendingSync;
   pendingSync = null;
-  if(job) await job();
+  if(job) { try { await job(); } catch(error) { pendingSync ??= job; throw error; } }
 }
 
 export function setState(next: State, { sync = true } = {}) {
