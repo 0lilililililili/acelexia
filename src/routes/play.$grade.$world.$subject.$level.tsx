@@ -24,7 +24,7 @@ import { WORLD_ART, mutedBgStyle } from "@/lib/world-art";
 import { LETTERS, parseCommand } from "@/lib/answer-match";
 import { answerOutcome } from "@/lib/answer-outcome";
 import { answerFormat } from "@/lib/answer-format";
-import { playerLv, requiredLv, starsForWrong, worldStarColor, STAR_HEX } from "@/lib/leveling";
+import { playerLv, requiredLv, starsForWrong, worldStarColor } from "@/lib/leveling";
 import hourglassImg from "@/assets/icon-hourglass.png";
 import potionImg from "@/assets/icon-potion.png";
 import torchImg from "@/assets/icon-torch.png";
@@ -411,10 +411,7 @@ function PlayPage() {
               key={n}
               size={44}
               aria-hidden
-              style={{
-                color: n <= starsEarned ? STAR_HEX[starColor] : "var(--color-muted-foreground)",
-                fill: n <= starsEarned ? STAR_HEX[starColor] : "transparent",
-              }}
+              className={n > starsEarned ? "text-muted-foreground" : n <= reward.yellow ? "text-sun fill-current" : starColor === "red" ? "text-fire fill-current" : starColor === "green" ? "text-forest fill-current" : starColor === "yellow" ? "text-sun fill-current" : "text-primary fill-current"}
             />
           ))}
         </div>
