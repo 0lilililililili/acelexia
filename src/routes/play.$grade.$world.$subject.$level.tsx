@@ -93,6 +93,7 @@ function PlayPage() {
         },
       }),
     staleTime: Infinity,
+    retry: false,
     enabled: !lvLocked,
   });
 
