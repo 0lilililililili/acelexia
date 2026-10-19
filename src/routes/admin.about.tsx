@@ -7,7 +7,7 @@ import { AboutView } from "@/components/about-view";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/admin/about")({
-  head: () => ({ meta: [{ title: "Edit About page — Acelexia" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ name: "description", content: "Edit About page — Acelexia. Manage your Acelexia learning adventure." }, { property: "og:title", content: "Edit About page — Acelexia" }, { property: "og:description", content: "Edit About page — Acelexia. Acelexia learning tools." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { title: "Edit About page — Acelexia" }, { name: "robots", content: "noindex" }] }),
   component: AdminAbout,
 });
 

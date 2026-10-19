@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Star } from "lucide-react";
-import { addExp, getState, type State } from "@/lib/store";
+import { addExp, getState, recordAnswer, DEFAULT_SETTINGS, type State } from "@/lib/store";
+import { SpeakButton } from "@/components/speak-button";
+import { voiceLangFor } from "@/lib/read-aloud";
 import { useSpeech } from "@/hooks/use-speech";
 import { LETTERS } from "@/lib/answer-match";
 import { answerOutcome } from "@/lib/answer-outcome";
@@ -64,7 +66,11 @@ function RequizPage() {
 
   const quiz = useMemo(() => (pool ? shuffle(pool).slice(0, QUIZ_SIZE) : []), [pool, round]);
   const current = quiz[idx];
-  const lang = LANG[current?.subject ?? "eng"] ?? "en-US";
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+  useEffect(() => { setSettings(getState().settings); }, []);
+  const lang = voiceLangFor(current?.subject ?? "eng", settings.language);
+  const startedAt = useRef(Date.now());
+  useEffect(() => { startedAt.current = Date.now(); },[current]);
   const finished = quiz.length > 0 && idx >= quiz.length;
 
   const next = useCallback(() => {
@@ -79,6 +85,7 @@ function RequizPage() {
       if (!current || answeredRef.current) return;
       const outcome = answerOutcome(text, current.answer, current.choices, spoken);
       if (outcome === "correct") {
+        recordAnswer(current.subject, true, Date.now() - startedAt.current, current.topic);
         answeredRef.current = true;
         setScore((s) => s + 1);
         addExp(1);
@@ -87,6 +94,7 @@ function RequizPage() {
         setWrongFlash(true);
         setTimeout(() => setWrongFlash(false), 400);
         if (outcome === "wrong") {
+          recordAnswer(current.subject, false, Date.now() - startedAt.current, current.topic);
           answeredRef.current = true;
           setTimeout(next, 600);
         }
@@ -158,7 +166,7 @@ function RequizPage() {
             {!current.choices && (current.subject === "chi" || (current.subject === "eng" && !/\s/.test(current.prompt))) && (
               <div className="mt-2 text-base font-extrabold">Read out loud:</div>
             )}
-            <div className="text-4xl font-extrabold mt-1">{current.prompt}</div>
+            <div className="flex items-start justify-center gap-3 mt-1"><div className="text-4xl font-extrabold break-words min-w-0">{current.prompt}</div><SpeakButton text={current.prompt} subject={current.subject} lang={settings.language}/></div>
              {!current.choices?.length && <p className="mt-2 text-sm font-bold text-muted-foreground">Answer format: {answerFormat(current.subject, current.prompt, current.answer)}</p>}
             {current.choices && current.choices.length > 0 && (
               <>

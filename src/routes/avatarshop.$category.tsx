@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useGameState } from "./avatar";
 
-export const Route = createFileRoute("/avatarshop/$category")({
+export const Route = createFileRoute("/avatarshop/$category")({head: () => ({ meta: [{ title: "Avatar clothing and equipment — Acelexia" }, { name: "description", content: "Browse clothing and equipment for your Acelexia adventurer." }, { property: "og:title", content: "Avatar clothing and equipment — Acelexia" }, { property: "og:description", content: "Browse clothing and equipment for your Acelexia adventurer." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }), 
   beforeLoad: ({ params }) => {
     if (!SLOTS.includes(params.category as Slot)) throw notFound();
   },

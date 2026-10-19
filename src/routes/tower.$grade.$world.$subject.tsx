@@ -10,7 +10,7 @@ import { festivalName } from "@/lib/festivals";
 import towerImg from "@/assets/tower.png";
 
 
-export const Route = createFileRoute("/tower/$grade/$world/$subject")({
+export const Route = createFileRoute("/tower/$grade/$world/$subject")({head: () => ({ meta: [{ title: "Boss tower levels — Acelexia" }, { name: "description", content: "Choose a level and view your earned stars in an Acelexia subject tower." }, { property: "og:title", content: "Boss tower levels — Acelexia" }, { property: "og:description", content: "Choose a level and view your earned stars in an Acelexia subject tower." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }), 
   component: TowerPage,
 });
 

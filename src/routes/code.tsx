@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { BackButton } from "@/components/back-button";
 
 export const Route = createFileRoute("/code")({
-  head: () => ({ meta: [{ title: "Code — Acalexia" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ name: "description", content: "Code — Acelexia. Manage your Acelexia learning adventure." }, { property: "og:title", content: "Code — Acelexia" }, { property: "og:description", content: "Code — Acelexia. Acelexia learning tools." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { title: "Code — Acelexia" }, { name: "robots", content: "noindex" }] }),
   component: CodePage,
 });
 

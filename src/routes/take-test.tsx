@@ -14,7 +14,7 @@ const pageBg: React.CSSProperties = {
   backgroundAttachment: "fixed",
 };
 
-export const Route = createFileRoute("/take-test")({ component: TestPage });
+export const Route = createFileRoute("/take-test")({head: () => ({ meta: [{ title: "Learning assessment — Acelexia" }, { name: "description", content: "Start a grade-appropriate Chinese, English and mathematics learning assessment." }, { property: "og:title", content: "Learning assessment — Acelexia" }, { property: "og:description", content: "Start a grade-appropriate Chinese, English and mathematics learning assessment." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),  component: TestPage });
 
 function TestPage() {
   const nav = useNavigate();

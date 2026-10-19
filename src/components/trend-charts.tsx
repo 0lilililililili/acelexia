@@ -1,60 +1,26 @@
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { DailyStat } from "@/lib/store";
 import { SUBJECT_LABEL } from "@/lib/subjects";
-
-type Point = { day: string; acc: number; sec: number; n: number };
-
-function series(daily: Record<string, DailyStat>, subject?: string): Point[] {
-  const byDay: Record<string, DailyStat> = {};
-  for (const [k, v] of Object.entries(daily)) {
-    const [s, day] = k.split("|");
-    if (!day || (subject && s !== subject)) continue;
-    const d = (byDay[day] ??= { c: 0, t: 0, ms: 0 });
-    d.c += v.c; d.t += v.t; d.ms += v.ms;
-  }
-  return Object.keys(byDay).sort().map((day) => {
-    const d = byDay[day];
-    return { day: day.slice(5), acc: d.t ? Math.round((d.c / d.t) * 100) : 0, sec: d.t ? Math.round(d.ms / d.t / 100) / 10 : 0, n: d.t };
-  });
+import { trendRows, SUBJECT_COLORS } from "@/lib/trend-data";
+const TOPIC_COLORS = ["var(--color-chart-1)", "var(--color-chart-3)", "var(--color-chart-2)", "var(--color-chart-4)", "var(--color-chart-5)"];
+function Chart({daily, subject, metric}: {daily: Record<string, DailyStat>; subject?: string; metric?: "accuracy" | "latency"}) {
+ const {rows, entities} = trendRows(daily,subject);
+ const metrics = metric ? [metric] : ["accuracy", "latency"];
+ return <div className="min-w-0 py-4">
+  <h3 className="text-lg font-bold">{subject ? metric === "accuracy" ? "Accuracy by topic" : "Answer time by topic" : "All subjects"}</h3>
+  {!rows.length ? <p className="text-muted-foreground mt-2">{subject ? "No topic records yet." : "No answers yet."}</p> :
+   <div className="h-80 mt-3"><ResponsiveContainer width="100%" height="100%"><LineChart data={rows} margin={{top:10,right:8,left:-12,bottom:10}}>
+    <CartesianGrid stroke="var(--color-border)" strokeDasharray="3 3"/>
+    <XAxis dataKey="day" tickFormatter={d=>d.slice(5)} tick={{fontSize:11}}/>
+    {(!metric || metric === "accuracy") && <YAxis yAxisId="accuracy" domain={[0,100]} unit="%" tick={{fontSize:11}}/>}
+    {(!metric || metric === "latency") && <YAxis yAxisId="latency" orientation={!metric ? "right" : "left"} unit="s" tick={{fontSize:11}}/>}
+    <Tooltip formatter={(v:number,name:string)=>[`${v}${name.includes("Accuracy") ? "%" : "s"}`,name]}/><Legend wrapperStyle={{fontSize:11}}/>
+    {(subject ? entities : ["chi","eng","math"]).flatMap((entity,i)=> metrics.map(m=><Line key={`${entity}:${m}`} yAxisId={m} dataKey={`${entity}:${m}`} name={`${subject ? entity : SUBJECT_LABEL[entity]} — ${m === "accuracy" ? "Accuracy" : "Answer time"}`} stroke={subject ? TOPIC_COLORS[i%TOPIC_COLORS.length] : SUBJECT_COLORS[entity]} strokeWidth={2.5} strokeDasharray={m === "latency" ? "6 4" : undefined} dot={{r:4}} connectNulls={false} isAnimationActive={false}/>))}
+   </LineChart></ResponsiveContainer></div>}
+ </div>;
 }
-
-function Chart({ title, data }: { title: string; data: Point[] }) {
-  return (
-    <div className="bg-card border-2 border-border rounded-3xl p-4 shadow">
-      <h3 className="text-lg font-extrabold">{title}</h3>
-      {data.length === 0 ? (
-        <p className="text-muted-foreground mt-2">No answers yet. Play some levels to see your trend.</p>
-      ) : (
-        <div className="h-56 mt-2">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data} margin={{ top: 5, right: 5, left: -10, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
-              <XAxis dataKey="day" tick={{ fontSize: 12 }} />
-              <YAxis yAxisId="a" domain={[0, 100]} unit="%" tick={{ fontSize: 12 }} />
-              <YAxis yAxisId="s" orientation="right" unit="s" tick={{ fontSize: 12 }} />
-              <Tooltip formatter={(v: number, name: string) => (name === "Accuracy" ? `${v}%` : `${v}s`)} />
-              <Legend />
-              <Line yAxisId="a" type="monotone" dataKey="acc" name="Accuracy" stroke="var(--color-primary)" strokeWidth={3} dot={{ r: 4 }} />
-              <Line yAxisId="s" type="monotone" dataKey="sec" name="Avg time" stroke="var(--color-destructive)" strokeWidth={3} strokeDasharray="6 3" dot={{ r: 4 }} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export function TrendCharts({ daily }: { daily: Record<string, DailyStat> }) {
-  return (
-    <section className="mt-8">
-      <h2 className="text-2xl font-extrabold">Progress over time</h2>
-      <p className="text-muted-foreground">Accuracy (solid line) and average answer time (dashed line) for each day.</p>
-      <div className="mt-4 grid gap-4">
-        <Chart title="All subjects" data={series(daily)} />
-        <div className="grid gap-4 md:grid-cols-3">
-          {["chi", "eng", "math"].map((s) => <Chart key={s} title={SUBJECT_LABEL[s] ?? s} data={series(daily, s)} />)}
-        </div>
-      </div>
-    </section>
-  );
+export function TrendCharts({daily}:{daily:Record<string,DailyStat>}) {
+ return <section className="mt-8"><h2 className="text-2xl font-extrabold">Progress over time</h2><Chart daily={daily}/>
+  {["chi","eng","math"].map(subject=><section key={subject} className="border-t border-border mt-5 pt-5"><h2 className="text-xl font-bold">{SUBJECT_LABEL[subject]}</h2><div className="grid gap-5 md:grid-cols-2"><Chart daily={daily} subject={subject} metric="accuracy"/><Chart daily={daily} subject={subject} metric="latency"/></div></section>)}
+ </section>;
 }

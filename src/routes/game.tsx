@@ -24,7 +24,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 
 export const Route = createFileRoute("/game")({
   head: () => ({
-    meta: [
+    meta: [{ property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, 
       { title: "World Map — Acelexia" },
       { name: "description", content: "Sail the Acelexia continent: aquatic, forest and fire lands, plus limited festival islands." },
       { property: "og:title", content: "World Map — Acelexia" },

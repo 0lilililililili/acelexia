@@ -205,11 +205,14 @@ export function localDay(d = new Date()) {
 }
 
 /** Records one answered question for the /game profile card and the daily trend charts. */
-export function recordAnswer(subject: string, correct: boolean, ms = 0) {
+export function recordAnswer(subject: string, correct: boolean, ms = 0, topic = "General") {
   updateState((s) => {
     const dk = `${subject}|${localDay()}`;
     const d = s.daily?.[dk] ?? { c: 0, t: 0, ms: 0 };
     s = { ...s, daily: { ...(s.daily ?? {}), [dk]: { c: d.c + (correct ? 1 : 0), t: d.t + 1, ms: d.ms + Math.max(0, Math.min(ms, 600000)) } } };
+    const tk = `${dk}|${encodeURIComponent(topic.trim() || "General")}`;
+    const td = s.daily[tk] ?? { c: 0, t: 0, ms: 0 };
+    s.daily[tk] = { c: td.c + Number(correct), t: td.t + 1, ms: td.ms + Math.max(0, Math.min(ms, 600000)) };
     const cur = s.stats[subject] ?? { correct: 0, total: 0 };
     const run = correct ? (s.badges.run[subject] ?? 0) + 1 : 0;
     return {
@@ -225,6 +228,14 @@ export function recordAnswer(subject: string, correct: boolean, ms = 0) {
 }
 
 let syncTimer: ReturnType<typeof setTimeout> | null = null;
+let pendingSync: (() => Promise<void>) | null = null;
+export async function flushProgress() {
+  if(syncTimer) clearTimeout(syncTimer);
+  syncTimer = null;
+  const job = pendingSync;
+  pendingSync = null;
+  if(job) { try { await job(); } catch(error) { pendingSync ??= job; throw error; } }
+}
 
 export function setState(next: State, { sync = true } = {}) {
   if (typeof window === "undefined") return;
@@ -234,13 +245,12 @@ export function setState(next: State, { sync = true } = {}) {
   const session = getSession();
   if (!session || session.isAdmin || !session.token) return;
   if (syncTimer) clearTimeout(syncTimer);
-  syncTimer = setTimeout(() => {
-    void (async () => {
+  pendingSync = async () => {
       try {
         const { saveProgress } = await import("./auth.functions");
         await saveProgress({
           data: {
-            token: session.token!,
+            token: session.token,
             username: session.username,
             grade: next.grade,
             onboarded: next.onboarded,
@@ -267,9 +277,10 @@ export function setState(next: State, { sync = true } = {}) {
 
       } catch (e) {
         console.error("progress sync failed", e);
+        throw e;
       }
-    })();
-  }, 600);
+  };
+  syncTimer = setTimeout(() => { void flushProgress().catch(() => {}); }, 600);
 }
 
 export function updateState(fn: (s: State) => State) {

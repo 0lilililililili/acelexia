@@ -10,10 +10,10 @@ import { BackButton } from "@/components/back-button";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({
-    meta: [
-      { title: "Create your Acalexia account" },
-      { name: "description", content: "Sign up to save your tower progress, revision bank and settings in Acalexia." },
-      { property: "og:title", content: "Create your Acalexia account" },
+    meta: [{ property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, 
+      { title: "Create your Acelexia account" },
+      { name: "description", content: "Sign up to save your tower progress, revision bank and settings in Acelexia." },
+      { property: "og:title", content: "Create your Acelexia account" },
       { property: "og:description", content: "Save your progress across every world and tower." },
     ],
   }),
