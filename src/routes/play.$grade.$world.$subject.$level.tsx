@@ -247,9 +247,12 @@ function PlayPage() {
     [current, toRevision],
   );
 
+  const qStartRef = useRef(Date.now());
+  useEffect(() => { qStartRef.current = Date.now(); }, [current]);
+
   const failQuestion = useCallback(() => {
     if (current) toRevision(current, "wrong");
-    recordAnswer(subject, false);
+    recordAnswer(subject, false, Date.now() - qStartRef.current);
     setWrong((w) => w + 1);
     setPhase("escape");
   }, [current, toRevision, subject]);
@@ -262,7 +265,7 @@ function PlayPage() {
         answeredRef.current = true;
         setPhase("defeat");
         setCorrect((c) => c + 1);
-        recordAnswer(subject, true);
+        recordAnswer(subject, true, Date.now() - qStartRef.current);
         if (!usedItem) addExp(1);
       } else if (outcome === "wrong") {
         answeredRef.current = true;
