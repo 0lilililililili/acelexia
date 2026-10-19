@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { getAboutBlocks } from "@/lib/about.functions";
 import { DEFAULT_ABOUT } from "@/lib/about-defaults";
 import { AboutView } from "@/components/about-view";
-import { BackButton } from "@/components/back-button";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
