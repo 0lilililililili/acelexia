@@ -15,3 +15,4 @@
 - Record subtopic daily totals alongside subject totals in the existing progress settings serialization, so charts retain account persistence without duplicating totals.
 - Stream speech PCM through a same-origin server route and resume browser audio on the user's click, so playback does not wait for a full WAV file.
 - Keep arcade definitions and grade-aware round data in shared browser-safe modules, with one independently replayable route per selected game.
+- Calculate arcade performance rewards in a shared pure evaluator, using explicit attempt totals so every game follows the same reward thresholds.
