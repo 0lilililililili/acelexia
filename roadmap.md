@@ -21,3 +21,9 @@
 - [x] Rebuild revision charts: six overall lines and separate subtopic accuracy/latency timelines.
 - [x] Reduce speech start delay using PCM streaming and verify live delivery.
 - [x] Phase 4 — Start all seven specified freely replayable arcade games with initial practice sets; test matching, character assembly, appraisal, bakery, basket layout and arena entry.
+
+## Uploaded arcade review
+- [ ] Confirm About Back and add completed-level Back to home.
+- [ ] Replace character sampling with grade bands and balanced, varied difficulty loads.
+- [ ] Award performance-based themed stars and show actual tower reward colours.
+- [ ] Verify rewards, navigation and updated source in Code.
