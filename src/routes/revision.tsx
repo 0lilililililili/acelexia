@@ -108,7 +108,7 @@ function RevisionPage() {
                             title="Re-quiz this topic"
                             className="requiz-dot grid place-items-center w-12 h-12 shrink-0 rounded-full bg-destructive text-destructive-foreground shadow-lg ring-4 ring-destructive/30 hover:scale-110 transition"
                           >
-                            <RotateCcw size=22 aria-hidden />
+                            <RotateCcw size={22} aria-hidden />
                           </Link>
                     </div>
                   </div>
@@ -154,7 +154,7 @@ function RevisionPage() {
                             title="Re-quiz this topic"
                             className="requiz-dot grid place-items-center w-12 h-12 shrink-0 rounded-full bg-destructive text-destructive-foreground shadow-lg ring-4 ring-destructive/30 hover:scale-110 transition"
                           >
-                            <RotateCcw size=22 aria-hidden />
+                            <RotateCcw size={22} aria-hidden />
                           </Link>
                           <button
                             onClick={() => clearTopic(subject, topic)}
