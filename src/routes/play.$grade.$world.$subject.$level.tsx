@@ -80,7 +80,7 @@ function PlayPage() {
 
   const generate = useServerFn(generateLevelItems);
   const { data, isLoading, error } = useQuery({
-    queryKey: ["qb", subject, grade, world, level, settings.language],
+    queryKey: ["qb-v2", subject, grade, world, art.label, level, 14, settings.language],
     queryFn: () =>
       generate({
         data: {
@@ -252,7 +252,7 @@ function PlayPage() {
 
   const failQuestion = useCallback(() => {
     if (current) toRevision(current, "wrong");
-    recordAnswer(subject, false, Date.now() - qStartRef.current);
+    recordAnswer(subject, false, Date.now() - qStartRef.current, current?.topic);
     setWrong((w) => w + 1);
     setPhase("escape");
   }, [current, toRevision, subject]);
@@ -265,7 +265,7 @@ function PlayPage() {
         answeredRef.current = true;
         setPhase("defeat");
         setCorrect((c) => c + 1);
-        recordAnswer(subject, true, Date.now() - qStartRef.current);
+        recordAnswer(subject, true, Date.now() - qStartRef.current, current.topic);
         if (!usedItem) addExp(1);
       } else if (outcome === "wrong") {
         answeredRef.current = true;

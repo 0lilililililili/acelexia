@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { matchesSubject, fallbackItems } from "./question-contract";
 
 const Input = z.object({
   subject: z.enum(["chi", "eng", "math"]),
@@ -95,10 +96,7 @@ export const generateLevelItems = createServerFn({ method: "POST" })
     if (!parsed.success) {
       // Fallback so the game never blocks
       return {
-        items: Array.from({ length: data.count }, (_, i) => ({
-          prompt: data.subject === "math" ? `${i + 1} + ${i + 2}` : ["cat", "dog", "sun", "fish", "tree", "fire", "moon", "star"][i % 8],
-          answer: data.subject === "math" ? `${(i + 1) + (i + 2)}` : ["cat", "dog", "sun", "fish", "tree", "fire", "moon", "star"][i % 8],
-        })),
+        items: fallbackItems(data.subject, data.count),
       };
     }
     // Shuffle MC options so the correct answer is not always the first one.
@@ -112,5 +110,7 @@ export const generateLevelItems = createServerFn({ method: "POST" })
       const isReadItem = !it.choices?.length && data.subject !== "math" && it.answer.trim().length > 0 && it.answer.trim().length <= 20 && !/\s/.test(it.answer.trim());
       if (isReadItem && !it.prompt.toLowerCase().includes(it.answer.trim().toLowerCase())) it.prompt = it.answer.trim();
     }
-    return parsed.data;
+    const valid = parsed.data.items.filter(it => matchesSubject(it, data.subject)).slice(0, data.count);
+    if (!valid.length) throw new Error("The question set did not match this subject. Please start a fresh level.");
+    return { items: valid };
   });

@@ -10,6 +10,8 @@ export const Route = createFileRoute("/revision")({
       { name: "description", content: "Every question you missed, grouped by subject and topic, ready to practise again." },
       { property: "og:title", content: "Revision bank — Acalexia" },
       { property: "og:description", content: "Practise the questions you missed, grouped by topic." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: RevisionPage,
