@@ -1,3 +1,4 @@
+import {shuffled} from "@/lib/shuffle";
 export const BUILD_CHARACTERS = [
  {word:"林",parts:["木","木"],distractors:["本","禾"],hint:"森林的林",difficulty:1},
  {word:"明",parts:["日","月"],distractors:["目","白"],hint:"明天的明",difficulty:1},
@@ -27,7 +28,7 @@ export const BASKET_SECONDS = 200;
 export const PARALYSIS_SECONDS = 3;
 export function basketGoal(grade:string) { return 6 + Math.max(0,Number(grade.slice(1))||0)*2; }
 export function basketGoods(target:number, seed:number) {
- return [{text:`${target-1} + 1`,value:target},{text:`${target*2} ÷ 2`,value:target},{text:`${target+seed%4} + 3`,value:target+seed%4+3},{text:`${target+4} − 4`,value:target}].sort(()=>0.5-Math.random());
+ return shuffled([{text:`${target-1} + 1`,value:target},{text:`${target*2} ÷ 2`,value:target},{text:`${target+seed%4} + 3`,value:target+seed%4+3},{text:`${target+4} − 4`,value:target}]);
 }
 export function builderRound(grade:string) {
  const max = grade === "K3" ? 1 : Number(grade.slice(1)) < 3 ? 2 : 3;

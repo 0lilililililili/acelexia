@@ -1,3 +1,4 @@
+import {shuffled} from "@/lib/shuffle";
 import {useMemo,useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
 import {SpeakButton} from "@/components/speak-button";
@@ -6,7 +7,7 @@ import {arcadeAnswer} from "@/lib/arcade-record";
 import type {ArcadeProps} from "@/lib/arcade";
 export function CharacterBuilder({grade,lang,onComplete}:ArcadeProps){
  const round=useMemo(()=>builderRound(grade),[grade]); const [index,setIndex]=useState(0);const [slots,setSlots]=useState<string[]>([]);const [result,setResult]=useState<boolean|null>(null);const [score,setScore]=useState(0);const start=useRef(Date.now());
- const q=round[index];const options=useMemo(()=>[...q.parts,...q.distractors].map((text,id)=>({text,id})).sort(()=>Math.random()-.5),[q]);const [used,setUsed]=useState<number[]>([]);
+ const q=round[index];const options=useMemo(()=>shuffled([...q.parts,...q.distractors].map((text,id)=>({text,id}))),[q]);const [used,setUsed]=useState<number[]>([]);
  const place=(text:string,id:number)=>{if(result!==null||used.includes(id)||slots.length>=q.parts.length)return;setSlots([...slots,text]);setUsed([...used,id])};
  const check=()=>{const ok=slots.join("|")===q.parts.join("|");setResult(ok);if(ok)setScore(score+1);arcadeAnswer("chi","字形結構",`組合「${q.word}」`,q.parts.join(" + "),ok,Date.now()-start.current)};
  const next=()=>{if(index+1>=round.length){onComplete(score,round.length);return}setIndex(index+1);setSlots([]);setUsed([]);setResult(null);start.current=Date.now()};

@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { matchesSubject, fallbackItems } from "./question-contract";
+import { matchesSubject } from "./question-contract";
 
 const Input = z.object({
   subject: z.enum(["chi", "eng", "math"]),
