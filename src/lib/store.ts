@@ -205,11 +205,14 @@ export function localDay(d = new Date()) {
 }
 
 /** Records one answered question for the /game profile card and the daily trend charts. */
-export function recordAnswer(subject: string, correct: boolean, ms = 0) {
+export function recordAnswer(subject: string, correct: boolean, ms = 0, topic = "General") {
   updateState((s) => {
     const dk = `${subject}|${localDay()}`;
     const d = s.daily?.[dk] ?? { c: 0, t: 0, ms: 0 };
     s = { ...s, daily: { ...(s.daily ?? {}), [dk]: { c: d.c + (correct ? 1 : 0), t: d.t + 1, ms: d.ms + Math.max(0, Math.min(ms, 600000)) } } };
+    const tk = `${dk}|${encodeURIComponent(topic.trim() || "General")}`;
+    const td = s.daily[tk] ?? { c: 0, t: 0, ms: 0 };
+    s.daily[tk] = { c: td.c + Number(correct), t: td.t + 1, ms: td.ms + Math.max(0, Math.min(ms, 600000)) };
     const cur = s.stats[subject] ?? { correct: 0, total: 0 };
     const run = correct ? (s.badges.run[subject] ?? 0) + 1 : 0;
     return {
