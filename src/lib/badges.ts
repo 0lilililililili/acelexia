@@ -62,6 +62,8 @@ export function evaluateBadges(): string[] {
 export const dayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
 const LANDS = ["aquatic", "forest", "fire"];
+/** Boss Towers: each subject lives in its own themed world. */
+const BOSS_WORLD: Record<string, string> = { chi: "fire", eng: "aquatic", math: "forest" };
 
 /** Called when the map opens. Returns true on the first visit of a new day. */
 export function tickStreak(): boolean {
@@ -70,7 +72,7 @@ export function tickStreak(): boolean {
   if (s.streak.lastDay === today) return false;
   const y = new Date(); y.setDate(y.getDate() - 1);
   const current = s.streak.lastDay === dayKey(y) ? s.streak.current + 1 : 1;
-  const daily: DailyTask[] = SUBJ.map((subject) => ({ subject, world: LANDS[Math.floor(Math.random() * LANDS.length)], done: false }));
+  const daily: DailyTask[] = SUBJ.map((subject) => ({ subject, world: BOSS_WORLD[subject] ?? LANDS[0], done: false }));
   setState({ ...s, streak: { current, best: Math.max(s.streak.best, current), lastDay: today, dailyDate: today, daily } });
   evaluateBadges();
   return true;

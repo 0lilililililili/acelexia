@@ -15,6 +15,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AvatarRouteImport } from './routes/avatar'
 import { Route as AvatarshopRouteImport } from './routes/avatarshop'
 import { Route as BadgesRouteImport } from './routes/badges'
+import { Route as BossRouteImport } from './routes/boss'
 import { Route as CodeRouteImport } from './routes/code'
 import { Route as GameRouteImport } from './routes/game'
 import { Route as InputDataRouteImport } from './routes/input-data'
@@ -66,6 +67,11 @@ const AvatarshopRoute = AvatarshopRouteImport.update({
 const BadgesRoute = BadgesRouteImport.update({
   id: '/badges',
   path: '/badges',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BossRoute = BossRouteImport.update({
+  id: '/boss',
+  path: '/boss',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CodeRoute = CodeRouteImport.update({
@@ -187,6 +193,7 @@ export interface FileRoutesByFullPath {
   '/avatar': typeof AvatarRoute
   '/avatarshop': typeof AvatarshopRouteWithChildren
   '/badges': typeof BadgesRoute
+  '/boss': typeof BossRoute
   '/code': typeof CodeRoute
   '/game': typeof GameRoute
   '/input-data': typeof InputDataRoute
@@ -215,6 +222,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/avatar': typeof AvatarRoute
   '/badges': typeof BadgesRoute
+  '/boss': typeof BossRoute
   '/code': typeof CodeRoute
   '/game': typeof GameRoute
   '/input-data': typeof InputDataRoute
@@ -246,6 +254,7 @@ export interface FileRoutesById {
   '/avatar': typeof AvatarRoute
   '/avatarshop': typeof AvatarshopRouteWithChildren
   '/badges': typeof BadgesRoute
+  '/boss': typeof BossRoute
   '/code': typeof CodeRoute
   '/game': typeof GameRoute
   '/input-data': typeof InputDataRoute
@@ -278,6 +287,7 @@ export interface FileRouteTypes {
     | '/avatar'
     | '/avatarshop'
     | '/badges'
+    | '/boss'
     | '/code'
     | '/game'
     | '/input-data'
@@ -306,6 +316,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/avatar'
     | '/badges'
+    | '/boss'
     | '/code'
     | '/game'
     | '/input-data'
@@ -336,6 +347,7 @@ export interface FileRouteTypes {
     | '/avatar'
     | '/avatarshop'
     | '/badges'
+    | '/boss'
     | '/code'
     | '/game'
     | '/input-data'
@@ -367,6 +379,7 @@ export interface RootRouteChildren {
   AvatarRoute: typeof AvatarRoute
   AvatarshopRoute: typeof AvatarshopRouteWithChildren
   BadgesRoute: typeof BadgesRoute
+  BossRoute: typeof BossRoute
   CodeRoute: typeof CodeRoute
   GameRoute: typeof GameRoute
   InputDataRoute: typeof InputDataRoute
@@ -426,6 +439,13 @@ declare module '@tanstack/react-router' {
       path: '/badges'
       fullPath: '/badges'
       preLoaderRoute: typeof BadgesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/boss': {
+      id: '/boss'
+      path: '/boss'
+      fullPath: '/boss'
+      preLoaderRoute: typeof BossRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/code': {
@@ -624,6 +644,7 @@ const rootRouteChildren: RootRouteChildren = {
   AvatarRoute: AvatarRoute,
   AvatarshopRoute: AvatarshopRouteWithChildren,
   BadgesRoute: BadgesRoute,
+  BossRoute: BossRoute,
   CodeRoute: CodeRoute,
   GameRoute: GameRoute,
   InputDataRoute: InputDataRoute,

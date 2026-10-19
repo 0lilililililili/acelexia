@@ -17,6 +17,7 @@ export const Route = createFileRoute("/revision")({
 
 import { SUBJECT_LABEL } from "@/lib/subjects";
 import { TrendCharts } from "@/components/trend-charts";
+import { RotateCcw } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 
 function RevisionPage() {
@@ -55,6 +56,15 @@ function RevisionPage() {
           </div>
         </div>
 
+        {subjects.length > 0 && (
+          <div className="mt-6 flex items-center gap-4 rounded-3xl border-4 border-destructive bg-card p-4 shadow">
+            <Link to="/requiz" search={{ subject: undefined, topic: undefined }} className="inline-flex items-center gap-3 rounded-full bg-destructive text-destructive-foreground px-6 py-4 text-xl font-extrabold shadow-lg hover:scale-105 transition">
+              <RotateCcw size={28} aria-hidden /> Start Re-quiz
+            </Link>
+            <p className="font-semibold">Practise 15 questions you got wrong. Or press a red circle button next to a topic to practise only that topic.</p>
+          </div>
+        )}
+
         <TrendCharts daily={state?.daily ?? {}} />
 
         {plan.focus.length > 0 && (
@@ -79,6 +89,7 @@ function RevisionPage() {
                         ({SUBJECT_LABEL[t.subject] ?? t.subject})
                       </span>
                     </h3>
+                    <div className="flex items-center gap-2">
                     <span
                       className={`rounded-full px-3 py-1 text-xs font-extrabold ${
                         t.band === "high"
@@ -90,6 +101,16 @@ function RevisionPage() {
                     >
                       {t.band === "high" ? tr("do_first") : t.band === "medium" ? tr("do_next") : tr("keep_warm")}
                     </span>
+                    <Link
+                            to="/requiz"
+                            search={{ subject: t.subject, topic: t.topic }}
+                            aria-label={`Re-quiz ${t.topic}`}
+                            title="Re-quiz this topic"
+                            className="requiz-dot grid place-items-center w-12 h-12 shrink-0 rounded-full bg-destructive text-destructive-foreground shadow-lg ring-4 ring-destructive/30 hover:scale-110 transition"
+                          >
+                            <RotateCcw size={22} aria-hidden />
+                          </Link>
+                    </div>
                   </div>
                   <div className="mt-2 h-3 rounded-full bg-muted overflow-hidden" aria-hidden>
                     <div className="h-full bg-primary" style={{ width: `${t.priority}%` }} />
@@ -125,12 +146,23 @@ function RevisionPage() {
                           <h3 className="font-extrabold">
                             {topic} <span className="text-muted-foreground font-semibold">({list.length})</span>
                           </h3>
+                          <div className="flex items-center gap-3">
+                          <Link
+                            to="/requiz"
+                            search={{ subject: subject, topic: topic }}
+                            aria-label={`Re-quiz ${topic}`}
+                            title="Re-quiz this topic"
+                            className="requiz-dot grid place-items-center w-12 h-12 shrink-0 rounded-full bg-destructive text-destructive-foreground shadow-lg ring-4 ring-destructive/30 hover:scale-110 transition"
+                          >
+                            <RotateCcw size={22} aria-hidden />
+                          </Link>
                           <button
                             onClick={() => clearTopic(subject, topic)}
                             className="text-xs font-bold text-muted-foreground hover:text-destructive"
                           >
                             {t("clear")}
                           </button>
+                          </div>
                         </div>
                         <ul className="mt-3 grid gap-2 sm:grid-cols-2">
                           {list.map((item, i) => (
