@@ -4,8 +4,8 @@ import { BackButton } from "@/components/back-button";
 
 export const Route = createFileRoute("/admin/")({
   head: () => ({
-    meta: [
-      { title: "Admin — Acalexia" },
+    meta: [{ name: "description", content: "Admin — Acelexia. Manage your Acelexia learning adventure." }, { property: "og:title", content: "Admin — Acelexia" }, { property: "og:description", content: "Admin — Acelexia. Acelexia learning tools." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, 
+      { title: "Admin — Acelexia" },
       { name: "robots", content: "noindex" },
     ],
   }),

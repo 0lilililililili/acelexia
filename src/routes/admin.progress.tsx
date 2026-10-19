@@ -3,7 +3,7 @@ import { Fragment, useEffect, useMemo, useState } from "react";
 import { listProgress } from "@/lib/auth.functions";
 
 export const Route = createFileRoute("/admin/progress")({
-  head: () => ({ meta: [{ title: "PROGRESS database — Admin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ name: "description", content: "PROGRESS database — Admin. Manage your Acelexia learning adventure." }, { property: "og:title", content: "PROGRESS database — Admin" }, { property: "og:description", content: "PROGRESS database — Admin. Acelexia learning tools." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { title: "PROGRESS database — Admin" }, { name: "robots", content: "noindex" }] }),
   component: ProgressAdmin,
 });
 

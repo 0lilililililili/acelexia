@@ -4,7 +4,7 @@ import { BackButton } from "@/components/back-button";
 import { listFeedbacks } from "@/lib/feedback.functions";
 
 export const Route = createFileRoute("/admin/feedback")({
-  head: () => ({ meta: [{ title: "Feedback — Acelexia Admin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ name: "description", content: "Feedback — Acelexia Admin. Manage your Acelexia learning adventure." }, { property: "og:title", content: "Feedback — Acelexia Admin" }, { property: "og:description", content: "Feedback — Acelexia Admin. Acelexia learning tools." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { title: "Feedback — Acelexia Admin" }, { name: "robots", content: "noindex" }] }),
   component: FeedbackAdmin,
 });
 

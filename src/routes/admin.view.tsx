@@ -6,7 +6,7 @@ import {
 import { GRADES, loadSubmissions, type Grade, type Submission } from "@/lib/input-questions";
 import { BackButton } from "@/components/back-button";
 
-export const Route = createFileRoute("/admin/view")({ component: AdminViewPage });
+export const Route = createFileRoute("/admin/view")({head: () => ({ meta: [{ title: "Test submissions — Acelexia Admin" }, { name: "description", content: "Review submitted assessments by grade and learning cohort." }, { property: "og:title", content: "Test submissions — Acelexia Admin" }, { property: "og:description", content: "Review submitted assessments by grade and learning cohort." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),  component: AdminViewPage });
 
 type SortKey = "time" | "dataId" | "grade" | "dyslexia" | "acc";
 

@@ -5,11 +5,11 @@ import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
-    meta: [
-      { title: "Settings — Acalexia" },
-      { name: "description", content: "Change text size, question time limit, or reset your Acalexia progress." },
-      { property: "og:title", content: "Settings — Acalexia" },
-      { property: "og:description", content: "Make Acalexia comfortable for you." },
+    meta: [{ property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, 
+      { title: "Settings — Acelexia" },
+      { name: "description", content: "Change text size, question time limit, or reset your Acelexia progress." },
+      { property: "og:title", content: "Settings — Acelexia" },
+      { property: "og:description", content: "Make Acelexia comfortable for you." },
     ],
   }),
   component: SettingsPage,

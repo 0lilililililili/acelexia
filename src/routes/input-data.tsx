@@ -10,7 +10,7 @@ import {
 } from "@/lib/input-questions";
 import { BackButton } from "@/components/back-button";
 
-export const Route = createFileRoute("/input-data")({ component: InputDataPage });
+export const Route = createFileRoute("/input-data")({head: () => ({ meta: [{ title: "Research assessment — Acelexia" }, { name: "description", content: "Record Chinese, English and mathematics assessment accuracy and response times." }, { property: "og:title", content: "Research assessment — Acelexia" }, { property: "og:description", content: "Record Chinese, English and mathematics assessment accuracy and response times." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),  component: InputDataPage });
 
 type Step = "dyslexia" | "grade" | "quiz" | "done";
 

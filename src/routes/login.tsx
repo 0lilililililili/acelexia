@@ -7,10 +7,10 @@ import { BackButton } from "@/components/back-button";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
-    meta: [
-      { title: "Log in to Acalexia" },
-      { name: "description", content: "Log in to restore your towers, revision bank and settings in Acalexia." },
-      { property: "og:title", content: "Log in to Acalexia" },
+    meta: [{ property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, 
+      { title: "Log in to Acelexia" },
+      { name: "description", content: "Log in to restore your towers, revision bank and settings in Acelexia." },
+      { property: "og:title", content: "Log in to Acelexia" },
       { property: "og:description", content: "Your adventure continues where you left off." },
     ],
   }),

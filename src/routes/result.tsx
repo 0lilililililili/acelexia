@@ -4,7 +4,7 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Responsi
 
 const Search = z.object({ d: z.string().optional() });
 
-export const Route = createFileRoute("/result")({
+export const Route = createFileRoute("/result")({head: () => ({ meta: [{ title: "Assessment results — Acelexia" }, { name: "description", content: "Review your Chinese, English and mathematics learning assessment." }, { property: "og:title", content: "Assessment results — Acelexia" }, { property: "og:description", content: "Review your Chinese, English and mathematics learning assessment." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }), 
   validateSearch: Search,
   component: ResultPage,
 });
