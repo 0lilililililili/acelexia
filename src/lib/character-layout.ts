@@ -1,4 +1,23 @@
-export type ComponentShape="left-right"|"top-bottom"|"triple"|"left-stack"|"stack-bottom"|"columns";
-export const CHARACTER_SHAPES:Record<string,ComponentShape>={森:"triple",鑫:"triple",轟:"triple",晶:"triple",品:"triple",淼:"triple",焱:"triple",磊:"triple",想:"stack-bottom",意:"top-bottom",語:"left-stack",湖:"columns",謝:"columns",樹:"columns",辯:"columns",辨:"columns",籃:"top-bottom",藍:"top-bottom",鑿:"top-bottom",鬱:"stack-bottom",贏:"top-bottom",聽:"left-stack",福:"left-stack",富:"top-bottom"};
-const TOP_BOTTOM=new Set(["苗","早","字","安","音","草","花","炎","息","悲","念","思","攀","鷹"]);
-export function characterShape(word:string):ComponentShape{return word==="龘"?"triple":TOP_BOTTOM.has(word)?"top-bottom":CHARACTER_SHAPES[word]??"left-right"}
+import {CHARACTER_LAYOUTS, type CharacterLayout} from "./character-layout-data";
+export function characterLayout(word:string):CharacterLayout {
+ const layout=CHARACTER_LAYOUTS[word];
+ if(!layout)throw new Error(`Character has no reviewed structure: ${word}`);
+ return layout;
+}
+// Compatibility for existing callers; gameplay uses positions, never shape guesses.
+export function characterShape(word:string) {
+ const q=characterLayout(word);
+ if(["森","鑫","轟","晶","品","淼","焱","磊","龘"].includes(word))return "triple";
+ return q.rows===1?"left-right":q.cols===1?"top-bottom":"positioned";
+}
+export function validCharacterLayout(layout:CharacterLayout) {
+ if(!Number.isInteger(layout.rows)||!Number.isInteger(layout.cols)||layout.rows<1||layout.cols<1)return false;
+ const cells=new Set<string>();
+ for(const p of layout.parts){
+  if([...p.text].length!==1||![p.row,p.col,p.rowSpan,p.colSpan].every(n=>Number.isInteger(n)&&n>0)||p.row+p.rowSpan-1>layout.rows||p.col+p.colSpan-1>layout.cols)return false;
+  for(let r=p.row;r<p.row+p.rowSpan;r++)for(let c=p.col;c<p.col+p.colSpan;c++){
+   const key=`${r}:${c}`;if(cells.has(key))return false;cells.add(key);
+  }
+ }
+ return cells.size===layout.rows*layout.cols;
+}
