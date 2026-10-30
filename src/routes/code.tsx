@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { BackButton } from "@/components/back-button";
+import {Button} from "@/components/ui/button";
+import {RefreshCw} from "lucide-react";
 
 export const Route = createFileRoute("/code")({
   head: () => ({ meta: [{ name: "description", content: "Code — Acelexia. Manage your Acelexia learning adventure." }, { property: "og:title", content: "Code — Acelexia" }, { property: "og:description", content: "Code — Acelexia. Acelexia learning tools." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { title: "Code — Acelexia" }, { name: "robots", content: "noindex" }] }),
@@ -48,7 +50,7 @@ function CodePage() {
     <main className="min-h-screen bg-background p-6">
       <header className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-extrabold">{"</> App source code"}</h1>
-        <BackButton className="text-sm text-primary" />
+        <div className="flex items-center gap-3"><Button size="icon" variant="outline" aria-label="Reload latest code" title="Reload latest code" onClick={()=>window.location.reload()}><RefreshCw/></Button><BackButton className="text-sm text-primary" /></div>
       </header>
 
       <div className="grid gap-4 lg:grid-cols-[320px_1fr]">
