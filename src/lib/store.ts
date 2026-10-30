@@ -4,6 +4,7 @@ import type { RevisionItem } from "./auth.functions";
 import type { StarColor } from "./leveling";
 
 export type Settings = {
+  [key: `familySeen_${string}`]: string | undefined;
   fontScale: number; // 1 = normal
   timeLimit: number; // seconds per question
   language: "zh-TW" | "zh-CN" | "en";
@@ -268,6 +269,7 @@ export function setState(next: State, { sync = true } = {}) {
               ...(next.settings.feedbackRating ? { feedbackRating: next.settings.feedbackRating } : {}),
               ...(next.settings.feedbackComment ? { feedbackComment: next.settings.feedbackComment } : {}),
               ...(next.settings.tutorialDone ? { tutorialDone: true } : {}),
+              ...Object.fromEntries(Object.entries(next.settings).filter(([k,v])=>k.startsWith("familySeen_")&&typeof v==="string")),
               ...flattenStats(next.stats),
               ...flattenLevelStars(next.stars),
               ...flattenDaily(next.daily),

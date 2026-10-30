@@ -51,7 +51,23 @@ export const BASKET_SECONDS = 200;
 export const PARALYSIS_SECONDS = 3;
 export function basketGoal(grade:string) { return 6 + Math.max(0,Number(grade.slice(1))||0)*2; }
 export function basketGoods(target:number, seed:number) {
- return shuffled([{text:`${target-1} + 1`,value:target},{text:`${target*2} ÷ 2`,value:target},{text:`${target+seed%4} + 3`,value:target+seed%4+3},{text:`${target+4} − 4`,value:target}]);
+ const used=new Set<string>();
+ return Array.from({length:8},(_,i)=>{const g=nextBasketGood(target,seed*8+i,used);used.add(g.text);return g});
+}
+export function nextBasketGood(target:number,seed:number,used:ReadonlySet<string>=new Set(),grade="P3") {
+ const basic=grade==="K3"||grade==="P1";
+ const pool:{text:string;value:number}[]=[];
+ for(let value=Math.max(1,target-3);value<=target+3;value++){
+  for(let n=1;n<=target+12;n++){
+   if(n<value)pool.push({text:`${n} + ${value-n}`,value});
+   pool.push({text:`${value+n} − ${n}`,value});
+   if(!basic&&n>1&&n<=12){pool.push({text:`${value*n} ÷ ${n}`,value});if(value%n===0)pool.push({text:`${n} × ${value/n}`,value})}
+  }
+ }
+ const wantCorrect=seed%3!==2;
+ const fresh=pool.filter(g=>!used.has(g.text)&&(g.value===target)===wantCorrect);
+ const choices=fresh.length?fresh:pool.filter(g=>!used.has(g.text));
+ return shuffled(choices.length?choices:pool)[0];
 }
 export const BUILDER_BANDS: Record<string, {min:number;max:number;budget:number}> = {
  K3:{min:1,max:3,budget:12}, P1:{min:4,max:5,budget:24},
@@ -68,7 +84,7 @@ export function builderRound(grade:string) {
  const reachable=(load:number):boolean=>load===0||load>=band.min&&eligible.some(c=>c.difficulty<=load&&reachable(load-c.difficulty));
  while(remaining>0){
   const candidates=shuffled(eligible.filter(c=>c.difficulty<=remaining&&reachable(remaining-c.difficulty)));
-  const next=candidates.find(c=>c.word!==rows.at(-1)?.word)??candidates[0];
+  const next=candidates.find(c=>!rows.some(r=>r.word===c.word))??candidates.find(c=>c.word!==rows.at(-1)?.word)??candidates[0];
   if(!next)break;
   rows.push(next);remaining-=next.difficulty;
  }
