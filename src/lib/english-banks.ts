@@ -4301,11 +4301,11 @@ export const ENGLISH_BANKS:Record<string,{typos:TypoItem[];families:{child:strin
         "scene": "seaside"
       },
       {
-        "sentence": "The crab has a protective shell.",
-        "bad": "shell",
+        "sentence": "The crab has a protective sheel.",
+        "bad": "sheel",
         "good": "shell",
         "choices": [
-          "shell",
+          "sheel",
           "shell",
           "shelle"
         ],

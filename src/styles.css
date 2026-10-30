@@ -268,6 +268,9 @@
 .scene-park img { left:-100%; top:0; }
 .scene-classroom img { left:0; top:-100%; }
 .scene-seaside img { left:-100%; top:-100%; }
+.family-npc svg { width:46px !important; height:69px !important; }
+.family-npc[aria-label="Mother"] svg { width:62px !important; height:93px !important; }
+.basket-cupboard svg { width:32px !important; height:32px !important; }
 .appraiser-reaction { animation:appraiser-nod .65s ease both; }
 @keyframes appraiser-nod { 0%,100%{transform:translateY(0)} 40%{transform:translateY(5px)} 70%{transform:translateY(-3px)} }
 @media(max-width:600px){ .basket-layout { grid-template-rows:130px 260px; } .basket-cupboards{gap:6px;padding:6px;} }
