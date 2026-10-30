@@ -26,6 +26,6 @@ test("complex nested characters keep upper and lower positions",()=>{
 });
 test("議 uses real parts 丷 王 我 stacked right of 言, never look-alike 羊",()=>{
  const q=characterLayout("議");
- expect(q.parts.map(p=>p.text)).toEqual(["言","丷","王","我"]);
- expect(q.parts.find(p=>p.text==="言")?.rowSpan).toBe(3);
+ assert.deepEqual(q.parts.map(p=>p.text),["言","丷","王","我"]);
+ assert.equal(q.parts.find(p=>p.text==="言")?.rowSpan,3);
 });
