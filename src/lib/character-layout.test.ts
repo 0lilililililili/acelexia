@@ -24,3 +24,8 @@ test("complex nested characters keep upper and lower positions",()=>{
  assert.deepEqual(characterLayout("鬱").parts.map(p=>[p.text,p.row,p.col]),[["木",1,1],["缶",1,2],["木",1,3],["冖",2,1],["鬯",3,1],["彡",3,3]]);
  assert.deepEqual(characterLayout("語").parts.map(p=>[p.text,p.row,p.col,p.rowSpan]),[["言",1,1,2],["五",1,2,1],["口",2,2,1]]);
 });
+test("議 uses real parts 丷 王 我 stacked right of 言, never look-alike 羊",()=>{
+ const q=characterLayout("議");
+ assert.deepEqual(q.parts.map(p=>p.text),["言","丷","王","我"]);
+ assert.equal(q.parts.find(p=>p.text==="言")?.rowSpan,3);
+});
