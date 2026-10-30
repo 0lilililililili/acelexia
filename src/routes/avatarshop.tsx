@@ -5,6 +5,8 @@ import { useLang } from "@/lib/i18n";
 import { tr } from "@/lib/tr";
 import { StarRow } from "@/components/stars";
 import { useGameState } from "./avatar";
+import { Button } from "@/components/ui/button";
+import { Store, UserRound } from "lucide-react";
 
 export const Route = createFileRoute("/avatarshop")({
   head: () => ({
@@ -25,9 +27,9 @@ function AvatarShopLayout() {
   const s = useGameState();
   return (
     <main className="min-h-screen px-4 py-6 max-w-5xl mx-auto">
-      <div className="flex gap-4">
-        <Link to="/shop" className="text-primary font-semibold">← {tr(lang, "Shop", "商店", "商店")}</Link>
-        <Link to="/avatar" className="text-primary font-semibold">{tr(lang, "My Avatar", "我的角色", "我的角色")}</Link>
+      <div className="flex justify-between items-center gap-6 flex-wrap">
+        <Button asChild variant="ghost"><Link to="/shop"><Store />← {tr(lang, "Shop", "商店", "商店")}</Link></Button>
+        <Button asChild variant="outline" className="border-2 border-primary"><Link to="/avatar"><UserRound />{tr(lang, "My Avatar", "我的角色", "我的角色")}</Link></Button>
       </div>
       <header className="mt-3 flex items-center gap-3 flex-wrap">
         <h1 className="text-4xl font-extrabold">{tr(lang, "Avatar Shop", "角色商店", "角色商店")}</h1>
