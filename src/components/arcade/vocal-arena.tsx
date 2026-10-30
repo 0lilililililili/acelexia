@@ -5,7 +5,8 @@ import {FightingAvatar} from "@/components/fighting-avatar";
 import {SpeakButton} from "@/components/speak-button";
 import {VOCAL_WORDS} from "@/lib/arcade-data";
 import {arcadeAnswer} from "@/lib/arcade-record";
-import {useSpeech} from "@/hooks/use-speech";
+import {useRecordedSpeech} from "@/hooks/use-recorded-speech";
+import {recognitionLangFor} from "@/lib/recognition-language";
 import {voiceLangFor} from "@/lib/read-aloud";
 import {matches as matchesAnswer} from "@/lib/answer-match";
 import {WORLD_ART} from "@/lib/world-art";
@@ -16,8 +17,8 @@ export function VocalArena({lang,grade,onComplete}:ArcadeProps){const [theme,set
   if(mode==="defense"){if(!ok)setHp(h=>Math.max(0,h-18));setResult(ok?"防守成功！":"防守失敗！ −18 HP")}
   else {if(ok){const damage=mode==="critical"?24:guard?5:12;setEnemy(h=>Math.max(0,h-damage));setStriking(true);setResult(`命中！ −${damage} HP`)}else setResult("招式未能使出！"); if(!guard)setHp(h=>Math.max(0,h-8))}
  },[word,finished,theme,mode,guard]);
- const speech=useSpeech({lang:voiceLangFor("chi",lang),onResult:check});
- useEffect(()=>{if(!theme||finished||result)return;const timer=setInterval(()=>setSeconds(s=>Math.max(0,s-1)),1000);return()=>clearInterval(timer)},[theme,finished,result]);
+ const speech=useRecordedSpeech({lang:recognitionLangFor("chi",lang),onResult:check});
+ useEffect(()=>{if(!theme||finished||result||speech.listening||speech.processing)return;const timer=setInterval(()=>setSeconds(s=>Math.max(0,s-1)),1000);return()=>clearInterval(timer)},[theme,finished,result,speech.listening,speech.processing]);
  useEffect(()=>{if(seconds===0&&!result)check("")},[seconds,result,check]);
  const next=()=>{const defend=Math.random()<(enemy<35?.65:.25);setGuard(defend);setMode(Math.random()<.2?"critical":!defend&&Math.random()<.4?"defense":"attack");setTurn(t=>t+1);setResult(null);setStriking(false);setTyped("");setSeconds(15);answered.current=false;startAt.current=Date.now()};
  if(!theme)return <div><h2 className="text-2xl font-bold">擂台 · 選擇主題</h2><div className="grid grid-cols-2 gap-4 mt-6">{Object.keys(VOCAL_WORDS).map(t=><Button key={t} className="h-24 text-2xl" variant="outline" onClick={()=>{setTheme(t);startAt.current=Date.now()}}>{t}</Button>)}</div></div>;
