@@ -1,5 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { Button } from "@/components/ui/button";
 import { signUpUser } from "@/lib/auth.functions";
 import { emptyState, setSession, setState } from "@/lib/store";
 import pirateMap from "@/assets/pirate-map.jpg";
@@ -24,6 +26,9 @@ const RESERVED = ["admin", "test1"];
 
 function SignupPage() {
   const nav = useNavigate();
+  const signup = useServerFn(signUpUser);
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
   const [name, setName] = useState("");
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
@@ -48,7 +53,7 @@ function SignupPage() {
     if (v) return;
     setBusy(true);
     try {
-      const res = await signUpUser({ data: { username: name.trim(), password: pw, gender } });
+      const res = await signup({ data: { username: name.trim(), password: pw, gender } });
       if (!res.ok) {
         setErr(res.error);
         return;
@@ -56,7 +61,7 @@ function SignupPage() {
       const fresh = emptyState();
       setState({ ...fresh, avatar: { ...fresh.avatar, gender } }, { sync: false });
       setSession({ userId: res.userId, username: res.username, isAdmin: false, token: res.token });
-      nav({ to: "/take-test" });
+      await nav({ to: "/take-test" });
     } catch {
       setErr("Something went wrong. Please try again.");
     } finally {
@@ -125,13 +130,13 @@ function SignupPage() {
 
         {err && <p className="text-destructive text-sm mt-3 font-semibold">{err}</p>}
 
-        <button
+        <Button
           type="submit"
-          disabled={busy}
+          disabled={!ready || busy}
           className="mt-6 w-full rounded-2xl bg-primary text-primary-foreground py-4 text-lg font-bold disabled:opacity-50"
         >
-          {busy ? "Creating…" : "Create account →"}
-        </button>
+          {!ready ? "Loading…" : busy ? "Creating…" : "Create account →"}
+        </Button>
 
         <Link to="/login" className="block mt-4 text-center text-sm text-primary font-semibold">
           I already have an account
