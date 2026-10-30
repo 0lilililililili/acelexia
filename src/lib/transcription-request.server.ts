@@ -12,6 +12,7 @@ export async function transcribe(
   options: {
     buffered?: boolean;
     language?: string;
+    dialect?: "zh-HK"|"zh-CN";
     signal?: AbortSignal;
   } = {},
 ) {
@@ -25,6 +26,7 @@ export async function transcribe(
   form.append("response_format", "json");
   if (!options.buffered) form.append("stream", "true");
   if (options.language) form.append("language", options.language);
+  if (options.dialect) form.append("prompt", options.dialect === "zh-HK" ? "This is a child reading Chinese words in Cantonese (Hong Kong). Transcribe the actual speech in Traditional Chinese. Do not translate Cantonese to English or invent words." : "This is a child reading Chinese words in Mandarin. Transcribe the actual speech in Chinese. Do not translate to English or invent words.");
   return fetch(`${config.baseURL}/v1/audio/transcriptions`, {
     method: "POST",
     headers: { Authorization: `Bearer ${config.apiKey}` },

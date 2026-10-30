@@ -7,6 +7,9 @@ import { SUBJECT_LABEL } from "@/lib/subjects";
 import towerImg from "@/assets/tower.png";
 import {ARCADE_GAMES} from "@/lib/arcade";
 import {Button} from "@/components/ui/button";
+import marketStreet from "@/assets/math-market-street.jpg";
+import villageStreet from "@/assets/english-village-street.jpg";
+import chinaStreet from "@/assets/chinatown-street.jpg";
 
 
 export const Route = createFileRoute("/world/$world")({
@@ -45,23 +48,19 @@ function WorldPage() {
   const area = AREA[world];
   if (area) {
     return (
-      <main className="min-h-screen px-6 py-8 relative" style={{ backgroundImage: `linear-gradient(180deg, oklch(0 0 0 / 0.15), oklch(0 0 0 / 0.35)), url(${art.bg})`, backgroundSize: "cover", backgroundPosition: "center", backgroundAttachment: "fixed" }}>
-        <Link to="/game" className="text-white font-semibold drop-shadow relative z-10">{t("back_world")}</Link>
-        <header className="text-center mt-4 mb-8 text-white drop-shadow relative z-10">
+      <main className="min-h-screen bg-background py-6">
+        <Button asChild variant="link" className="mx-4"><Link to="/game">{t("back_world")}</Link></Button>
+        <header className="text-center mt-2 mb-5 text-foreground px-4">
           <h1 className="text-4xl font-extrabold">{label}</h1>
-          <p className="opacity-95 text-lg">{SUBJECT_LABEL[area.subject]} mini-games — finish a round to win stars.</p>
         </header>
-        <div className="grid gap-5 sm:grid-cols-3 max-w-5xl mx-auto relative z-10">
-          {ARCADE_GAMES.filter(g=>g.world===world).map((g) => (
-            <div key={g.id} className="bg-card border-2 border-border rounded-md p-6 text-center shadow-2xl">
-              <img src={art.boss} alt="" loading="lazy" className="mx-auto w-24 h-24 object-contain opacity-80" />
-              <h2 className="text-xl font-extrabold mt-2">{g.name}</h2>
-              <Button asChild className="mt-5"><Link to="/arcade/$game" params={{game:g.id}}>Play →</Link></Button>
-            </div>
+        <div className={`subject-street ${world==="fire"?"street-three":""}`}>
+          <img src={world==="forest"?marketStreet:world==="aquatic"?villageStreet:chinaStreet} alt={label} width={1536} height={1024}/>
+          {ARCADE_GAMES.filter(g=>g.world===world).map((g,i) => (
+            <Button key={g.id} asChild variant="ghost" className={`street-door street-door-${i}`}><Link to="/arcade/$game" params={{game:g.id}} aria-label={`Play ${g.name}`}><span>{g.name} →</span></Link></Button>
           ))}
         </div>
-        <div className="text-center mt-8 relative z-10">
-          <Link to="/boss" className="inline-block bg-primary text-primary-foreground rounded-full px-6 py-3 font-extrabold shadow-lg">Go to Boss Towers</Link>
+        <div className="text-center mt-5 mb-6">
+          <Button asChild><Link to="/boss">Go to Boss Towers</Link></Button>
         </div>
       </main>
     );

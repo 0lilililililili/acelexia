@@ -18,7 +18,7 @@ export const Route=createFileRoute("/api/transcribe")({server:{handlers:{POST:as
  const settings=(progress?.settings??{}) as Record<string,unknown>;
  if(typeof settings.voiceDenied==="string")return Response.json({message:settings.voiceDenied},{status:403});
  const key=process.env.LOVABLE_API_KEY;if(!key)return Response.json({message:"Voice input is not configured."},{status:401});
- const upstream=await transcribe({baseURL:"https://ai.gateway.lovable.dev",apiKey:key,model:"openai/gpt-transcribe",maxFileBytes:limit,audioOnly:true},file,{language:lang==="en-US"?"en":"zh",signal:request.signal});
+ const upstream=await transcribe({baseURL:"https://ai.gateway.lovable.dev",apiKey:key,model:"openai/gpt-transcribe",maxFileBytes:limit,audioOnly:true},file,{language:lang==="en-US"?"en":"zh",...(lang==="zh-HK"||lang==="zh-CN"?{dialect:lang}:{}),signal:request.signal});
  if(upstream.status===403){const body=await upstream.clone().json().catch(()=>({}));const message=body.message??body.error?.message??"Voice input access is unavailable.";await supabaseAdmin.from("progress").update({settings:{...settings,voiceDenied:message} as never}).eq("user_id",session.sub)}
  return new Response(upstream.body,{status:upstream.status,headers:{"Content-Type":upstream.headers.get("content-type")??"text/event-stream","Cache-Control":"no-cache"}});
 }}}});
