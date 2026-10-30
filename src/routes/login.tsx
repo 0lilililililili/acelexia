@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { logInUser } from "@/lib/auth.functions";
 import { DEFAULT_SETTINGS, emptyState, normalizeAvatar, normalizeBadges, normalizeStreak, normalizeWallet, setSession, setState, unflattenStats, unflattenLevelStars, unflattenDaily, type State, type Wallet } from "@/lib/store";
 import pirateMap from "@/assets/pirate-map.jpg";
@@ -20,6 +21,9 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const nav = useNavigate();
+  const login = useServerFn(logInUser);
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
   const [id, setId] = useState("");
   const [pw, setPw] = useState("");
   const [err, setErr] = useState<string | null>(null);
@@ -34,7 +38,7 @@ function LoginPage() {
     }
     setBusy(true);
     try {
-      const res = await logInUser({ data: { username: id.trim(), password: pw } });
+      const res = await login({ data: { username: id.trim(), password: pw } });
       if (!res.ok) {
         setErr(res.error);
         return;
@@ -45,7 +49,7 @@ function LoginPage() {
           window.sessionStorage.setItem("wq_admin_token", res.token);
         } catch {}
         setSession({ userId: "admin", username: "admin", isAdmin: true });
-        nav({ to: "/admin" });
+        await nav({ to: "/admin" });
         return;
       }
 
@@ -77,9 +81,9 @@ function LoginPage() {
       } catch {}
 
       // New player (never finished the test) → take the test first
-      nav({ to: restored.onboarded ? "/game" : "/take-test" });
-    } catch {
-      setErr("Something went wrong. Please try again.");
+      await nav({ to: restored.onboarded ? "/game" : "/take-test" });
+    } catch (error) {
+      setErr(error instanceof Error ? error.message : "Something went wrong. Please try again.");
     } finally {
       setBusy(false);
     }
@@ -90,7 +94,7 @@ function LoginPage() {
       className="min-h-screen flex items-center justify-center p-6 relative"
       style={{ backgroundImage: `url(${pirateMap})`, backgroundSize: "cover", backgroundPosition: "center" }}
     >
-      <div className="absolute inset-0 bg-[oklch(0.97_0.05_80)]/55" />
+      <div className="absolute inset-0 bg-background/55" />
       <form onSubmit={submit} className="relative bg-card border-2 border-border rounded-3xl p-8 w-full max-w-md shadow-lg">
         <h1 className="text-3xl font-extrabold">Log in</h1>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -122,10 +126,10 @@ function LoginPage() {
 
         <Button
           type="submit"
-          disabled={busy}
+          disabled={!ready || busy}
           className="mt-6 w-full h-16 text-lg font-bold transition hover:bg-forest hover:shadow-lg focus-visible:ring-4 disabled:opacity-50"
         >
-          {busy ? "Checking…" : "Log in →"}
+          {!ready ? "Loading…" : busy ? "Checking…" : "Log in →"}
         </Button>
 
         <Link to="/signup" className="block mt-4 text-center text-sm text-primary font-semibold">

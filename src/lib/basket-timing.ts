@@ -1,0 +1,1 @@
+export const BASKET_REPLACEMENT_MS = 2500;
