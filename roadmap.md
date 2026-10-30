@@ -43,3 +43,15 @@
 - [x] Review all 102 assembly characters with AI; retain 99 reviewed entries and withhold 辨、爨、鷹 pending accurate special-component artwork.
 - [x] Render explicit part positions, including 贏's two upper rows and three bottom columns.
 - [x] Test the full bank and verify placement and checking in the game and Code page.
+
+## October 30 review
+- [ ] Diagnose and fix login refresh/navigation; verify a real sign-in.
+- [ ] Replace subject area scenery with interactive minigame buildings.
+- [ ] Separate Shop and outlined My avatar controls.
+- [ ] Allow individual character pieces to return to choices.
+- [ ] Add Cantonese/Mandarin session selection and pronunciation-aware retries/choices.
+- [ ] Separate compact appraiser scenery from expressive NPC artwork.
+- [ ] Reduce English scene size; enlarge words/choices; add contextual word-family parts of speech.
+- [ ] Mute basket scenery and delay replacements by 2–3 seconds.
+- [ ] Expand grade-aware bakery syllabus practice and cooking presentation.
+- [ ] Refresh Code and verify changed activities and tests.
