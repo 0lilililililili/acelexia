@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { HelpCircle } from "lucide-react";
 import pirateMap from "@/assets/pirate-map.jpg";
 import mascot from "@/assets/mascot-dragon.png";
+import {Button} from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -58,12 +59,9 @@ function Home1() {
           >
             Sign up
           </Link>
-          <Link
-            to="/login"
-            className="rounded-2xl bg-card border-2 border-primary text-primary px-6 py-5 text-lg font-bold hover:scale-[1.03] transition"
-          >
+          <Button asChild variant="outline" className="h-auto border-2 border-primary text-primary px-6 py-5 text-lg font-bold hover:bg-primary hover:text-primary-foreground hover:shadow-lg transition"><Link to="/login">
             Log in
-          </Link>
+          </Link></Button>
         </div>
 
 

@@ -16,3 +16,6 @@
 - Stream speech PCM through a same-origin server route and resume browser audio on the user's click, so playback does not wait for a full WAV file.
 - Keep arcade definitions and grade-aware round data in shared browser-safe modules, with one independently replayable route per selected game.
 - Calculate arcade performance rewards in a shared pure evaluator, using explicit attempt totals so every game follows the same reward thresholds.
+- Keep validated AI-prepared English banks by grade and persist mastered family roots in progress settings; fetch fresh families only on explicit user requests so blocked generation cannot loop.
+- Use complete WAV recordings through the authenticated same-origin transcription route for Chinese arcade and re-quiz answers; keep recognition language independent from an English interface and normalize Chinese scripts for matching.
+- Store character spatial layout metadata separately from word banks and render selectable component positions, preserving genuine repeated radicals.

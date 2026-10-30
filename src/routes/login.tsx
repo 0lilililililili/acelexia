@@ -4,6 +4,7 @@ import { logInUser } from "@/lib/auth.functions";
 import { DEFAULT_SETTINGS, emptyState, normalizeAvatar, normalizeBadges, normalizeStreak, normalizeWallet, setSession, setState, unflattenStats, unflattenLevelStars, unflattenDaily, type State, type Wallet } from "@/lib/store";
 import pirateMap from "@/assets/pirate-map.jpg";
 import { BackButton } from "@/components/back-button";
+import {Button} from "@/components/ui/button";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -119,13 +120,13 @@ function LoginPage() {
 
         {err && <p className="text-destructive text-sm mt-3 font-semibold">{err}</p>}
 
-        <button
+        <Button
           type="submit"
           disabled={busy}
-          className="mt-6 w-full rounded-2xl bg-primary text-primary-foreground py-4 text-lg font-bold disabled:opacity-50"
+          className="mt-6 w-full h-16 text-lg font-bold transition hover:bg-forest hover:shadow-lg focus-visible:ring-4 disabled:opacity-50"
         >
           {busy ? "Checking…" : "Log in →"}
-        </button>
+        </Button>
 
         <Link to="/signup" className="block mt-4 text-center text-sm text-primary font-semibold">
           Create a new account

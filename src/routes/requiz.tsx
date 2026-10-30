@@ -5,6 +5,9 @@ import { addExp, getState, recordAnswer, DEFAULT_SETTINGS, type State } from "@/
 import { SpeakButton } from "@/components/speak-button";
 import { voiceLangFor } from "@/lib/read-aloud";
 import { useSpeech } from "@/hooks/use-speech";
+import {useRecordedSpeech} from "@/hooks/use-recorded-speech";
+import {recognitionLangFor} from "@/lib/recognition-language";
+import {Button} from "@/components/ui/button";
 import { LETTERS } from "@/lib/answer-match";
 import { answerOutcome } from "@/lib/answer-outcome";
 import { answerFormat } from "@/lib/answer-format";
@@ -68,7 +71,7 @@ function RequizPage() {
   const current = quiz[idx];
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   useEffect(() => { setSettings(getState().settings); }, []);
-  const lang = voiceLangFor(current?.subject ?? "eng", settings.language);
+  const lang = recognitionLangFor(current?.subject ?? "eng", settings.language);
   const startedAt = useRef(Date.now());
   useEffect(() => { startedAt.current = Date.now(); },[current]);
   const finished = quiz.length > 0 && idx >= quiz.length;
@@ -111,7 +114,10 @@ function RequizPage() {
     [check],
   );
 
-  const { listening, supported, start } = useSpeech({ lang, onResult: handleResult });
+  const browserSpeech = useSpeech({ lang, onResult: handleResult });
+  const recordedSpeech = useRecordedSpeech({lang,onResult:handleResult});
+  const speech=current?.subject==="chi"?recordedSpeech:browserSpeech;
+  const {listening,supported,start}=speech;
 
   if (pool && pool.length === 0) {
     return (
@@ -199,11 +205,11 @@ function RequizPage() {
 
         <div className="mt-auto pt-8 flex flex-col items-center gap-4">
           {supported ? (
-            <button
-              onClick={start}
-              disabled={listening}
+            <Button
+              onClick={()=>{if(current?.subject==="chi"&&listening)void recordedSpeech.stop();else void start()}}
+              disabled={current?.subject==="chi"&&recordedSpeech.processing}
               className={`rounded-full w-24 h-24 bg-primary text-primary-foreground shadow-2xl grid place-items-center ${listening ? "mic-pulse" : "hover:scale-105"}`}
-              aria-label="Speak your answer"
+              aria-label={listening&&current?.subject==="chi"?"Stop recording":"Speak your answer"}
             >
               <svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
                 <rect x="9" y="2" width="6" height="12" rx="3" fill="currentColor" stroke="none" />
@@ -211,7 +217,7 @@ function RequizPage() {
                 <path d="M12 18v3" />
                 <path d="M8 21h8" />
               </svg>
-            </button>
+            </Button>
           ) : (
             <form
               onSubmit={(e) => { e.preventDefault(); check(typed); }}
@@ -226,6 +232,7 @@ function RequizPage() {
               <button className="rounded-2xl bg-primary text-primary-foreground px-5 py-3 font-bold">Check</button>
             </form>
           )}
+          {current?.subject==="chi"&&<><p role="status">{recordedSpeech.processing?"Recognising your answer…":listening?"讀完後按咪高峰停止錄音":""}</p>{recordedSpeech.error&&<p role="alert" className="text-destructive">{recordedSpeech.error}</p>}<form onSubmit={e=>{e.preventDefault();check(typed)}} className="flex gap-2"><input aria-label="Chinese answer" value={typed} onChange={e=>setTyped(e.target.value)} className="border border-border rounded-md px-3 min-w-0"/><Button type="submit">Check</Button></form></>}
           <button onClick={next} className="text-sm font-bold text-muted-foreground hover:text-foreground">
             Next question →
           </button>
