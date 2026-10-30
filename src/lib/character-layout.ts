@@ -1,3 +1,4 @@
 export type ComponentShape="left-right"|"top-bottom"|"triple"|"left-stack"|"stack-bottom"|"columns";
 export const CHARACTER_SHAPES:Record<string,ComponentShape>={森:"triple",鑫:"triple",轟:"triple",晶:"triple",品:"triple",淼:"triple",焱:"triple",磊:"triple",想:"stack-bottom",意:"top-bottom",語:"left-stack",湖:"columns",謝:"columns",樹:"columns",辯:"columns",辨:"columns",籃:"top-bottom",藍:"top-bottom",鑿:"top-bottom",鬱:"stack-bottom",贏:"top-bottom",聽:"left-stack",福:"left-stack",富:"top-bottom"};
-export function characterShape(word:string):ComponentShape{return CHARACTER_SHAPES[word]??"left-right"}
+const TOP_BOTTOM=new Set(["苗","早","字","安","音","草","花","炎","息","悲","念","思","攀","鷹"]);
+export function characterShape(word:string):ComponentShape{return word==="龘"?"triple":TOP_BOTTOM.has(word)?"top-bottom":CHARACTER_SHAPES[word]??"left-right"}

@@ -1,0 +1,12 @@
+import {test} from "node:test";
+import {strict as assert} from "node:assert";
+import {basketGoods,nextBasketGood,BUILD_CHARACTERS} from "./arcade-data";
+import {characterShape} from "./character-layout";
+import {recognitionLangFor} from "./recognition-language";
+import {matches} from "./answer-match";
+test("basket contains eight distinct cupboard expressions",()=>{const g=basketGoods(8,0);assert.equal(g.length,8);assert.equal(new Set(g.map(x=>x.text)).size,8)});
+test("replacement expressions do not repeat previously collected expressions",()=>{const used=new Set<string>();for(let i=0;i<80;i++){const g=nextBasketGood(8,i,used);assert.ok(!used.has(g.text));used.add(g.text)}});
+test("森 鑫 and 轟 assemble in a top-one bottom-two shape",()=>{for(const w of ["森","鑫","轟"]){assert.equal(characterShape(w),"triple");assert.equal(BUILD_CHARACTERS.find(q=>q.word===w)?.parts.length,3)}});
+test("行 assembles left to right",()=>assert.equal(characterShape("行"),"left-right"));
+test("Chinese recognition stays Chinese with an English interface",()=>{assert.equal(recognitionLangFor("chi","en"),"zh-HK");assert.equal(recognitionLangFor("chi","zh-CN"),"zh-CN")});
+test("Chinese transcripts accept equivalent scripts and punctuation",()=>{assert.ok(matches("苹果。","蘋果"));assert.ok(matches("蘋果。","蘋果"));assert.equal(matches("香蕉","蘋果"),false)});

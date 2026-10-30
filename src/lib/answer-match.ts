@@ -1,4 +1,5 @@
 // Shared answer matching + spoken item-command parsing for the play & re-quiz pages.
+import {normalizedChinese} from "./chinese-script";
 
 export const LETTERS = ["a", "b", "c", "d"];
 
@@ -72,7 +73,7 @@ export function wordsToFraction(s: string): string | null {
 }
 
 export function normalize(s: string) {
-  return s.toLowerCase().replace(/[^\p{Letter}\p{Number}]/gu, "");
+  return normalizedChinese(s).toLowerCase().replace(/[^\p{Letter}\p{Number}]/gu, "");
 }
 
 export function matches(transcript: string, answer: string) {

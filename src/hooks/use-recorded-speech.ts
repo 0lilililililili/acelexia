@@ -5,7 +5,7 @@ import {getSession} from "@/lib/store";
 export function useRecordedSpeech({lang,onResult}:{lang:string;onResult:(text:string)=>void}){
  const [listening,setListening]=useState(false);const [processing,setProcessing]=useState(false);const [error,setError]=useState("");const [transcript,setTranscript]=useState("");
  const recording=useRef<Awaited<ReturnType<typeof recordWav>>|null>(null);const callback=useRef(onResult);callback.current=onResult;const timer=useRef<ReturnType<typeof setTimeout>|null>(null);const mounted=useRef(true);
- useEffect(()=>()=>{mounted.current=false;if(timer.current)clearTimeout(timer.current);void recording.current?.stop().catch(()=>{});recording.current=null},[]);
+ useEffect(()=>{mounted.current=true;return()=>{mounted.current=false;if(timer.current)clearTimeout(timer.current);void recording.current?.stop().catch(()=>{});recording.current=null}},[]);
  const stop=async()=>{if(timer.current)clearTimeout(timer.current);const active=recording.current;recording.current=null;if(!active)return;setListening(false);setProcessing(true);try{
   const file=await active.stop();const data=new FormData();data.append("file",file);data.append("lang",lang);
   const response=await fetch("/api/transcribe",{method:"POST",headers:{Authorization:`Bearer ${getSession()?.token??""}`},body:data});
