@@ -40,6 +40,6 @@
 - [x] Refresh the Code page and verify the changed activities.
 
 ## Chinese structure review
-- [ ] Review all assembly characters with AI and correct unsupported decompositions.
-- [ ] Render explicit part positions, including 贏's two upper rows and three bottom columns.
-- [ ] Test the full bank and verify placement and checking in the game and Code page.
+- [x] Review all 102 assembly characters with AI; retain 99 reviewed entries and withhold 辨、爨、鷹 pending accurate special-component artwork.
+- [x] Render explicit part positions, including 贏's two upper rows and three bottom columns.
+- [x] Test the full bank and verify placement and checking in the game and Code page.
