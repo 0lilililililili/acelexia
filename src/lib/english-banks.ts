@@ -1,3 +1,4 @@
+// AI-prepared, validated grade-specific practice banks.
 import type {TypoItem} from "./arcade-bank-schema";
 export const ENGLISH_BANKS:Record<string,{typos:TypoItem[];families:{child:string;mother:string}[]}>= {
   "K3": {
@@ -3777,6 +3778,1518 @@ export const ENGLISH_BANKS:Record<string,{typos:TypoItem[];families:{child:strin
       {
         "child": "movement",
         "mother": "move"
+      }
+    ]
+  },
+  "P5": {
+    "typos": [
+      {
+        "sentence": "The mother and boy mix the bater.",
+        "bad": "bater",
+        "good": "batter",
+        "choices": [
+          "batter",
+          "battar",
+          "battor"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "The boy helps his mothar.",
+        "bad": "mothar",
+        "good": "mother",
+        "choices": [
+          "muthar",
+          "mother",
+          "mothur"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "They use eggs and flouer to make the cake.",
+        "bad": "flouer",
+        "good": "flour",
+        "choices": [
+          "flouar",
+          "floure",
+          "flour"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "The strawberies are red.",
+        "bad": "strawberies",
+        "good": "strawberries",
+        "choices": [
+          "strawberries",
+          "strawberrys",
+          "strawberr ies"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "The cake is baking in the ovven.",
+        "bad": "ovven",
+        "good": "oven",
+        "choices": [
+          "ovun",
+          "oven",
+          "ovenn"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "The mother and boy are mixxing together.",
+        "bad": "mixxing",
+        "good": "mixing",
+        "choices": [
+          "mixeing",
+          "mixng",
+          "mixing"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "The boy is a helpful baking partnar.",
+        "bad": "partnar",
+        "good": "partner",
+        "choices": [
+          "partner",
+          "partnur",
+          "partnner"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "The eggs are ingrediants for the cake.",
+        "bad": "ingrediants",
+        "good": "ingredients",
+        "choices": [
+          "ingredents",
+          "ingredients",
+          "ingreedients"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "The mother and boy prepair the batter.",
+        "bad": "prepair",
+        "good": "prepare",
+        "choices": [
+          "prepere",
+          "prepaire",
+          "prepare"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "They are bakeing a cake.",
+        "bad": "bakeing",
+        "good": "baking",
+        "choices": [
+          "baking",
+          "bakking",
+          "bakinng"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "The batter needs mixure.",
+        "bad": "mixure",
+        "good": "mixing",
+        "choices": [
+          "mixxing",
+          "mixing",
+          "mixeing"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "The strawberries are a type of fruite.",
+        "bad": "fruite",
+        "good": "fruit",
+        "choices": [
+          "froot",
+          "fruut",
+          "fruit"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "The mother and boy work togeather.",
+        "bad": "togeather",
+        "good": "together",
+        "choices": [
+          "together",
+          "togethar",
+          "toggether"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "The children are plaing ball.",
+        "bad": "plaing",
+        "good": "playing",
+        "choices": [
+          "playying",
+          "playing",
+          "playng"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "The boy and girl share a bal.",
+        "bad": "bal",
+        "good": "ball",
+        "choices": [
+          "bawl l",
+          "boll",
+          "ball"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "There are burds in the park.",
+        "bad": "burds",
+        "good": "birds",
+        "choices": [
+          "birds",
+          "birdds",
+          "berds"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "The trees are plannts.",
+        "bad": "plannts",
+        "good": "plants",
+        "choices": [
+          "plantes",
+          "plants",
+          "plantts"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "The dog is an animel.",
+        "bad": "animel",
+        "good": "animal",
+        "choices": [
+          "annimal",
+          "animall",
+          "animal"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "The boy and girl are childran.",
+        "bad": "childran",
+        "good": "children",
+        "choices": [
+          "children",
+          "childern",
+          "childrin"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "Playing ball is a form of exersise.",
+        "bad": "exersise",
+        "good": "exercise",
+        "choices": [
+          "excercise",
+          "exercise",
+          "exercize"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "The children are playing outdors.",
+        "bad": "outdors",
+        "good": "outdoors",
+        "choices": [
+          "outdoars",
+          "outdoorz",
+          "outdoors"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "The park is a place for a picnik.",
+        "bad": "picnik",
+        "good": "picnic",
+        "choices": [
+          "picnic",
+          "picknic",
+          "picn ic"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "The boy and girl play with each othar.",
+        "bad": "othar",
+        "good": "other",
+        "choices": [
+          "uther",
+          "other",
+          "otherr"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "The birds have fethers.",
+        "bad": "fethers",
+        "good": "feathers",
+        "choices": [
+          "feathars",
+          "featherrs",
+          "feathers"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "The trees have branchis.",
+        "bad": "branchis",
+        "good": "branches",
+        "choices": [
+          "branches",
+          "branchs",
+          "br anches"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "Playing ball is an outdoor activety.",
+        "bad": "activety",
+        "good": "activity",
+        "choices": [
+          "actvity",
+          "activity",
+          "activitty"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "The teecher is in the classroom.",
+        "bad": "teecher",
+        "good": "teacher",
+        "choices": [
+          "teachar",
+          "techer",
+          "teacher"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "The children have pencisl for writing.",
+        "bad": "pencisl",
+        "good": "pencils",
+        "choices": [
+          "pencils",
+          "pencisl",
+          "pencilse"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "The clock shows the tiem.",
+        "bad": "tiem",
+        "good": "time",
+        "choices": [
+          "tiime",
+          "time",
+          "tyme"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "The books are for reeding.",
+        "bad": "reeding",
+        "good": "reading",
+        "choices": [
+          "readng",
+          "readding",
+          "reading"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "The bags can carry the children's boosk.",
+        "bad": "boosk",
+        "good": "books",
+        "choices": [
+          "books",
+          "boosk",
+          "bookse"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "The boy and girl are studenst.",
+        "bad": "studenst",
+        "good": "students",
+        "choices": [
+          "students",
+          "studenst",
+          "studentse"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "The children are practising their writting.",
+        "bad": "writting",
+        "good": "writing",
+        "choices": [
+          "writeing",
+          "writng",
+          "writing"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "Reading is a useful skil.",
+        "bad": "skil",
+        "good": "skill",
+        "choices": [
+          "skill",
+          "skille",
+          "skilll"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "The classroom is a place for learing.",
+        "bad": "learing",
+        "good": "learning",
+        "choices": [
+          "lerning",
+          "learning",
+          "learnning"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "The teacher helps with the children's educasion.",
+        "bad": "educasion",
+        "good": "education",
+        "choices": [
+          "edducation",
+          "educattion",
+          "education"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "The pencils are useful for schoolwokr.",
+        "bad": "schoolwokr",
+        "good": "schoolwork",
+        "choices": [
+          "schoolwork",
+          "schoolwokr",
+          "schoolworke"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "Reading and writing need practiec.",
+        "bad": "practiec",
+        "good": "practice",
+        "choices": [
+          "practice",
+          "practiec",
+          "practicee"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "The fammily builds a sandcastle.",
+        "bad": "fammily",
+        "good": "family",
+        "choices": [
+          "famaly",
+          "familly",
+          "family"
+        ],
+        "scene": "seaside"
+      },
+      {
+        "sentence": "The sandcastle is made of sadn.",
+        "bad": "sadn",
+        "good": "sand",
+        "choices": [
+          "sand",
+          "sadn",
+          "sande"
+        ],
+        "scene": "seaside"
+      },
+      {
+        "sentence": "There is a bote on the water.",
+        "bad": "bote",
+        "good": "boat",
+        "choices": [
+          "boatt",
+          "boat",
+          "boet"
+        ],
+        "scene": "seaside"
+      },
+      {
+        "sentence": "The crab has clasw.",
+        "bad": "clasw",
+        "good": "claws",
+        "choices": [
+          "claws",
+          "clasw",
+          "clawse"
+        ],
+        "scene": "seaside"
+      },
+      {
+        "sentence": "Ice cream is a frozen treet.",
+        "bad": "treet",
+        "good": "treat",
+        "choices": [
+          "treat",
+          "treet t",
+          "treaat"
+        ],
+        "scene": "seaside"
+      },
+      {
+        "sentence": "The family is bilding together.",
+        "bad": "bilding",
+        "good": "building",
+        "choices": [
+          "buidling",
+          "building",
+          "buildding"
+        ],
+        "scene": "seaside"
+      },
+      {
+        "sentence": "The boat floats on the watar.",
+        "bad": "watar",
+        "good": "water",
+        "choices": [
+          "watter",
+          "waterr",
+          "water"
+        ],
+        "scene": "seaside"
+      },
+      {
+        "sentence": "The family works on the sandcastel.",
+        "bad": "sandcastel",
+        "good": "sandcastle",
+        "choices": [
+          "sandcastle",
+          "sandcastel",
+          "sandcastlee"
+        ],
+        "scene": "seaside"
+      },
+      {
+        "sentence": "Building a sandcastle takes teamwokr.",
+        "bad": "teamwokr",
+        "good": "teamwork",
+        "choices": [
+          "teamwork",
+          "teamwokr",
+          "teamworke"
+        ],
+        "scene": "seaside"
+      },
+      {
+        "sentence": "The crab has a protective shell.",
+        "bad": "shell",
+        "good": "shell",
+        "choices": [
+          "shell",
+          "shell",
+          "shelle"
+        ],
+        "scene": "seaside"
+      },
+      {
+        "sentence": "The family is at the seeside.",
+        "bad": "seeside",
+        "good": "seaside",
+        "choices": [
+          "seaside",
+          "seasidde",
+          "seasied"
+        ],
+        "scene": "seaside"
+      },
+      {
+        "sentence": "The family is busy with their sandcastle projetc.",
+        "bad": "projetc",
+        "good": "project",
+        "choices": [
+          "project",
+          "projetc",
+          "projecte"
+        ],
+        "scene": "seaside"
+      }
+    ],
+    "families": [
+      {
+        "child": "eggs",
+        "mother": "egg"
+      },
+      {
+        "child": "cakes",
+        "mother": "cake"
+      },
+      {
+        "child": "dogs",
+        "mother": "dog"
+      },
+      {
+        "child": "birds",
+        "mother": "bird"
+      },
+      {
+        "child": "trees",
+        "mother": "tree"
+      },
+      {
+        "child": "books",
+        "mother": "book"
+      },
+      {
+        "child": "pencils",
+        "mother": "pencil"
+      },
+      {
+        "child": "bags",
+        "mother": "bag"
+      },
+      {
+        "child": "boats",
+        "mother": "boat"
+      },
+      {
+        "child": "crabs",
+        "mother": "crab"
+      },
+      {
+        "child": "mixing",
+        "mother": "mix"
+      },
+      {
+        "child": "baked",
+        "mother": "bake"
+      },
+      {
+        "child": "player",
+        "mother": "play"
+      },
+      {
+        "child": "reader",
+        "mother": "read"
+      },
+      {
+        "child": "writer",
+        "mother": "write"
+      },
+      {
+        "child": "teacher",
+        "mother": "teach"
+      },
+      {
+        "child": "builder",
+        "mother": "build"
+      },
+      {
+        "child": "learning",
+        "mother": "learn"
+      },
+      {
+        "child": "helpful",
+        "mother": "help"
+      },
+      {
+        "child": "careful",
+        "mother": "care"
+      },
+      {
+        "child": "happiness",
+        "mother": "happy"
+      },
+      {
+        "child": "kindness",
+        "mother": "kind"
+      },
+      {
+        "child": "sadness",
+        "mother": "sad"
+      },
+      {
+        "child": "darkness",
+        "mother": "dark"
+      },
+      {
+        "child": "brightness",
+        "mother": "bright"
+      },
+      {
+        "child": "softness",
+        "mother": "soft"
+      },
+      {
+        "child": "weakness",
+        "mother": "weak"
+      },
+      {
+        "child": "fairness",
+        "mother": "fair"
+      },
+      {
+        "child": "neatness",
+        "mother": "neat"
+      },
+      {
+        "child": "illness",
+        "mother": "ill"
+      },
+      {
+        "child": "quietly",
+        "mother": "quiet"
+      },
+      {
+        "child": "slowly",
+        "mother": "slow"
+      },
+      {
+        "child": "quickly",
+        "mother": "quick"
+      },
+      {
+        "child": "loudly",
+        "mother": "loud"
+      },
+      {
+        "child": "gently",
+        "mother": "gentle"
+      },
+      {
+        "child": "bravely",
+        "mother": "brave"
+      },
+      {
+        "child": "politely",
+        "mother": "polite"
+      },
+      {
+        "child": "safely",
+        "mother": "safe"
+      },
+      {
+        "child": "easily",
+        "mother": "easy"
+      },
+      {
+        "child": "angrily",
+        "mother": "angry"
+      },
+      {
+        "child": "colourful",
+        "mother": "colour"
+      },
+      {
+        "child": "peaceful",
+        "mother": "peace"
+      },
+      {
+        "child": "beautiful",
+        "mother": "beauty"
+      },
+      {
+        "child": "powerful",
+        "mother": "power"
+      },
+      {
+        "child": "hopeful",
+        "mother": "hope"
+      },
+      {
+        "child": "useful",
+        "mother": "use"
+      },
+      {
+        "child": "joyful",
+        "mother": "joy"
+      },
+      {
+        "child": "successful",
+        "mother": "success"
+      },
+      {
+        "child": "musical",
+        "mother": "music"
+      },
+      {
+        "child": "natural",
+        "mother": "nature"
+      }
+    ]
+  },
+  "P6": {
+    "typos": [
+      {
+        "sentence": "The boy mixes the bater.",
+        "bad": "bater",
+        "good": "batter",
+        "choices": [
+          "batter",
+          "battar",
+          "bater"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "His mother adds some flouer.",
+        "bad": "flouer",
+        "good": "flour",
+        "choices": [
+          "flouer",
+          "flour",
+          "flouur"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "The egs are beside the flour.",
+        "bad": "egs",
+        "good": "eggs",
+        "choices": [
+          "egges",
+          "egs",
+          "eggs"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "A cake is baking in the owen.",
+        "bad": "owen",
+        "good": "oven",
+        "choices": [
+          "oven",
+          "ovven",
+          "owen"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "The strawberies are red.",
+        "bad": "strawberies",
+        "good": "strawberries",
+        "choices": [
+          "strawberies",
+          "strawberries",
+          "strawberrys"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "The mother and boy mix the batter togeter.",
+        "bad": "togeter",
+        "good": "together",
+        "choices": [
+          "togethar",
+          "togeter",
+          "together"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "The boy helps his mothar.",
+        "bad": "mothar",
+        "good": "mother",
+        "choices": [
+          "mother",
+          "mothar",
+          "motherr"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "The mother mixes the batter carefuly.",
+        "bad": "carefuly",
+        "good": "carefully",
+        "choices": [
+          "carefuly",
+          "carefully",
+          "carefullly"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "The boy is practissing his mixing skills.",
+        "bad": "practissing",
+        "good": "practising",
+        "choices": [
+          "practissing",
+          "practiseing",
+          "practising"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "Flour and eggs are ingrediants in the batter.",
+        "bad": "ingrediants",
+        "good": "ingredients",
+        "choices": [
+          "ingredients",
+          "ingrediants",
+          "ingredents"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "The mother is prepairing the batter.",
+        "bad": "prepairing",
+        "good": "preparing",
+        "choices": [
+          "prepairing",
+          "preparing",
+          "preparring"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "The boy is helpfull as he mixes the batter.",
+        "bad": "helpfull",
+        "good": "helpful",
+        "choices": [
+          "helpfull",
+          "helpfool",
+          "helpful"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "The cake is insied the oven.",
+        "bad": "insied",
+        "good": "inside",
+        "choices": [
+          "inside",
+          "insied",
+          "insidde"
+        ],
+        "scene": "bakery"
+      },
+      {
+        "sentence": "The boy and girl play with a ba ll.",
+        "bad": "ba",
+        "good": "ball",
+        "choices": [
+          "ball",
+          "balll",
+          "bawl"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "A dog is in the parck.",
+        "bad": "parck",
+        "good": "park",
+        "choices": [
+          "parck",
+          "parkk",
+          "park"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "There are berds near the trees.",
+        "bad": "berds",
+        "good": "birds",
+        "choices": [
+          "birds",
+          "berds",
+          "birdds"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "The boy and girl enjoy their picnik.",
+        "bad": "picnik",
+        "good": "picnic",
+        "choices": [
+          "picnik",
+          "picnic",
+          "picnac"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "The children are playng ball.",
+        "bad": "playng",
+        "good": "playing",
+        "choices": [
+          "playng",
+          "playying",
+          "playing"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "The trees have many leafs.",
+        "bad": "leafs",
+        "good": "leaves",
+        "choices": [
+          "leaves",
+          "leavs",
+          "leaveses"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "The girl plays oposite the boy.",
+        "bad": "oposite",
+        "good": "opposite",
+        "choices": [
+          "oposite",
+          "opposite",
+          "oppossite"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "The children are enjoyng their ball game.",
+        "bad": "enjoyng",
+        "good": "enjoying",
+        "choices": [
+          "enjoyng",
+          "enjoyying",
+          "enjoying"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "Playing ball gives the children excercise.",
+        "bad": "excercise",
+        "good": "exercise",
+        "choices": [
+          "exercise",
+          "excercise",
+          "exersise"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "The trees grow outdors.",
+        "bad": "outdors",
+        "good": "outdoors",
+        "choices": [
+          "outdors",
+          "outdoors",
+          "outdoores"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "The children share a playfull moment with the ball.",
+        "bad": "playfull",
+        "good": "playful",
+        "choices": [
+          "playfull",
+          "playfool",
+          "playful"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "The boy and girl are surounded by trees.",
+        "bad": "surounded",
+        "good": "surrounded",
+        "choices": [
+          "surrounded",
+          "surounded",
+          "surroundded"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "The picnic is a chance for relaxasion.",
+        "bad": "relaxasion",
+        "good": "relaxation",
+        "choices": [
+          "relaxasion",
+          "relaxation",
+          "relaxattion"
+        ],
+        "scene": "park"
+      },
+      {
+        "sentence": "The teacher is in the clasroom.",
+        "bad": "clasroom",
+        "good": "classroom",
+        "choices": [
+          "clasroom",
+          "classrom",
+          "classroom"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "The girl reads a boook.",
+        "bad": "boook",
+        "good": "book",
+        "choices": [
+          "book",
+          "boook",
+          "bok"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "The boy writes with a pensil.",
+        "bad": "pensil",
+        "good": "pencil",
+        "choices": [
+          "pensil",
+          "pencil",
+          "pencill"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "The clok shows the time.",
+        "bad": "clok",
+        "good": "clock",
+        "choices": [
+          "clok",
+          "cloc",
+          "clock"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "The children have school baggs.",
+        "bad": "baggs",
+        "good": "bags",
+        "choices": [
+          "bags",
+          "baggs",
+          "bagz"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "The teacher helps the studants.",
+        "bad": "studants",
+        "good": "students",
+        "choices": [
+          "studants",
+          "students",
+          "studentts"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "The girl is reeding her book.",
+        "bad": "reeding",
+        "good": "reading",
+        "choices": [
+          "reeding",
+          "readng",
+          "reading"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "The boy is writting.",
+        "bad": "writting",
+        "good": "writing",
+        "choices": [
+          "writing",
+          "writting",
+          "writeing"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "The children are lerning in the classroom.",
+        "bad": "lerning",
+        "good": "learning",
+        "choices": [
+          "lerning",
+          "learning",
+          "learnning"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "The girl reads with concentrashion.",
+        "bad": "concentrashion",
+        "good": "concentration",
+        "choices": [
+          "concentrashion",
+          "concentraition",
+          "concentration"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "Reading helps the children gain knowlege.",
+        "bad": "knowlege",
+        "good": "knowledge",
+        "choices": [
+          "knowledge",
+          "knowlege",
+          "knowledje"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "The boy practises his handwritting.",
+        "bad": "handwritting",
+        "good": "handwriting",
+        "choices": [
+          "handwritting",
+          "handwriting",
+          "handwriteing"
+        ],
+        "scene": "classroom"
+      },
+      {
+        "sentence": "The family builds with saand.",
+        "bad": "saand",
+        "good": "sand",
+        "choices": [
+          "saand",
+          "sannd",
+          "sand"
+        ],
+        "scene": "seaside"
+      },
+      {
+        "sentence": "A crabb is on the sand.",
+        "bad": "crabb",
+        "good": "crab",
+        "choices": [
+          "crab",
+          "crabb",
+          "crabbe"
+        ],
+        "scene": "seaside"
+      },
+      {
+        "sentence": "The boat floats on the watter.",
+        "bad": "watter",
+        "good": "water",
+        "choices": [
+          "watter",
+          "water",
+          "waterr"
+        ],
+        "scene": "seaside"
+      },
+      {
+        "sentence": "The fammily builds a sandcastle.",
+        "bad": "fammily",
+        "good": "family",
+        "choices": [
+          "fammily",
+          "famaly",
+          "family"
+        ],
+        "scene": "seaside"
+      },
+      {
+        "sentence": "There is ice creem at the seaside.",
+        "bad": "creem",
+        "good": "cream",
+        "choices": [
+          "cream",
+          "creem",
+          "creamm"
+        ],
+        "scene": "seaside"
+      },
+      {
+        "sentence": "The family is bilding a sandcastle.",
+        "bad": "bilding",
+        "good": "building",
+        "choices": [
+          "bilding",
+          "building",
+          "buildding"
+        ],
+        "scene": "seaside"
+      },
+      {
+        "sentence": "The boat is floting.",
+        "bad": "floting",
+        "good": "floating",
+        "choices": [
+          "floting",
+          "floatting",
+          "floating"
+        ],
+        "scene": "seaside"
+      },
+      {
+        "sentence": "The family works on the sandcastel.",
+        "bad": "sandcastel",
+        "good": "sandcastle",
+        "choices": [
+          "sandcastle",
+          "sandcastel",
+          "sandcasle"
+        ],
+        "scene": "seaside"
+      },
+      {
+        "sentence": "The family enjoys a seeside activity.",
+        "bad": "seeside",
+        "good": "seaside",
+        "choices": [
+          "seeside",
+          "seaside",
+          "seasidde"
+        ],
+        "scene": "seaside"
+      },
+      {
+        "sentence": "Building a sandcastle is a creativ activity.",
+        "bad": "creativ",
+        "good": "creative",
+        "choices": [
+          "creativ",
+          "creattive",
+          "creative"
+        ],
+        "scene": "seaside"
+      },
+      {
+        "sentence": "The family shows cooperasion while building the sandcastle.",
+        "bad": "cooperasion",
+        "good": "cooperation",
+        "choices": [
+          "cooperation",
+          "cooperasion",
+          "cooperration"
+        ],
+        "scene": "seaside"
+      },
+      {
+        "sentence": "The sandcastle is the family's creasion.",
+        "bad": "creasion",
+        "good": "creation",
+        "choices": [
+          "creasion",
+          "creation",
+          "creattion"
+        ],
+        "scene": "seaside"
+      }
+    ],
+    "families": [
+      {
+        "child": "cats",
+        "mother": "cat"
+      },
+      {
+        "child": "dogs",
+        "mother": "dog"
+      },
+      {
+        "child": "bags",
+        "mother": "bag"
+      },
+      {
+        "child": "eggs",
+        "mother": "egg"
+      },
+      {
+        "child": "books",
+        "mother": "book"
+      },
+      {
+        "child": "cakes",
+        "mother": "cake"
+      },
+      {
+        "child": "trees",
+        "mother": "tree"
+      },
+      {
+        "child": "birds",
+        "mother": "bird"
+      },
+      {
+        "child": "boats",
+        "mother": "boat"
+      },
+      {
+        "child": "crabs",
+        "mother": "crab"
+      },
+      {
+        "child": "playing",
+        "mother": "play"
+      },
+      {
+        "child": "jumped",
+        "mother": "jump"
+      },
+      {
+        "child": "looking",
+        "mother": "look"
+      },
+      {
+        "child": "walked",
+        "mother": "walk"
+      },
+      {
+        "child": "mixing",
+        "mother": "mix"
+      },
+      {
+        "child": "baker",
+        "mother": "bake"
+      },
+      {
+        "child": "teacher",
+        "mother": "teach"
+      },
+      {
+        "child": "reader",
+        "mother": "read"
+      },
+      {
+        "child": "writer",
+        "mother": "write"
+      },
+      {
+        "child": "builder",
+        "mother": "build"
+      },
+      {
+        "child": "helpful",
+        "mother": "help"
+      },
+      {
+        "child": "careful",
+        "mother": "care"
+      },
+      {
+        "child": "hopeful",
+        "mother": "hope"
+      },
+      {
+        "child": "useful",
+        "mother": "use"
+      },
+      {
+        "child": "colourful",
+        "mother": "colour"
+      },
+      {
+        "child": "peaceful",
+        "mother": "peace"
+      },
+      {
+        "child": "joyful",
+        "mother": "joy"
+      },
+      {
+        "child": "fearless",
+        "mother": "fear"
+      },
+      {
+        "child": "dangerous",
+        "mother": "danger"
+      },
+      {
+        "child": "natural",
+        "mother": "nature"
+      },
+      {
+        "child": "happiness",
+        "mother": "happy"
+      },
+      {
+        "child": "kindness",
+        "mother": "kind"
+      },
+      {
+        "child": "darkness",
+        "mother": "dark"
+      },
+      {
+        "child": "weakness",
+        "mother": "weak"
+      },
+      {
+        "child": "fairness",
+        "mother": "fair"
+      },
+      {
+        "child": "quietly",
+        "mother": "quiet"
+      },
+      {
+        "child": "quickly",
+        "mother": "quick"
+      },
+      {
+        "child": "slowly",
+        "mother": "slow"
+      },
+      {
+        "child": "politely",
+        "mother": "polite"
+      },
+      {
+        "child": "patiently",
+        "mother": "patient"
+      },
+      {
+        "child": "creation",
+        "mother": "create"
+      },
+      {
+        "child": "education",
+        "mother": "educate"
+      },
+      {
+        "child": "celebration",
+        "mother": "celebrate"
+      },
+      {
+        "child": "protection",
+        "mother": "protect"
+      },
+      {
+        "child": "movement",
+        "mother": "move"
+      },
+      {
+        "child": "enjoyment",
+        "mother": "enjoy"
+      },
+      {
+        "child": "development",
+        "mother": "develop"
+      },
+      {
+        "child": "agreement",
+        "mother": "agree"
+      },
+      {
+        "child": "successful",
+        "mother": "success"
+      },
+      {
+        "child": "comfortable",
+        "mother": "comfort"
       }
     ]
   }
