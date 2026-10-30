@@ -38,3 +38,8 @@
 - [x] Fix Chinese speech recognition in Vocal Arena and Re-quiz.
 - [x] Add a colourful appraiser counter and an old-man NPC with correct/wrong reactions.
 - [x] Refresh the Code page and verify the changed activities.
+
+## Chinese structure review
+- [x] Review all 102 assembly characters with AI; retain 99 reviewed entries and withhold 辨、爨、鷹 pending accurate special-component artwork.
+- [x] Render explicit part positions, including 贏's two upper rows and three bottom columns.
+- [x] Test the full bank and verify placement and checking in the game and Code page.
