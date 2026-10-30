@@ -1,0 +1,3 @@
+import {z} from "zod";
+export const BakeryQuestionSchema=z.object({unit:z.string(),topic:z.string(),prompt:z.string().min(10),parts:z.array(z.string()).length(3),labels:z.array(z.string()).length(3),formula:z.string(),formulas:z.array(z.string()).length(3),answer:z.string().min(1),explanation:z.string(),trap:z.string().nullable(),trapAnswer:z.string().nullable(),trapChoices:z.array(z.string())});
+export type BakeryQuestion=z.infer<typeof BakeryQuestionSchema>;
