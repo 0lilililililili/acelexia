@@ -45,6 +45,7 @@
   --color-fire: var(--fire);
   --color-sun: var(--sun);
   --color-grape: var(--grape);
+  --color-scene-tint: var(--scene-tint);
 }
 
 :root {
@@ -80,6 +81,8 @@
   --fire: oklch(0.65 0.2 35);
   --sun: oklch(0.82 0.16 90);
   --grape: oklch(0.55 0.2 310);
+  --scene-tint: oklch(0.91 0.005 250);
+  --scene-shadow: 0 4px 18px color-mix(in oklch, var(--foreground) 18%, transparent);
 }
 
 .dark {
@@ -250,11 +253,13 @@
 .monster-enter { animation: monster-enter 0.7s cubic-bezier(.2,.8,.3,1.2) both; }
 .basket-layout { display:grid; grid-template-rows:160px 320px; }
 .basket-counter { position:relative; overflow:hidden; }
-.basket-cupboards { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); grid-template-rows:repeat(2,minmax(0,1fr)); gap:12px; padding:12px; background:var(--secondary); }
-.basket-cupboard { border:4px solid var(--forest); background:var(--card); box-shadow:inset 0 -8px 0 var(--secondary); }
+.basket-counter > img { filter:saturate(.2); opacity:.6; }
+.basket-counter { background:var(--scene-tint); }
+.basket-cupboards { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); grid-template-rows:repeat(2,minmax(0,1fr)); gap:12px; padding:12px; background:var(--scene-tint); }
+.basket-cupboard { border:3px solid var(--border); background:var(--card); box-shadow:inset 0 -8px 0 var(--muted); }
 .character-structure { display:grid; width:min(100%,320px); height:320px; margin:24px auto; gap:8px; }
 .character-structure > button { height:100%; width:100%; font-size:40px; }
-.english-scene { aspect-ratio:1 / 1; max-width:620px; margin-left:auto; margin-right:auto; overflow:hidden; position:relative; }
+.english-scene { aspect-ratio:1 / 1; width:min(100%,300px); margin-left:auto; margin-right:auto; overflow:hidden; position:relative; }
 .english-scene img { position:absolute; width:200%; max-width:none; height:auto; }
 .scene-bakery img { left:0; top:0; }
 .scene-park img { left:-100%; top:0; }
@@ -267,3 +272,20 @@
 @keyframes appraiser-nod { 0%,100%{transform:translateY(0)} 40%{transform:translateY(5px)} 70%{transform:translateY(-3px)} }
 @media(max-width:600px){ .basket-layout { grid-template-rows:130px 260px; } .basket-cupboards{gap:6px;padding:6px;} }
 @media (prefers-reduced-motion: reduce) { .monster-enter { animation: none; } }
+.subject-street { position:relative; width:min(100%,1400px); margin:auto; aspect-ratio:3 / 2; }
+.subject-street > img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.street-door { position:absolute; top:24%; bottom:8%; width:32%; padding:0; background:transparent; border:3px solid transparent; height:auto; align-items:flex-end; white-space:normal; color:var(--foreground); transition:border-color .2s,box-shadow .2s; }
+.street-door:hover,.street-door:focus-visible { background:transparent; border-color:var(--primary); box-shadow:var(--scene-shadow); }
+.street-door span { margin-bottom:12%; padding:12px 18px; border:2px solid var(--primary); border-radius:8px; background:var(--card); font-size:18px; font-weight:800; box-shadow:var(--scene-shadow); }
+.street-door-0 { left:1%; } .street-door-1 { right:1%; }
+.street-three .street-door { width:30%; } .street-three .street-door-1 { left:35%;right:auto; } .street-three .street-door-2 { right:1%; }
+.appraiser-scene { position:relative; width:min(100%,560px); height:300px; margin:16px auto 0; overflow:hidden; border-radius:8px; }
+.appraiser-scene > .appraiser-room { position:absolute; inset:0;width:100%;height:100%;object-fit:cover; }
+.appraiser-sprite { position:absolute; width:180px; height:260px; left:50%; bottom:-35px; transform:translateX(-50%); overflow:hidden; }
+.appraiser-sprite img { position:absolute; height:100%; width:300%;max-width:none;object-fit:fill; }
+.appraiser-neutral img { left:0; } .appraiser-happy img { left:-100%; } .appraiser-sad img { left:-200%; }
+.recipe-kitchen { width:100%; height:200px; object-fit:cover; border-radius:8px; }
+.recipe-steps { display:flex;gap:8px; flex-wrap:wrap; margin:16px 0; }
+.recipe-steps span { padding:4px 12px; border-bottom:3px solid var(--border);font-weight:700;color:var(--muted-foreground); }
+.recipe-steps .current { border-color:var(--primary);color:var(--primary); }
+@media(max-width:600px){ .street-door span { font-size:14px;padding:8px; } .subject-street{aspect-ratio:1 / 1;} .subject-street>img{object-fit:fill;} .street-door{top:20%;bottom:4%;} .appraiser-scene{height:240px;} .appraiser-sprite{height:230px;width:160px;} .recipe-kitchen{height:150px;} }
