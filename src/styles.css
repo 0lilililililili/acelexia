@@ -262,7 +262,7 @@
 .shape-left-stack > :first-child { grid-row:1 / -1; }
 .shape-stack-bottom { grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; }
 .shape-stack-bottom > :last-child { grid-column:1 / -1; }
-.english-scene { aspect-ratio:2 / 1; overflow:hidden; position:relative; }
+.english-scene { aspect-ratio:1 / 1; max-width:620px; margin-left:auto; margin-right:auto; overflow:hidden; position:relative; }
 .english-scene img { position:absolute; width:200%; max-width:none; height:auto; }
 .scene-bakery img { left:0; top:0; }
 .scene-park img { left:-100%; top:0; }
