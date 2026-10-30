@@ -29,12 +29,12 @@
 - [x] Verify rewards, navigation and updated source in Code.
 
 ## October arcade improvements
-- [ ] Add a clear mouse-over state to Log in.
-- [ ] Rework Basket Collector: varied expressions, immediate replacement, eight cupboards, 1:2 counter/choices layout.
-- [ ] Clarify Bakery prompts and ask extra quantity questions only for value-changing traps.
-- [ ] Replace English scene symbols with complete illustrated scenes and expand grade/level question banks.
-- [ ] Use avatar-style Word Family NPCs and new questions without repeating correctly answered items.
-- [ ] Add shape-aware Chinese character assembly and expand its word banks.
-- [ ] Fix Chinese speech recognition in Vocal Arena and Re-quiz.
-- [ ] Add a colourful appraiser counter and an old-man NPC with correct/wrong reactions.
-- [ ] Refresh the Code page and verify the changed activities.
+- [x] Add a clear mouse-over state to Log in.
+- [x] Rework Basket Collector: varied expressions, immediate replacement, eight cupboards, 1:2 counter/choices layout.
+- [x] Clarify Bakery prompts and ask extra quantity questions only for value-changing traps.
+- [x] Replace English scene symbols with complete illustrated scenes and prepare 50 questions per school grade.
+- [x] Use avatar-style Word Family NPCs and new questions without repeating correctly answered items.
+- [x] Add shape-aware Chinese character assembly and expand its word banks.
+- [x] Fix Chinese speech recognition in Vocal Arena and Re-quiz.
+- [x] Add a colourful appraiser counter and an old-man NPC with correct/wrong reactions.
+- [x] Refresh the Code page and verify the changed activities.

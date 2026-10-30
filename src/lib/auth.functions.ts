@@ -200,7 +200,7 @@ export const saveProgress = createServerFn({ method: "POST" })
     if (!owner) throw new Error("Unauthorized");
     const { data: prev } = await supabaseAdmin
       .from("progress")
-      .select("wallet, avatar, streak, badges, towers, updated_at")
+      .select("wallet, avatar, streak, badges, towers, updated_at, settings")
       .eq("user_id", sess.sub)
       .maybeSingle();
     const { guardProgress } = await import("./progress-guard.server");
@@ -214,7 +214,10 @@ export const saveProgress = createServerFn({ method: "POST" })
         towers: g.towers,
         revision_bank: data.revision,
         wallet: g.wallet as never,
-        settings: data.settings,
+        settings: {
+          ...Object.fromEntries(Object.entries(data.settings).filter(([k])=>k!=="voiceDenied"&&k!=="arcadeAiDenied")),
+          ...Object.fromEntries(Object.entries((prev?.settings??{}) as Record<string,unknown>).filter(([k])=>k==="voiceDenied"||k==="arcadeAiDenied")),
+        } as never,
         avatar: g.avatar as never,
         streak: g.streak as never,
         badges: g.badges as never,

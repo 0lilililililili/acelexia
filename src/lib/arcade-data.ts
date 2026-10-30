@@ -87,7 +87,6 @@ export const BUILD_CHARACTERS = [
 {word:"辦",parts:["辛", "力", "辛"],distractors:["目","本"],hint:"組合「辦」",difficulty:11},
 {word:"瓣",parts:["辛", "瓜", "辛"],distractors:["目","本"],hint:"組合「瓣」",difficulty:11},
 {word:"辮",parts:["辛", "糸", "辛"],distractors:["目","本"],hint:"組合「辮」",difficulty:11},
-{word:"辭",parts:["辤", "辛"],distractors:["目","本"],hint:"組合「辭」",difficulty:11},
 {word:"簾",parts:["竹", "廉"],distractors:["目","本"],hint:"組合「簾」",difficulty:12},
 {word:"簿",parts:["竹", "溥"],distractors:["目","本"],hint:"組合「簿」",difficulty:12},
 {word:"蕾",parts:["艹", "雷"],distractors:["目","本"],hint:"組合「蕾」",difficulty:12},
