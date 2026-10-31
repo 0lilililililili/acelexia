@@ -45,13 +45,13 @@
 - [x] Test the full bank and verify placement and checking in the game and Code page.
 
 ## October 30 review
-- [ ] Diagnose and fix login refresh/navigation; verify a real sign-in.
-- [ ] Replace subject area scenery with interactive minigame buildings.
-- [ ] Separate Shop and outlined My avatar controls.
-- [ ] Allow individual character pieces to return to choices.
-- [ ] Add Cantonese/Mandarin session selection and pronunciation-aware retries/choices.
-- [ ] Separate compact appraiser scenery from expressive NPC artwork.
-- [ ] Reduce English scene size; enlarge words/choices; add contextual word-family parts of speech.
-- [ ] Mute basket scenery and delay replacements by 2–3 seconds.
-- [ ] Expand grade-aware bakery syllabus practice and cooking presentation.
-- [ ] Refresh Code and verify changed activities and tests.
+- [x] Diagnose and fix login refresh/navigation; verify a real sign-in.
+- [x] Replace subject area scenery with interactive minigame buildings.
+- [x] Separate Shop and outlined My avatar controls.
+- [x] Allow individual character pieces to return to choices.
+- [x] Add Cantonese/Mandarin session selection and pronunciation-aware retries/choices.
+- [x] Separate compact appraiser scenery from expressive NPC artwork.
+- [x] Reduce English scene size; enlarge words/choices; add contextual word-family parts of speech.
+- [x] Mute basket scenery and delay replacements by 2–3 seconds.
+- [x] Expand grade-aware bakery syllabus practice and cooking presentation.
+- [x] Refresh Code and verify changed activities and tests.
