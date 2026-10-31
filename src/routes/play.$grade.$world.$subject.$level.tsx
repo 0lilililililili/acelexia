@@ -523,7 +523,7 @@ function PlayPage() {
                 )}
                 <div className="flex items-start gap-2 justify-center">
                   <div className="text-2xl sm:text-3xl font-extrabold tracking-wide text-center flex-1">
-                    {current.prompt}
+                    <DyslexicText text={current.prompt} level={settings.readingScaffold} />
                   </div>
                   <SpeakButton text={current.prompt} subject={subject} lang={settings.language} />
                 </div>

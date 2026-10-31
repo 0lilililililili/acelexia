@@ -12,6 +12,7 @@ export type Settings = {
   feedbackRating?: number;
   feedbackComment?: string;
   tutorialDone?: boolean;
+  readingScaffold?: "off" | "light" | "full";
 };
 
 export type Session = { userId: string; username: string; isAdmin: boolean; token?: string };
@@ -269,6 +270,7 @@ export function setState(next: State, { sync = true } = {}) {
               ...(next.settings.feedbackRating ? { feedbackRating: next.settings.feedbackRating } : {}),
               ...(next.settings.feedbackComment ? { feedbackComment: next.settings.feedbackComment } : {}),
               ...(next.settings.tutorialDone ? { tutorialDone: true } : {}),
+              ...(next.settings.readingScaffold ? { readingScaffold: next.settings.readingScaffold } : {}),
               ...Object.fromEntries(Object.entries(next.settings).filter(([k,v])=>k.startsWith("familySeen_")&&typeof v==="string")),
               ...flattenStats(next.stats),
               ...flattenLevelStars(next.stars),
