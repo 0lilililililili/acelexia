@@ -81,6 +81,22 @@ function SettingsPage() {
         </section>
 
         <section className="mt-6 bg-card border-2 border-border rounded-3xl p-6 shadow">
+          <h2 className="text-xl font-extrabold">Reading help</h2>
+          <p className="text-sm text-muted-foreground mt-1">Bold the start of English words so eyes can anchor on them.</p>
+          <div className="mt-3 grid grid-cols-3 gap-2">
+            {(["off", "light", "full"] as const).map((v) => (
+              <button
+                key={v}
+                onClick={() => update({ readingScaffold: v })}
+                className={`rounded-xl py-3 font-bold border-2 capitalize ${(settings.readingScaffold ?? "off") === v ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border"}`}
+              >
+                {v}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-6 bg-card border-2 border-border rounded-3xl p-6 shadow">
           <h2 className="text-xl font-extrabold">{t("time_limit")}</h2>
           <p className="text-sm text-muted-foreground mt-1">{t("time_limit_sub")}</p>
           <div className="mt-3 grid grid-cols-3 sm:grid-cols-5 gap-2">
