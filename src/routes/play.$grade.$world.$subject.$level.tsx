@@ -1,3 +1,4 @@
+import { DyslexicText } from "@/components/ui/dyslexic-text";
 import { translate } from "@/lib/i18n";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
