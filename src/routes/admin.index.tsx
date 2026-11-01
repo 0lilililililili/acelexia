@@ -56,6 +56,10 @@ function AdminPage() {
           <h2 className="text-xl font-extrabold">Feedback</h2>
           <p className="text-sm text-muted-foreground mt-1">Every rating and comment from players.</p>
         </Link>
+        <Link to="/admin/qb" className="rounded-lg bg-card border-2 border-border p-6 shadow hover:border-primary transition">
+          <h2 className="text-xl font-extrabold">Question banks · QB</h2>
+          <p className="text-sm text-muted-foreground mt-1">Questions, answers, grades and subjects.</p>
+        </Link>
         <Link to="/admin/about" className="rounded-3xl bg-card border-2 border-border p-6 shadow hover:border-primary transition">
           <h2 className="text-xl font-extrabold">About page</h2>
           <p className="text-sm text-muted-foreground">Edit the About Us page.</p>

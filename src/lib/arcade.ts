@@ -7,4 +7,4 @@ export const ARCADE_GAMES = [
  {id:"basket",world:"forest",subject:"math",name:"Basket Collector"},
  {id:"bakery",world:"forest",subject:"math",name:"Bakery Problem Solver"},
 ];
-export type ArcadeProps = {grade:string; lang:"zh-TW"|"zh-CN"|"en"; onComplete:(correct:number,total:number)=>void};
+export type ArcadeProps = {grade:string; lang:"zh-TW"|"zh-CN"|"en"; readingScaffold?:"off"|"light"|"full"; soundHelp?:boolean; onComplete:(correct:number,total:number)=>void};

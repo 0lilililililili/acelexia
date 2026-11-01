@@ -1,6 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { DEFAULT_SETTINGS, getState, setState, type Settings } from "@/lib/store";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { DyslexicText } from "@/components/ui/dyslexic-text";
+import { ReadingAid } from "@/components/reading-aid";
 import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/settings")({
@@ -85,15 +89,19 @@ function SettingsPage() {
           <p className="text-sm text-muted-foreground mt-1">Bold the start of English words so eyes can anchor on them.</p>
           <div className="mt-3 grid grid-cols-3 gap-2">
             {(["off", "light", "full"] as const).map((v) => (
-              <button
+              <Button variant="outline"
                 key={v}
                 onClick={() => update({ readingScaffold: v })}
                 className={`rounded-xl py-3 font-bold border-2 capitalize ${(settings.readingScaffold ?? "off") === v ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border"}`}
               >
                 {v}
-              </button>
+              </Button>
             ))}
           </div>
+          <p className="mt-4 text-xl"><DyslexicText text="The teacher is reading a book." level={settings.readingScaffold}/></p>
+          <div className="mt-5 flex items-center justify-between gap-4"><label htmlFor="sound-help" className="font-bold">Sound help · 讀音提示</label><Switch id="sound-help" checked={settings.soundHelp ?? false} onCheckedChange={soundHelp => update({soundHelp})}/></div>
+          <ReadingAid text="light" subject="eng" enabled={settings.soundHelp}/>
+          <ReadingAid text="你好" subject="chi" spoken={settings.language === "zh-CN" ? "zh-CN" : "zh-HK"} enabled={settings.soundHelp}/>
         </section>
 
         <section className="mt-6 bg-card border-2 border-border rounded-3xl p-6 shadow">

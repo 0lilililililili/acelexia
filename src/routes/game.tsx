@@ -17,7 +17,7 @@ import { SUBJECTS } from "@/lib/subjects";
 import { Button } from "@/components/ui/button";
 import { DailyPopup } from "@/components/daily-popup";
 import { Tutorial } from "@/components/tutorial";
-import { tickStreak, STREAK_MILESTONES } from "@/lib/badges";
+import { prepareDailyQuests, STREAK_MILESTONES } from "@/lib/badges";
 import { User, Award, HelpCircle, LogOut, ClipboardList, MessageSquare } from "lucide-react";
 import { tr } from "@/lib/tr";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -84,8 +84,8 @@ function GameMap() {
       setStats(st.stats ?? {});
       setStreak(st.streak);
     };
+    if (prepareDailyQuests()) setDailyOpen(true);
     sync();
-    if (tickStreak()) setDailyOpen(true);
     if (!getState().settings.tutorialDone) setTutOpen(true);
     const state = getState();
     const answers = Object.values(state.stats ?? {}).reduce((sum, stat) => sum + stat.total, 0);
@@ -243,8 +243,9 @@ function GameMap() {
             <span className="text-muted-foreground text-xs">{streak.daily.filter((task) => task.done).length}/{streak.daily.length}</span>
           </Button>
         </div>
+        <div className="map-layout">
         <div
-          className="relative rounded-[2rem] overflow-hidden border-4 border-border shadow-2xl"
+          className="map-canvas relative rounded-[2rem] overflow-hidden border-4 border-border shadow-2xl"
           style={{ aspectRatio: "3 / 2", maxHeight: "calc(100svh - 2rem)", marginInline: "auto" }}
         >
           <img
@@ -323,9 +324,10 @@ function GameMap() {
             </Link>
           </div>
 
-          {/* Event isle — bottom left, below Aquatic Bay */}
-          <div className="absolute left-[3%] bottom-[4%] w-[26%] min-w-[150px]">
-            <div className="rounded-[2rem] bg-[oklch(0.95_0.06_90)]/90 border-4 border-white/80 shadow-2xl p-3 text-center">
+        </div>
+          {/* Events live beside/below the map, never over its labels. */}
+          <div className="map-events">
+            <div className="rounded-lg bg-secondary border-2 border-border p-3 text-center">
               <div className="flex items-center justify-center gap-1 text-xs font-extrabold uppercase tracking-wider">
                 <Sparkles size={14} aria-hidden /> {t("event_isle")}
               </div>
@@ -352,7 +354,7 @@ function GameMap() {
                         to="/world/$world"
                         params={{ world: id }}
                         title={name}
-                        className="flex items-center gap-2 rounded-2xl bg-white/90 border-2 border-border px-2 py-1.5 hover:border-primary transition"
+                        className="flex items-center gap-2 rounded-lg bg-card border-2 border-border px-2 py-1.5 hover:border-primary transition"
                       >
                         <img src={art.boss} alt="" loading="lazy" className="w-9 h-9 object-contain" />
                         <span className="text-xs font-extrabold">{name}</span>

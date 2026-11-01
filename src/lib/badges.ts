@@ -2,6 +2,7 @@
 import { ITEMS } from "./avatar";
 import { playerLv } from "./leveling";
 import { getState, setState, type DailyTask, type State } from "./store";
+import { activityStreak } from "./activity-streak";
 
 export type BadgeTab = "chi" | "eng" | "math" | "others";
 export type Badge = { id: string; tab: BadgeTab; icon: "flame" | "tower" | "crown" | "calendar" | "star" | "sword" | "hat" | "shirt"; goal: { en: string; zh: string }; check: (s: State) => boolean };
@@ -39,7 +40,7 @@ export const BADGES: Badge[] = [
     })),
   ]),
   ...LVS.map((n): Badge => ({ id: `lv${n}`, tab: "others", icon: "crown", goal: { en: `Reach LV ${n}`, zh: `達到 LV ${n}` }, check: (s) => playerLv(s.wallet.exp) >= n })),
-  ...STREAKS.map((x): Badge => ({ id: `streak${x.d}`, tab: "others", icon: "calendar", goal: { en: `${x.en} daily streak`, zh: `連續登入${x.zh}` }, check: (s) => s.streak.best >= x.d })),
+  ...STREAKS.map((x): Badge => ({ id: `streak${x.d}`, tab: "others", icon: "calendar", goal: { en: `${x.en} practice streak`, zh: `連續練習${x.zh}` }, check: (s) => s.streak.best >= x.d })),
   { id: "hoard50", tab: "others", icon: "star", goal: { en: "Save 50 stars of one colour", zh: "同一顏色星星儲滿50粒" }, check: (s) => Object.values(s.wallet.stars).some((n) => n >= 50) },
   { id: "allweapons", tab: "others", icon: "sword", goal: { en: "Collect every weapon", zh: "收集所有武器" }, check: (s) => ownsAll(s, "weapon") },
   { id: "allhats", tab: "others", icon: "hat", goal: { en: "Collect every hat", zh: "收集所有帽子" }, check: (s) => ownsAll(s, "hat") },
@@ -65,17 +66,24 @@ const LANDS = ["aquatic", "forest", "fire"];
 /** Boss Towers: each subject lives in its own themed world. */
 const BOSS_WORLD: Record<string, string> = { chi: "fire", eng: "aquatic", math: "forest" };
 
-/** Called when the map opens. Returns true on the first visit of a new day. */
-export function tickStreak(): boolean {
+/** Refresh quests without counting a map visit as practice. */
+export function prepareDailyQuests(): boolean {
   const s = getState();
   const today = dayKey();
-  if (s.streak.lastDay === today) return false;
-  const y = new Date(); y.setDate(y.getDate() - 1);
-  const current = s.streak.lastDay === dayKey(y) ? s.streak.current + 1 : 1;
+  if (s.streak.dailyDate === today) return false;
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+  const current = s.streak.lastDay === dayKey(yesterday) || s.streak.lastDay === today ? s.streak.current : 0;
   const daily: DailyTask[] = SUBJ.map((subject) => ({ subject, world: BOSS_WORLD[subject] ?? LANDS[0], done: false }));
-  setState({ ...s, streak: { current, best: Math.max(s.streak.best, current), lastDay: today, dailyDate: today, daily } });
-  evaluateBadges();
+  setState({ ...s, streak: { ...s.streak, current, dailyDate: today, daily } });
   return true;
+}
+
+export function recordPracticeDay() {
+  prepareDailyQuests();
+  const s = getState();
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+  const streak = activityStreak(s.streak, "boss-level", dayKey(), dayKey(yesterday));
+  if (streak !== s.streak) setState({ ...s, streak });
 }
 
 export function daysToNextStreakBadge(best: number, current: number) {
@@ -85,6 +93,7 @@ export function daysToNextStreakBadge(best: number, current: number) {
 }
 
 export function markDailyDone(subject: string, world: string) {
+  recordPracticeDay();
   const s = getState();
   if (s.streak.dailyDate !== dayKey()) return;
   const daily = s.streak.daily.map((d) => (d.subject === subject && d.world === world ? { ...d, done: true } : d));

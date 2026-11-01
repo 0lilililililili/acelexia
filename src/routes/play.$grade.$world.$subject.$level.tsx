@@ -1,4 +1,5 @@
 import { DyslexicText } from "@/components/ui/dyslexic-text";
+import { ReadingAid } from "@/components/reading-aid";
 import { translate } from "@/lib/i18n";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -9,7 +10,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { generateLevelItems } from "@/lib/qb.functions";
 import { useSpeech } from "@/hooks/use-speech";
 import { markCleared } from "@/lib/progress";
-import { evaluateBadges, markDailyDone } from "@/lib/badges";
+import { evaluateBadges, markDailyDone, recordPracticeDay } from "@/lib/badges";
 import {
   addExp,
   addRevisionItem,
@@ -343,6 +344,7 @@ function PlayPage() {
     const tag = `${grade}:${world}:${subject}:${level}`;
     if (awardedRef.current === tag) return;
     awardedRef.current = tag;
+    recordPracticeDay();
     if (starsEarned > 0) {
       markCleared(grade, world, subject, levelNum);
       recordLevelStars(grade, world, subject, levelNum, starsEarned);
@@ -528,6 +530,7 @@ function PlayPage() {
                   </div>
                   <SpeakButton text={current.prompt} subject={subject} lang={settings.language} />
                 </div>
+                <ReadingAid text={current.prompt} subject={subject} enabled={settings.soundHelp} spoken={settings.language === "zh-CN" ? "zh-CN" : "zh-HK"} />
                 {!current.choices?.length && <p className="mt-2 text-center text-sm font-bold text-muted-foreground">Answer format: {answerFormat(subject, current.prompt, current.answer)}</p>}
                 {current.choices && current.choices.length > 0 && (
                   <>
@@ -539,7 +542,7 @@ function PlayPage() {
                           disabled={phase !== "active"}
                           className="rounded-xl border-2 border-border bg-background hover:border-primary px-3 py-2 text-lg font-bold text-left disabled:opacity-50"
                         >
-                          <span className="text-primary mr-2 uppercase font-extrabold">{LETTERS[i]}.</span>{c}
+                          <span className="text-primary mr-2 uppercase font-extrabold">{LETTERS[i]}.</span><DyslexicText text={c} level={settings.readingScaffold} />
                         </button>
                       ))}
                     </div>
