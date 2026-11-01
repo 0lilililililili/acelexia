@@ -289,3 +289,15 @@
 .recipe-steps span { padding:4px 12px; border-bottom:3px solid var(--border);font-weight:700;color:var(--muted-foreground); }
 .recipe-steps .current { border-color:var(--primary);color:var(--primary); }
 @media(max-width:600px){ .street-door span { font-size:14px;padding:8px; } .subject-street{aspect-ratio:1 / 1;} .subject-street>img{object-fit:fill;} .street-door{top:20%;bottom:4%;} .appraiser-scene{height:240px;} .appraiser-sprite{height:230px;width:160px;} .recipe-kitchen{height:150px;} }
+
+.map-layout { display:grid; grid-template-columns:minmax(0,1fr); gap:16px; }
+.map-canvas { width:100%; }
+.map-events { min-width:0; }
+@media(min-width:1024px) { .map-layout { grid-template-columns:minmax(0,1fr) 210px; align-items:start; } }
+.reading-full { letter-spacing:0; word-spacing:.25em; }
+.reading-aid { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px; margin:12px 0; }
+.sound-unit { display:flex; flex-direction:column; align-items:center; padding:4px 12px; border-bottom:3px solid var(--primary); color:var(--primary); background:var(--muted); border-radius:4px; }
+.sound-unit:nth-child(3n+2) { border-color:var(--forest); color:var(--forest); }
+.sound-unit:nth-child(3n) { border-color:var(--fire); color:var(--fire); }
+.sound-unit strong { font-size:20px; }
+.sound-unit small { font-size:14px; }

@@ -13,6 +13,7 @@ export type Settings = {
   feedbackComment?: string;
   tutorialDone?: boolean;
   readingScaffold?: "off" | "light" | "full";
+  soundHelp?: boolean;
 };
 
 export type Session = { userId: string; username: string; isAdmin: boolean; token?: string };
@@ -72,7 +73,7 @@ export function normalizeAvatar(a?: Partial<AvatarState> | null): AvatarState {
   return { gender: a?.gender === "girl" ? "girl" : "boy", equipped: { ...(a?.equipped ?? {}) }, owned: [...(a?.owned ?? [])] };
 }
 export function normalizeStreak(a?: Partial<StreakState> | null): StreakState {
-  return { ...emptyStreak(), ...(a ?? {}), daily: Array.isArray(a?.daily) ? a!.daily : [] };
+  return { ...emptyStreak(), ...(a ?? {}), daily: Array.isArray(a?.daily) ? a.daily : [] };
 }
 export function normalizeBadges(a?: Partial<BadgeState> | null): BadgeState {
   return { unlocked: [...(a?.unlocked ?? [])], run: { ...(a?.run ?? {}) }, bestRun: { ...(a?.bestRun ?? {}) } };
@@ -271,6 +272,7 @@ export function setState(next: State, { sync = true } = {}) {
               ...(next.settings.feedbackComment ? { feedbackComment: next.settings.feedbackComment } : {}),
               ...(next.settings.tutorialDone ? { tutorialDone: true } : {}),
               ...(next.settings.readingScaffold ? { readingScaffold: next.settings.readingScaffold } : {}),
+              soundHelp: next.settings.soundHelp ?? false,
               ...Object.fromEntries(Object.entries(next.settings).filter(([k,v])=>k.startsWith("familySeen_")&&typeof v==="string")),
               ...flattenStats(next.stats),
               ...flattenLevelStars(next.stars),

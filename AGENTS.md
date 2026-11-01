@@ -19,3 +19,6 @@
 - Keep validated AI-prepared English banks by grade and persist mastered family roots in progress settings; fetch fresh families only on explicit user requests so blocked generation cannot loop.
 - Use complete WAV recordings through the authenticated same-origin transcription route for Chinese arcade and re-quiz answers; keep recognition language independent from an English interface and normalize Chinese scripts for matching.
 - Store AI-assisted, reviewed character decompositions and explicit per-part grid positions separately from word banks; reject missing layouts and withhold unverifiable splits so gameplay cannot silently teach guessed structures. Preserve distinct selectable slots for repeated radicals.
+- Use a shared pure activity-streak evaluator at completed boss/quest rounds; map entry refreshes daily quests without awarding streak days.
+- Keep phonics and syllables curated and omit unsupported annotations; render optional sound aids through one shared component and persist their setting with progress.
+- Serve admin question-bank inventory through signed admin verification, without triggering question generation or exposing player records.

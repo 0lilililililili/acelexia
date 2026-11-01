@@ -15,7 +15,7 @@ const RAW_FILES = import.meta.glob(
   { query: "?raw", import: "default", eager: true },
 ) as Record<string, string>;
 
-const EXCLUDE = /routeTree\.gen\.ts$|\/components\/ui\//;
+const EXCLUDE = /routeTree\.gen\.ts$|\/components\/ui\/(?!dyslexic-text\.tsx$)/;
 
 function CodePage() {
   const files = useMemo(

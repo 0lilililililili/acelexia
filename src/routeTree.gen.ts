@@ -32,6 +32,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAboutRouteImport } from './routes/admin.about'
 import { Route as AdminFeedbackRouteImport } from './routes/admin.feedback'
 import { Route as AdminProgressRouteImport } from './routes/admin.progress'
+import { Route as AdminQbRouteImport } from './routes/admin.qb'
 import { Route as AdminViewRouteImport } from './routes/admin.view'
 import { Route as ApiSpeechRouteImport } from './routes/api/speech'
 import { Route as ApiTranscribeRouteImport } from './routes/api/transcribe'
@@ -157,6 +158,11 @@ const AdminProgressRoute = AdminProgressRouteImport.update({
   path: '/progress',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminQbRoute = AdminQbRouteImport.update({
+  id: '/qb',
+  path: '/qb',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminViewRoute = AdminViewRouteImport.update({
   id: '/view',
   path: '/view',
@@ -227,6 +233,7 @@ export interface FileRoutesByFullPath {
   '/admin/about': typeof AdminAboutRoute
   '/admin/feedback': typeof AdminFeedbackRoute
   '/admin/progress': typeof AdminProgressRoute
+  '/admin/qb': typeof AdminQbRoute
   '/admin/view': typeof AdminViewRoute
   '/api/speech': typeof ApiSpeechRoute
   '/api/transcribe': typeof ApiTranscribeRoute
@@ -259,6 +266,7 @@ export interface FileRoutesByTo {
   '/admin/about': typeof AdminAboutRoute
   '/admin/feedback': typeof AdminFeedbackRoute
   '/admin/progress': typeof AdminProgressRoute
+  '/admin/qb': typeof AdminQbRoute
   '/admin/view': typeof AdminViewRoute
   '/api/speech': typeof ApiSpeechRoute
   '/api/transcribe': typeof ApiTranscribeRoute
@@ -294,6 +302,7 @@ export interface FileRoutesById {
   '/admin/about': typeof AdminAboutRoute
   '/admin/feedback': typeof AdminFeedbackRoute
   '/admin/progress': typeof AdminProgressRoute
+  '/admin/qb': typeof AdminQbRoute
   '/admin/view': typeof AdminViewRoute
   '/api/speech': typeof ApiSpeechRoute
   '/api/transcribe': typeof ApiTranscribeRoute
@@ -330,6 +339,7 @@ export interface FileRouteTypes {
     | '/admin/about'
     | '/admin/feedback'
     | '/admin/progress'
+    | '/admin/qb'
     | '/admin/view'
     | '/api/speech'
     | '/api/transcribe'
@@ -362,6 +372,7 @@ export interface FileRouteTypes {
     | '/admin/about'
     | '/admin/feedback'
     | '/admin/progress'
+    | '/admin/qb'
     | '/admin/view'
     | '/api/speech'
     | '/api/transcribe'
@@ -396,6 +407,7 @@ export interface FileRouteTypes {
     | '/admin/about'
     | '/admin/feedback'
     | '/admin/progress'
+    | '/admin/qb'
     | '/admin/view'
     | '/api/speech'
     | '/api/transcribe'
@@ -599,6 +611,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProgressRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/qb': {
+      id: '/admin/qb'
+      path: '/qb'
+      fullPath: '/admin/qb'
+      preLoaderRoute: typeof AdminQbRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/view': {
       id: '/admin/view'
       path: '/view'
@@ -669,6 +688,7 @@ interface AdminRouteChildren {
   AdminAboutRoute: typeof AdminAboutRoute
   AdminFeedbackRoute: typeof AdminFeedbackRoute
   AdminProgressRoute: typeof AdminProgressRoute
+  AdminQbRoute: typeof AdminQbRoute
   AdminViewRoute: typeof AdminViewRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
@@ -677,6 +697,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAboutRoute: AdminAboutRoute,
   AdminFeedbackRoute: AdminFeedbackRoute,
   AdminProgressRoute: AdminProgressRoute,
+  AdminQbRoute: AdminQbRoute,
   AdminViewRoute: AdminViewRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
