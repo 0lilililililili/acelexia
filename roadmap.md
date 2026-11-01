@@ -55,3 +55,10 @@
 - [x] Mute basket scenery and delay replacements by 2–3 seconds.
 - [x] Expand grade-aware bakery syllabus practice and cooking presentation.
 - [x] Refresh Code and verify changed activities and tests.
+
+## November 1 changes
+- [ ] Add admin question-bank browsing without generating new questions.
+- [ ] Move phone map events clear of Boss Towers and other controls.
+- [ ] Count streaks on completed quest/boss rounds, never map visits; test persistence rules.
+- [ ] Finish Phase 1: arcade reading help and optional Chinese tone / English phonics aids.
+- [ ] Refresh Code and verify the changed flows.
