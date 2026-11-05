@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { matchesSubject } from "./question-contract";
+import { offlineLevelItems } from "./offline-bank";
 
 const Input = z.object({
   subject: z.enum(["chi", "eng", "math"]),
@@ -21,9 +22,26 @@ const Item = z.object({
 
 const Schema = z.object({ items: z.array(Item) });
 
+// Circuit breaker: after a credit/rate failure, skip AI for a while and serve offline questions.
+let aiPausedUntil = 0;
+
 export const generateLevelItems = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => Input.parse(d))
   .handler(async ({ data }) => {
+    const offline = () => ({ items: offlineLevelItems(data), source: "offline" as const });
+    if (Date.now() < aiPausedUntil) return offline();
+    try {
+      return { ...(await generateWithAI(data)), source: "ai" as const };
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      if (/AI gateway (402|429)/.test(msg)) aiPausedUntil = Date.now() + 10 * 60 * 1000;
+      console.warn("[qb] AI unavailable, using offline bank:", msg.slice(0, 120));
+      return offline();
+    }
+  });
+
+async function generateWithAI(data: z.infer<typeof Input>) {
+  {
     const key = process.env.LOVABLE_API_KEY;
     if (!key) throw new Error("Missing LOVABLE_API_KEY");
 
@@ -110,4 +128,5 @@ export const generateLevelItems = createServerFn({ method: "POST" })
     const valid = parsed.data.items.filter(it => matchesSubject(it, data.subject)).slice(0, data.count);
     if (valid.length < 8) throw new Error("The question set did not match this subject. Please start a fresh level.");
     return { items: valid };
-  });
+  }
+}
