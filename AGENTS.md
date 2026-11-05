@@ -22,3 +22,4 @@
 - Use a shared pure activity-streak evaluator at completed boss/quest rounds; map entry refreshes daily quests without awarding streak days.
 - Keep phonics and syllables curated and omit unsupported annotations; render optional sound aids through one shared component and persist their setting with progress.
 - Serve admin question-bank inventory through signed admin verification, without triggering question generation or exposing player records.
+- Tower questions are hybrid: try AI, fall back to the browser-safe offline bank on any failure, pausing AI 10 min after 402/429 so levels never fail on credits.

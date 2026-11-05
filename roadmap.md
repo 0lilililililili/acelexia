@@ -62,3 +62,6 @@
 - [ ] Count streaks on completed quest/boss rounds, never map visits; test persistence rules.
 - [ ] Finish Phase 1: arcade reading help and optional Chinese tone / English phonics aids.
 - [ ] Refresh Code and verify the changed flows.
+
+## Hybrid questions
+- [x] Tower levels and daily quests use AI questions when available, offline syllabus bank otherwise.
