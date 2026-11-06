@@ -20,5 +20,10 @@ export const listQuestionBanks = createServerFn({ method: "POST" })
     for (const q of arcade.BUILD_CHARACTERS) rows.push({ bank: "Character Builder", grade: Object.entries(arcade.BUILDER_BANDS).find(([, b]) => q.difficulty >= b.min && q.difficulty <= b.max)?.[0] ?? "Shared", subject: "chi", prompt: q.word, answer: q.parts.join(" · "), topic: q.hint, choices: q.distractors, detail: JSON.stringify(CHARACTER_LAYOUTS[q.word]) });
     for (const q of arcade.APPRAISALS) rows.push({ bank: "Appraiser", grade: "Shared", subject: "chi", prompt: q.meaning, answer: q.answer, topic: q.source, choices: [q.answer, q.falseWord], detail: `Simplified: ${q.simple}` });
     for (const [topic, words] of Object.entries(arcade.VOCAL_WORDS)) for (const word of words) rows.push({ bank: "Vocal Arena", grade: "Shared", subject: "chi", prompt: word, answer: word, topic, choices: [], detail: "" });
+    const { offlineLevelItems } = await import("./offline-bank");
+    for (const grade of ["K3", "P1", "P2", "P3", "P4", "P5", "P6"]) for (const subject of ["chi", "eng", "math"]) {
+      const items = offlineLevelItems({ subject, grade, level: 1, count: subject === "math" ? 14 : 200, language: "zh-TW" });
+      for (const q of items) rows.push({ bank: "Boss Tower (offline)", grade, subject, prompt: q.prompt, answer: q.answer, topic: q.topic ?? "", choices: q.choices ?? [], detail: subject === "math" ? "Sample from level 1 — numbers change every level." : "" });
+    }
     return { rows };
   });
