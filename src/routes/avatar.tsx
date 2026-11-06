@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { getState, type State } from "@/lib/store";
+import { getState, updateState, flushProgress, type State } from "@/lib/store";
 import { itemsFor, isOwned, itemName, resolveLook, SLOTS, OPTIONAL_SLOTS, type Slot } from "@/lib/avatar";
 import { equip, SLOT_LABEL } from "@/lib/avatar-shop";
 import { AvatarFigure } from "@/components/avatar-figure";
@@ -54,6 +54,14 @@ function AvatarPage() {
       <div className="mt-4 grid gap-6 md:grid-cols-[260px_1fr]">
         <div className="bg-card border-2 border-border rounded-3xl p-4 shadow grid place-items-center">
           <AvatarFigure look={look} gender={s.avatar.gender} size={200} />
+          <div className="mt-3 flex gap-2" role="group" aria-label="Gender">
+            {(["boy", "girl"] as const).map((g) => (
+              <Button key={g} variant={s.avatar.gender === g ? "default" : "outline"} className="rounded-2xl font-bold"
+                onClick={() => { updateState((st) => ({ ...st, avatar: { ...st.avatar, gender: g, equipped: Object.fromEntries(Object.entries(st.avatar.equipped).filter(([sl, id]) => { const it = itemsFor(sl as Slot, g).find((x) => x.id === id); return !!it; })) } })); void flushProgress(); }}>
+                {g === "boy" ? tr(lang, "Boy", "男孩", "男孩") : tr(lang, "Girl", "女孩", "女孩")}
+              </Button>
+            ))}
+          </div>
         </div>
         <div>
           <div className="flex flex-wrap gap-2" role="tablist">

@@ -21,6 +21,29 @@ import { SUBJECT_LABEL } from "@/lib/subjects";
 import { TrendCharts } from "@/components/trend-charts";
 import { RotateCcw } from "lucide-react";
 import { useLang } from "@/lib/i18n";
+import { explain } from "@/lib/explanations";
+
+function ExplainItem({ subject, prompt, answer, answerLabel }: { subject: string; prompt: string; answer: string; answerLabel: string }) {
+  const [open, setOpen] = useState(false);
+  const ex = open ? explain({ subject, prompt, answer }) : null;
+  return (
+    <li className="rounded-xl bg-background border border-border px-3 py-2">
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <div className="font-bold">{prompt}</div>
+          <div className="text-sm text-muted-foreground">{answerLabel}: {answer}</div>
+        </div>
+        <button onClick={() => setOpen((o) => !o)} className="shrink-0 rounded-full bg-secondary text-secondary-foreground px-3 py-1 text-sm font-bold">💡 Explain</button>
+      </div>
+      {ex && (
+        <div className="mt-2 rounded-lg bg-muted p-2 text-sm">
+          <ul className="list-disc pl-4 space-y-1">{ex.why.map((w, j) => <li key={j}>{w}</li>)}</ul>
+          <p className="mt-1 font-semibold">Tip: {ex.tip}</p>
+        </div>
+      )}
+    </li>
+  );
+}
 
 function RevisionPage() {
   const { t } = useLang();
@@ -168,10 +191,7 @@ function RevisionPage() {
                         </div>
                         <ul className="mt-3 grid gap-2 sm:grid-cols-2">
                           {list.map((item, i) => (
-                            <li key={i} className="rounded-xl bg-background border border-border px-3 py-2">
-                              <div className="font-bold">{item.prompt}</div>
-                              <div className="text-sm text-muted-foreground">{t("answer")}: {item.answer}</div>
-                            </li>
+                            <ExplainItem key={i} subject={subject} prompt={item.prompt} answer={item.answer} answerLabel={t("answer")} />
                           ))}
                         </ul>
                       </div>
