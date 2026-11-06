@@ -28,9 +28,32 @@ export function splitAtBlanks(text: string): (string | null)[] {
 
 import { streamSpeech } from "./stream-speech";
 import { getSession } from "./store";
+let aiVoicePausedUntil = 0;
+/** Free browser voice; resolves when finished, cancelled or unavailable. */
+function deviceSpeak(text: string, lang: string, signal: AbortSignal) {
+  return new Promise<void>((resolve, reject) => {
+    const synth = window.speechSynthesis;
+    if (!synth) return reject(new Error("This device has no read-aloud voice."));
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang;
+    const base = lang.slice(0, 2);
+    const voice = synth.getVoices().find(v => v.lang.replace("_", "-") === lang)
+      ?? (lang === "zh-HK" ? synth.getVoices().find(v => /yue|HK/i.test(v.lang)) : undefined)
+      ?? synth.getVoices().find(v => v.lang.startsWith(base));
+    if (voice) u.voice = voice;
+    u.rate = 0.9;
+    u.onend = () => resolve();
+    u.onerror = () => resolve();
+    signal.addEventListener("abort", () => { synth.cancel(); resolve(); }, { once: true });
+    synth.speak(u);
+  });
+}
 let runId = 0;
 let controller: AbortController | null = null;
-export function stopReading() { runId++; controller?.abort(); controller = null; }
+export function stopReading() {
+  runId++; controller?.abort(); controller = null;
+  if (typeof window !== "undefined") window.speechSynthesis?.cancel();
+}
 /** Stream each clause immediately, preserving an explicit silent pause at blanks. */
 export async function readAloud(text: string, voiceLang: string, pauseMs = 1500) {
   if (typeof window === "undefined") return false;
@@ -46,8 +69,17 @@ export async function readAloud(text: string, voiceLang: string, pauseMs = 1500)
           const timer = setTimeout(resolve, pauseMs);
           active.signal.addEventListener("abort", () => { clearTimeout(timer); resolve(); }, {once:true});
         });
+      } else if (Date.now() < aiVoicePausedUntil) {
+        await deviceSpeak(part, voiceLang, active.signal);
       } else {
-        await streamSpeech("/api/speech", part, voiceLang, getSession()?.token, active.signal);
+        try {
+          await streamSpeech("/api/speech", part, voiceLang, getSession()?.token, active.signal);
+        } catch (error) {
+          if (active.signal.aborted) throw error;
+          // AI voice unavailable (e.g. no credits): use the free device voice for 10 minutes.
+          aiVoicePausedUntil = Date.now() + 10 * 60_000;
+          await deviceSpeak(part, voiceLang, active.signal);
+        }
       }
     }
     return true;
