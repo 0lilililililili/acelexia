@@ -23,7 +23,7 @@ export const listQuestionBanks = createServerFn({ method: "POST" })
     const { offlineLevelItems } = await import("./offline-bank");
     for (const grade of ["K3", "P1", "P2", "P3", "P4", "P5", "P6"]) for (const subject of ["chi", "eng", "math"]) {
       const items = offlineLevelItems({ subject, grade, level: 1, count: subject === "math" ? 14 : 200, language: "zh-TW" });
-      for (const q of items) rows.push({ bank: "Boss Tower (offline)", grade, subject, prompt: q.prompt, answer: q.answer, topic: q.topic, choices: q.choices ?? [], detail: subject === "math" ? "Sample from level 1 — numbers change every level." : "" });
+      for (const q of items) rows.push({ bank: "Boss Tower (offline)", grade, subject, prompt: q.prompt, answer: q.answer, topic: q.topic ?? "", choices: q.choices ?? [], detail: subject === "math" ? "Sample from level 1 — numbers change every level." : "" });
     }
     return { rows };
   });
