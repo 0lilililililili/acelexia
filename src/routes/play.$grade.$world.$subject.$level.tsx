@@ -617,7 +617,7 @@ function PlayPage() {
                   <Check size={30} aria-hidden />
                 </button>
                 <button
-                  onClick={failQuestion}
+                  onClick={() => failQuestion()}
                   className="grid place-items-center w-16 h-16 rounded-full bg-card border-4 border-border shadow"
                   aria-label="Don't use"
                 >

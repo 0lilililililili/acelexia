@@ -16,7 +16,9 @@ type Props = {
 /** Shown inside the question half only, so the battle stays visible. */
 export function ExplanationPanel({ subject, lang, prompt, answer, chosen, onRetry, onSkip }: Props) {
   const e = explain({ subject, prompt, answer, chosen: chosen ?? undefined });
-  const spoken = [...e.why, e.tip].join(" ");
+  const why = e.why.filter((w) => subject === "math" || !w.includes(answer));
+  const lines = why.length ? why : ["Look again slowly at each choice. Compare the shapes and sounds."];
+  const spoken = [...lines, e.tip].join(" ");
   return (
     <div role="dialog" aria-label="Why it was wrong" className="absolute inset-0 z-10 overflow-y-auto rounded-2xl bg-card border-4 border-primary p-4 shadow-2xl animate-pop">
       <div className="flex items-center justify-between gap-2">
@@ -25,7 +27,7 @@ export function ExplanationPanel({ subject, lang, prompt, answer, chosen, onRetr
       </div>
       <p className="mt-2 font-bold">{chosen ? <>You chose: <span className="text-destructive">{chosen}</span></> : "Time ran out."}</p>
       <ul className="mt-2 space-y-1 text-lg leading-relaxed list-disc pl-5">
-        {e.why.filter((w) => !w.includes(answer) || subject === "math").map((w, i) => <li key={i}>{w}</li>)}
+        {lines.map((w, i) => <li key={i}>{w}</li>)}
       </ul>
       <p className="mt-2 rounded-xl bg-secondary px-3 py-2 font-bold">Tip: {e.tip}</p>
       <div className="mt-3 flex gap-2 justify-center flex-wrap">
