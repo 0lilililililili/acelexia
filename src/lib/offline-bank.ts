@@ -75,7 +75,7 @@ const CHI_IDIOM: [string, string, string, string, string][] = [
   ["看得很專注，眼睛不動：", "目不轉睛", "東張西望", "垂頭喪氣", "興高采烈"],
   ["失望又沒精神：", "垂頭喪氣", "興高采烈", "目不轉睛", "井井有條"],
 ];
-const CHI_READ = ["人", "口", "手", "山", "水", "火", "家人", "學校", "朋友", "老師", "圖書館", "快樂", "天氣", "公園", "早餐", "眼睛"];
+const CHI_READ = ["大人", "窗口", "雙手", "高山", "開水", "火車", "家人", "學校", "朋友", "老師", "圖書館", "快樂", "天氣", "公園", "早餐", "眼睛"];
 
 const ENG_SPELL: [string, string, string, string][] = [
   ["because", "becuase", "becasue", "bacause"],
