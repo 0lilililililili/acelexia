@@ -13,11 +13,9 @@ describe("offline tower bank", () => {
       });
 });
 
-import { test as t2, expect as e2 } from "bun:test";
-import { offlineLevelItems as oli } from "./offline-bank";
-t2("Chinese reading items are never a single character", () => {
-  for (const grade of ["K3","P1","P3","P6"] as const) {
-    const items = oli({ subject: "chi", grade, level: 1, count: 200, language: "zh-TW" } as any);
-    for (const it of items.filter((i) => !i.choices?.length)) e2([...it.prompt].length).toBeGreaterThanOrEqual(2);
+it("Chinese reading items are never a single character", () => {
+  for (const grade of ["K3", "P1", "P3", "P6"] as const) {
+    const items = offlineLevelItems({ subject: "chi", grade, level: 1, count: 200, language: "zh-TW" } as any);
+    for (const x of items.filter((i) => !i.choices?.length)) assert.ok([...x.prompt].length >= 2, x.prompt);
   }
 });
