@@ -65,3 +65,7 @@
 
 ## Hybrid questions
 - [x] Tower levels and daily quests use AI questions when available, offline syllabus bank otherwise.
+
+## Explanations
+- [x] Stage 1: avatar Boy/Girl switch, Revision Bank Explain button, offline explanation helper.
+- [ ] Stage 2: wrong-answer explanation + "Choose Again" in Boss Towers and 7 mini-games (waiting on go-ahead/credits).
