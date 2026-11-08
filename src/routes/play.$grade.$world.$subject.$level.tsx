@@ -33,6 +33,7 @@ import torchImg from "@/assets/icon-torch.png";
 import { FightingAvatar } from "@/components/fighting-avatar";
 import { SpeakButton } from "@/components/speak-button";
 import { Button } from "@/components/ui/button";
+import { ExplanationPanel } from "@/components/explanation-panel";
 
 export const Route = createFileRoute("/play/$grade/$world/$subject/$level")({
   head: ({ params }) => ({
@@ -105,7 +106,7 @@ function PlayPage() {
   const [idx, setIdx] = useState(0);
   const [correct, setCorrect] = useState(0);
   const [wrong, setWrong] = useState(0);
-  const [phase, setPhase] = useState<"enter" | "active" | "defeat" | "escape" | "back" | "offer">("enter");
+  const [phase, setPhase] = useState<"enter" | "active" | "defeat" | "escape" | "back" | "offer" | "explain" | "retry">("enter");
   const [transcript, setTranscript] = useState("");
   const [tick, setTick] = useState(0);
   const [bonus, setBonus] = useState(0);
@@ -256,16 +257,31 @@ function PlayPage() {
   const qStartRef = useRef(Date.now());
   useEffect(() => { qStartRef.current = Date.now(); }, [current]);
 
-  const failQuestion = useCallback(() => {
+  const [chosen, setChosen] = useState<string | null>(null);
+  const [ruledOut, setRuledOut] = useState<string[]>([]);
+  useEffect(() => { setChosen(null); setRuledOut([]); }, [idx]);
+
+  // First miss (wrong pick or time-up) still counts as wrong; then explain and let the child choose again.
+  const failQuestion = useCallback((picked?: string) => {
     if (current) toRevision(current, "wrong");
     recordAnswer(subject, false, Date.now() - qStartRef.current, current?.topic);
     setWrong((w) => w + 1);
-    setPhase("escape");
+    setChosen(picked ?? null);
+    if (picked) setRuledOut((r) => [...r, picked]);
+    setPhase("explain");
   }, [current, toRevision, subject]);
 
   const submit = useCallback(
     (text: string, spoken: boolean) => {
-      if (!current || phase !== "active" || answeredRef.current) return;
+      if (!current) return;
+      if (phase === "retry") {
+        const o = answerOutcome(text, current.answer, current.choices, spoken);
+        if (o === "correct") { answeredRef.current = true; setPhase("defeat"); }
+        else if (o === "wrong") { setRuledOut((r) => [...r, text]); setChosen(text); setPhase("explain"); }
+        else { setFeedback("wrong"); setTimeout(() => setFeedback("none"), 400); }
+        return;
+      }
+      if (phase !== "active" || answeredRef.current) return;
       const outcome = answerOutcome(text, current.answer, current.choices, spoken);
       if (outcome === "correct") {
         answeredRef.current = true;
@@ -275,7 +291,7 @@ function PlayPage() {
         if (!usedItem) addExp(1);
       } else if (outcome === "wrong") {
         answeredRef.current = true;
-        failQuestion();
+        failQuestion(current.choices?.length ? text : spoken ? undefined : text);
       } else {
         setFeedback("wrong");
         setTimeout(() => setFeedback("none"), 400);
@@ -294,6 +310,10 @@ function PlayPage() {
         if (cmd?.kind === "glass") useGlass(cmd.which);
         else if (cmd?.kind === "yes" && ownedGlasses[0]) useGlass(ownedGlasses[0]);
         else if (cmd?.kind === "no") failQuestion();
+        return;
+      }
+      if (phase === "explain") {
+        if (cmd?.kind === "yes" || /again|retry|再/i.test(t)) setPhase("retry");
         return;
       }
       const mentionsItem = /item|potion|torch|glass|pass/i.test(t);
@@ -324,6 +344,7 @@ function PlayPage() {
       setPhase("offer");
       return;
     }
+    answeredRef.current = true;
     failQuestion();
   }, [tick, phase, current, timeLimit, offered, ownedGlasses.length, failQuestion]);
 
@@ -539,7 +560,7 @@ function PlayPage() {
                         <button
                           key={i}
                           onClick={() => submit(c, false)}
-                          disabled={phase !== "active"}
+                          disabled={(phase !== "active" && phase !== "retry") || ruledOut.includes(c)}
                           className="rounded-xl border-2 border-border bg-background hover:border-primary px-3 py-2 text-lg font-bold text-left disabled:opacity-50"
                         >
                           <span className="text-primary mr-2 uppercase font-extrabold">{LETTERS[i]}.</span><DyslexicText text={c} level={settings.readingScaffold} />
@@ -558,6 +579,22 @@ function PlayPage() {
                   {Math.ceil(remaining)}s{buffetLeft > 0 ? ` • POTION B ${buffetLeft}s` : ""}
                 </div>
               </div>
+            </div>
+          )}
+          {current && phase === "explain" && (
+            <ExplanationPanel
+              subject={subject}
+              lang={settings.language}
+              prompt={current.prompt}
+              answer={current.answer}
+              chosen={chosen}
+              onRetry={() => setPhase("retry")}
+              onSkip={() => setPhase("escape")}
+            />
+          )}
+          {phase === "retry" && (
+            <div className="absolute top-1 inset-x-0 text-center pointer-events-none">
+              <span className="inline-block rounded-full bg-primary text-primary-foreground px-3 py-1 text-sm font-extrabold">Choose again — no timer</span>
             </div>
           )}
         </section>
@@ -580,7 +617,7 @@ function PlayPage() {
                   <Check size={30} aria-hidden />
                 </button>
                 <button
-                  onClick={failQuestion}
+                  onClick={() => failQuestion()}
                   className="grid place-items-center w-16 h-16 rounded-full bg-card border-4 border-border shadow"
                   aria-label="Don't use"
                 >
@@ -617,7 +654,7 @@ function PlayPage() {
           <>
             <button
               onClick={start}
-              disabled={listening || (phase !== "active" && phase !== "offer")}
+              disabled={listening || (phase !== "active" && phase !== "offer" && phase !== "retry" && phase !== "explain")}
               className={`rounded-full w-24 h-24 [@media(max-height:500px)]:w-16 [@media(max-height:500px)]:h-16 bg-primary text-primary-foreground text-4xl font-extrabold shadow-2xl flex items-center justify-center ${listening ? "mic-pulse" : "hover:scale-105"}`}
               aria-label="Speak your answer"
             >
